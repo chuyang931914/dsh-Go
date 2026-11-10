@@ -66,7 +66,7 @@
 | Flutter | `/root/dev/flutter` | 3.47.7 |
 | Android SDK | `/root/dev/android-sdk` | platform 36 / build-tools 36.0.0 / NDK 28.2.13676358 |
 | Gradle | 由 Gradle Wrapper 管理 | 9.3.1 |
-| CJK 字体（跑金色/Widget 测试必需） | `fonts-noto-cjk`（apt 安装） | `fc-match "Noto Sans CJK SC"` 应命中；未装时中文全渲染成方块，测试必红 |
+| CJK 字体（**仅测试机需要，不影响 APK**） | apt `fonts-noto-cjk`，默认目录 `/usr/share/fonts/noto-cjk`（可用 `DSH_TEST_FONT_DIR` 覆盖） | 缺 `NotoSansCJK-{Light,Regular,Bold}.ttc` 时测试故意 fail-fast；真机中文由 Android 系统字体兜底 |
 
 ### 3.3 环境变量脚本（构建前必须 source）
 
@@ -370,7 +370,7 @@ git push github HEAD:mogai
 15. **`SettingsPageId` 枚举值必须在 `_pages` 中有对应条目**：`spots.dart` 里 `SettingsIndex.page(id)` 和 `entry(id)` 用 `pages[id]!` 空断言；若某页面 ID（如 `privacy`/`sharedLinks`）只在枚举里但不在 `_pages` 中，任何遍历到它的代码（设置搜索、`SettingsTile(spot: SettingsIndex.entry(...))`）都会崩溃 → 灰屏。魔改剔除页面时，要么把它从 `_rows` 和所有 `SettingsIndex.entry/page()` 调用处移走，要么在 `_pages` 中补一条 `row: false` 的占位。
 16. **WSLg 弹窗「无法加载远程桌面服务 ActiveX 控件」**：根因是 WSL 3.0 的 `msrdc.exe`（WSLg 组件）启动时加载 `C:\Program Files\WSL\rdclientax.dll`，该 DLL 依赖新版 `mstscax.dll` 的导出函数，但 Win10 19045 的 `mstscax.dll`（10.0.19041.4522）太旧 → `LoadLibrary` 失败（错误码 127）→ 每次用 WSL 都弹错。**修复**：在 `C:\Users\Administrator\.wslconfig` 写入 `[wsl2]\nguiApplications=false` 禁用 WSLg，然后 `wsl --shutdown`。本项目只用 WSL 命令行构建，不需要 GUI，禁用无影响。若以后要用 WSL GUI，需升级 Windows 或降级 WSL 到 2.x。
 17. **关闭页面入口要"三件套"一起改**：① 设置 hub 里的 `SettingsTile`；② `spots.dart` 的 `SettingsPageMeta` + `_rows` 索引项；③ 该页专属的分组标题 l10n、测试断言、`settings_hub_full` 金色图。只删 ① → 搜索仍能搜到（见 Rule 11）；只删 ② → 页面仍从 hub 可达；改了分组标题不重生成金色 → 测试红。已按此完成两次：`privacy`（7-3）、`about`（7-10）。
-18. **Widget/金色测试依赖 CJK 字体**：WSL 内需 `apt install fonts-noto-cjk`，否则中文渲染成方块、差异巨大。装好后 `fc-match` 命中的是 `NotoSansCJK-Light`，与基准图字重可能有细微差（本次遇到 11% 像素差），统一用 `flutter test --update-goldens <file>` 重新生成，不要手改 PNG。l10n 改动要先跑 `python3 tool/l10n_merge.py` 再 `flutter gen-l10n`，否则生成物不更新。
+18. **测试缺 CJK 字体会故意报错，这不是 App 缺陷**：`test/support/test_fonts.dart` 在字体缺失时主动 `throw StateError('Test font missing: ...')`，目的是防止金色图静默使用测试引擎的方块字体。WSL 需 `apt install fonts-noto-cjk`（默认 `/usr/share/fonts/noto-cjk`，需 `NotoSansCJK-{Light,Regular,Bold}.ttc`）。**真机中文由 Android 系统字体兜底，APK 不受影响**。装好后 `fc-match` 命中的是 Light 字重，与基准图可能有细微差（本次遇到 11% 像素差），统一用 `flutter test --update-goldens <file>` 重新生成，不要手改 PNG。l10n 改动要先跑 `python3 tool/l10n_merge.py` 再 `flutter gen-l10n`，否则生成物不更新。
 
 ---
 
