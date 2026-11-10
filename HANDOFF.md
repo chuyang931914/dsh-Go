@@ -16,7 +16,7 @@
 | 主仓库（GitHub） | https://github.com/chuyang931914/dsh-Go.git （**默认分支已设为 `mogai`**；原 `main` 保留上游历史镜像） |
 | 镜像仓库（Gitee） | https://gitee.com/chuyang931914/dsh-go-mogai.git （`main` = 魔改版，含本交接文档） |
 | Git 身份 | `chuyang` / `200414988+chuyang931914@users.noreply.github.com` |
-| 分支 | `main` |
+| 分支 | Gitee `main`；GitHub 默认分支 `mogai` |
 | 包名 / 版本 | `io.github.ccch1mneyyy.dsh_app`，versionName `1.0.15`，versionCode 由构建脚本按 `MMDDHHmm` 生成（如 11101923） |
 
 **重要：魔改版用自建签名，与官方签名不同 → 官方 APK 覆盖安装会失败，官方"应用内更新"天然装不上（双保险，即使忘了关更新也装不进去）。**
@@ -27,7 +27,6 @@
 
 | 产物 | 路径 |
 | --- | --- |
-| 原始未魔改 APK（构建链路验证用） | `D:\Android\apk\dsh-go-1.0.15-original-arm64.apk`（约 206MB，v1.0.15/11101835） |
 | 魔改版 APK | `D:\Android\apk\dsh-go-1.0.15-mogai-arm64.apk` |
 | APK 下载（GitHub Release） | https://github.com/chuyang931914/dsh-Go/releases/download/v1.0.15-mogai/dsh-go-1.0.15-mogai-arm64.apk |
 | 构建脚本原始输出 | WSL 内 `/root/dsh-Go/app/build/app/outputs/flutter-apk/app-arm64-release.apk` |
@@ -291,8 +290,6 @@ git -c http.version=HTTP/1.1 push github main:refs/heads/mogai
 
 ## 十二、下一步可推进方向
 
-1. 把本文件同步进仓库根目录 `HANDOFF.md` 并推送双仓库（已完成，见提交记录）。
-2. 在 Gitee 仓库里上传 APK 到 Release，手机端从 Gitee 直接下载安装（不依赖网盘）。
-3. 备份 keystore 到网盘 + U 盘各一份（最高优先级，丢失不可逆）。
-4. 若要继续魔改，优先"禁用 + 去入口"，尽量不删文件，减少上游 rebase 冲突。
-5. 上游升级时：以新版本为基线重新打 4 处补丁（补丁点见第七节），保留本仓库 commit 作为参考。
+1. 备份 keystore 到网盘 + U 盘各一份（最高优先级，丢失不可逆）。
+2. 若要继续魔改，优先"禁用 + 去入口"，尽量不删文件，减少上游 rebase 冲突。
+3. 上游升级时：以新版本为基线重新打 4 处补丁（补丁点见第七节），保留本仓库 commit 作为参考。
