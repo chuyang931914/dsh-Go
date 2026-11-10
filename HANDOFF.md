@@ -13,7 +13,7 @@
 | 上游项目 | dsh-Go（DeepSeek Harness 的 Android 客户端，Flutter 编写） |
 | 上游版本 | 1.0.15（基线提交 `40c73ab`，未改动） |
 | 本项目性质 | **个人魔改版**（去统计 / 锁默认模型档位 / 去隐私分享 / 去自动更新），自签名，不跟随官方更新 |
-| 主仓库（GitHub） | https://github.com/chuyang931914/dsh-Go.git （`main` = 上游历史镜像；**魔改代码在分支 `mogai`**） |
+| 主仓库（GitHub） | https://github.com/chuyang931914/dsh-Go.git （**默认分支已设为 `mogai`**；原 `main` 保留上游历史镜像） |
 | 镜像仓库（Gitee） | https://gitee.com/chuyang931914/dsh-go-mogai.git （`main` = 魔改版，含本交接文档） |
 | Git 身份 | `chuyang` / `200414988+chuyang931914@users.noreply.github.com` |
 | 分支 | `main` |
@@ -29,6 +29,7 @@
 | --- | --- |
 | 原始未魔改 APK（构建链路验证用） | `D:\Android\apk\dsh-go-1.0.15-original-arm64.apk`（约 206MB，v1.0.15/11101835） |
 | 魔改版 APK | `D:\Android\apk\dsh-go-1.0.15-mogai-arm64.apk` |
+| APK 下载（GitHub Release） | https://github.com/chuyang931914/dsh-Go/releases/download/v1.0.15-mogai/dsh-go-1.0.15-mogai-arm64.apk |
 | 构建脚本原始输出 | WSL 内 `/root/dsh-Go/app/build/app/outputs/flutter-apk/app-arm64-release.apk` |
 | 签名文件 | `D:\Android\keystore\dsh-go-release.jks` |
 | 签名备份 | `D:\Android\keystore\backup\`（**务必再备份到网盘/U盘，丢了就无法覆盖升级，只能卸载重装**） |
