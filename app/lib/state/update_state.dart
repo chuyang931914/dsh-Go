@@ -354,7 +354,7 @@ class AppUpdateController extends Notifier<AppUpdateState> {
     int? ms(String key) => prefs.getInt(key);
     state = state.copyWith(
       loaded: true,
-      autoCheck: prefs.getBool(_autoKey) ?? true,
+      autoCheck: false, // 魔改：自动更新已剔除
       current: current,
       flavor: flavor,
       skippedVersion: () => prefs.getString(_skippedKey),
@@ -523,16 +523,8 @@ class AppUpdateController extends Notifier<AppUpdateState> {
   /// True when the caller should offer the update (newer and not skipped).
   Future<bool> autoCheckIfDue() async {
     await ready;
-    final prefs = _prefs;
-    if (!ref.mounted || prefs == null || !state.autoCheck || state.busy) return false;
-    DateTime? at(String key) {
-      final ms = prefs.getInt(key);
-      return ms == null ? null : DateTime.fromMillisecondsSinceEpoch(ms);
-    }
-
-    if (!isAutoCheckDue(now: _now(), lastChecked: at(_checkedKey), lastAttempt: at(_attemptKey))) return false;
-    await check();
-    return ref.mounted && state.hasUpdate && !state.isSkipped && state.asset != null;
+    // 魔改：自动更新已剔除，启动时不做任何检查。
+    return false;
   }
 
   /// Asks the sources for the latest release. Concurrent calls share one check;

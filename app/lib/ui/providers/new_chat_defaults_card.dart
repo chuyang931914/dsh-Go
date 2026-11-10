@@ -28,6 +28,8 @@ class _NewChatDefaultsCardState extends ConsumerState<NewChatDefaultsCard> {
 
   Future<void> _save(EngineSettings snapshot, ModelSelection selection, bool? remember) async {
     if (_saving) return;
+    // 魔改：新对话默认的思考强度固定为「低」。
+    selection = ModelSelection(provider: selection.provider, model: selection.model, reasoningEffort: 'low');
     final controller = ref.read(engineSettingsProvider.notifier);
     final editor = controller.edit(snapshot);
     if (!editor.active || ref.read(readListLiveConnectionProvider) == null) return;

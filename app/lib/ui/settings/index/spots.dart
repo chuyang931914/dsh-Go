@@ -453,20 +453,6 @@ final _pages = <SettingsPageMeta>[
     freq: Freq.medium,
     links: const ['system-permissions'],
   ),
-  SettingsPageMeta(
-    SettingsPageId.privacy,
-    title: (l) => l.hubPrivacy,
-    group: _general,
-    keywords: (l) => l.searchKwPrivacy,
-    links: const ['privacy'],
-  ),
-  SettingsPageMeta(
-    SettingsPageId.sharedLinks,
-    title: (l) => l.remoteHostedMyLinks,
-    parent: SettingsPageId.privacy,
-    keywords: (l) => l.searchKwSharedLinks,
-    links: const ['shared-links'],
-  ),
   // 主机
   SettingsPageMeta(
     SettingsPageId.engine,

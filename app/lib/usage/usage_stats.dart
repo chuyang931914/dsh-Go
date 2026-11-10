@@ -13,9 +13,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../l10n/l10n.dart';
 import '../phone/phone_channel.dart';
-import '../runtime/runtime_bridge.dart';
-import '../runtime/runtime_state.dart';
-import '../state/phone_state.dart' show phoneChannelProvider;
 import 'usage_ledger.dart';
 import 'usage_net.dart';
 
@@ -63,10 +60,6 @@ final usageResumesProvider = Provider<VoidCallback Function(VoidCallback onResum
 bool phoneTaskStarted(PhoneTaskStatus before, PhoneTaskStatus now) =>
     now.active && (!before.active || (now.id != null && now.id != before.id));
 
-/// The on-device engine's launch while it runs (`direct`, `proot`).
-String? _engineMode(LocalRuntimeState s) =>
-    s.status.phase == RuntimePhase.running ? s.status.currentExecutionMode : null;
-
 class UsageStatsController extends Notifier<UsageStatsState> {
   static const enabledKey = 'usage_stats_enabled';
   static const noticedKey = 'usage_stats_noticed';
@@ -103,63 +96,13 @@ class UsageStatsController extends Notifier<UsageStatsState> {
   @override
   UsageStatsState build() {
     _loaded = _load();
-    if (UsageBuild.active) _watch();
+    // 魔改：匿名使用统计已剔除，不再观察生命周期与手机控制任务。
     return const UsageStatsState();
   }
 
   Future<void> _load() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      if (!ref.mounted) return;
-      final enabled = prefs.getBool(enabledKey) ?? true;
-      DateTime? time(String key) => switch (prefs.getInt(key)) {
-        final int ms => DateTime.fromMillisecondsSinceEpoch(ms),
-        null => null,
-      };
-      if (enabled) {
-        _ledger = UsageLedger.decode(prefs.getString(daysKey));
-        _iid = prefs.getString(iidKey);
-        _iidSince = time(iidSinceKey);
-        _failedAt = time(failedAtKey);
-        _closedDay = prefs.getString(closedDayKey);
-        _saved = (_ledger.encode(), _iid, _iidSince, _failedAt, _closedDay);
-      }
-      state = UsageStatsState(loaded: true, enabled: enabled, noticed: prefs.getBool(noticedKey) ?? false);
-    } catch (_) {
-      // No preferences backend: nothing kept, so nothing collected.
-      if (ref.mounted) state = state.copyWith(loaded: true);
-    }
-  }
-
-  /// Release builds: today counts when the app comes to the front, and the
-  /// days before go out; the engine's launch and phone control tasks are
-  /// noted as they happen.
-  void _watch() {
-    ref.onDispose(ref.read(usageResumesProvider)(() => unawaited(foreground())));
-    // A cold start comes up in front.
-    unawaited(foreground());
-    ref.listen(localRuntimeProvider.select(_engineMode), (_, mode) {
-      if (mode != null) _record((ledger, now) => ledger.engine(mode, now));
-    }, fireImmediately: true);
-    final channel = ref.read(phoneChannelProvider);
-    StreamSubscription<PhoneStatus>? sub;
-    var disposed = false;
-    ref.onDispose(() {
-      disposed = true;
-      unawaited(sub?.cancel());
-    });
-    unawaited(() async {
-      try {
-        final first = await channel.status();
-        // Listening with no native side reports an error: only once it answered.
-        if (disposed || !first.ready) return;
-        var last = first.task;
-        sub = channel.statusChanges.listen((s) {
-          if (phoneTaskStarted(last, s.task)) count(UsageCount.phone);
-          last = s.task;
-        }, onError: (_) {});
-      } catch (_) {}
-    }());
+    // 魔改：匿名使用统计已剔除 —— 不读开关、不计数、不落盘、不发送。
+    if (ref.mounted) state = const UsageStatsState(loaded: true, enabled: false, noticed: true);
   }
 
   /// One more [c] today.

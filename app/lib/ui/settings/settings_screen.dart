@@ -47,7 +47,6 @@ import '../shell/brand_mark.dart';
 import '../shell/page_frame.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
-import '../update/update_tiles.dart' show UpdateBadge;
 import 'about_page.dart';
 import 'appearance/appearance_page.dart';
 import 'background_guide_page.dart';
@@ -57,7 +56,6 @@ import 'language_tile.dart';
 import 'notification_settings.dart';
 import 'performance_page.dart';
 import 'personalization_page.dart';
-import 'privacy_page.dart';
 import 'search/settings_search_page.dart';
 import 'settings_widgets.dart';
 import 'system_access_page.dart';
@@ -124,7 +122,6 @@ class SettingsScreen extends ConsumerWidget {
     final hostName = host.isLocal ? l10n.commonThisPhone : ref.watch(hostNameProvider(host)) ?? l10n.commonRemoteHost;
     // 帮助与关于.
     final update = ref.watch(appUpdateProvider);
-    final newVersion = update.hasUpdate && !update.isSkipped;
 
     final page = AppPage.list(
       title: l10n.commonSettings,
@@ -254,12 +251,6 @@ class SettingsScreen extends ConsumerWidget {
               spot: SettingsIndex.entry(SettingsPageId.systemAccess),
               onTap: () => _push(context, const SystemAccessPage()),
             ),
-            SettingsTile(
-              icon: AppIcons.privacy,
-              tint: SettingsHues.general,
-              spot: SettingsIndex.entry(SettingsPageId.privacy),
-              onTap: () => _push(context, const PrivacyPage()),
-            ),
           ],
         ),
         SettingsSection(
@@ -316,9 +307,7 @@ class SettingsScreen extends ConsumerWidget {
               icon: AppIcons.info,
               tint: SettingsHues.help,
               spot: SettingsIndex.entry(SettingsPageId.about),
-              value: newVersion
-                  ? UpdateBadge(l10n.hubAboutNewVersion)
-                  : Text(update.current.name, style: AppType.tabular(Theme.of(context).textTheme.bodyMedium!)),
+              value: Text(update.current.name, style: AppType.tabular(Theme.of(context).textTheme.bodyMedium!)),
               onTap: () => _push(context, const AboutPage()),
             ),
           ],

@@ -12,9 +12,9 @@ const defaultModelSelectionFields = [defaultModelProviderField, defaultModelIdFi
 ModelSelection? defaultModelSelection(EngineSettings settings) {
   final provider = settings.valueOf(defaultModelProviderField);
   final model = settings.valueOf(defaultModelIdField);
-  final effort = settings.valueOf(defaultModelEffortField);
   if (provider is! String || provider.isEmpty || model is! String || model.isEmpty) return null;
-  return ModelSelection(provider: provider, model: model, reasoningEffort: effort is String ? effort : null);
+  // 魔改：新对话默认的思考强度固定为「低」。
+  return ModelSelection(provider: provider, model: model, reasoningEffort: 'low');
 }
 
 bool supportsDefaultModelMode(EngineSettings settings) =>
