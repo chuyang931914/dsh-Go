@@ -15,7 +15,6 @@ import 'package:dsh_app/state/settings_state.dart';
 import 'package:dsh_app/ui/settings/about_page.dart';
 import 'package:dsh_app/ui/settings/interface_page.dart';
 import 'package:dsh_app/ui/settings/personalization_page.dart';
-import 'package:dsh_app/ui/settings/privacy_page.dart';
 import 'package:dsh_app/ui/settings/reply_prefs_page.dart';
 import 'package:dsh_app/ui/settings/settings_screen.dart';
 import 'package:dsh_client/dsh_client.dart';
@@ -89,7 +88,8 @@ void main() {
   goldenBoth('about', () => const AboutPage(), overrides: _local);
 
   // The two pages that also show the host's own settings.
-  for (final (name, page) in [('interface', const InterfacePage()), ('privacy', const PrivacyPage())]) {
+  // 魔改：隐私页已删除，仅保留 interface
+  for (final (name, page) in [('interface', const InterfacePage())]) {
     for (final brightness in Brightness.values) {
       final mode = brightness == Brightness.dark ? 'dark' : 'light';
       testWidgets('$name ($mode)', (tester) async {

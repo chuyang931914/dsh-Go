@@ -9019,7 +9019,7 @@ class L10nEn extends L10n {
   String get hubGroupHosts => 'Hosts';
 
   @override
-  String get hubGroupHelp => 'Help and about';
+  String get hubGroupHelp => 'Help';
 
   @override
   String get hubPersonalization => 'Personalization';

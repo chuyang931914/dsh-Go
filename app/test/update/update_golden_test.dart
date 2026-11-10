@@ -1,22 +1,19 @@
-// Goldens for in-app updates: the 关于 rows with the new-version mark, and the
-// update sheet in its main states (offer, downloading, signature mismatch).
-// Plus widget checks of the sheet's buttons, the manual check entry and the
-// launch check. The goldens use a page holding only the 关于 group, so other
-// settings rows changing doesn't move them.
+// The update sheet's behaviour and the launch check, over a bare home.
+//
+// 魔改：自动更新已整体剔除 —— 关于页不再有「检查更新」「自动更新」两行，
+// `Spots.updateCheck/updateAuto` 与 `AppUpdateTiles` 已删除，因此原来的
+// 「关于」分组金色基准与手工检查/自动检查开关用例一并移除；这里直接打开
+// 更新面板，只保留仍存在代码的行为验证。
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:dsh_app/runtime/runtime_state.dart';
 import 'package:dsh_app/state/settings_state.dart';
 import 'package:dsh_app/state/star_prompt.dart';
 import 'package:dsh_app/state/update_state.dart';
-import 'package:dsh_app/ui/settings/about_page.dart';
-import 'package:dsh_app/ui/settings/settings_screen.dart';
-import 'package:dsh_app/ui/settings/settings_widgets.dart';
-import 'package:dsh_app/ui/shell/page_frame.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
 import 'package:dsh_app/ui/update/update_launch_check.dart';
-import 'package:dsh_app/ui/update/update_tiles.dart';
+import 'package:dsh_app/ui/update/update_sheet.dart';
 import 'package:dsh_app/update/release.dart';
 import 'package:dsh_app/update/version.dart';
 import 'package:flutter/material.dart';
@@ -119,97 +116,37 @@ List<Override> _overrides(FakeUpdate update) => [
   appUpdateProvider.overrideWith(() => update),
 ];
 
-/// The 关于 group as 设置 lays it out.
-class _AboutPage extends StatelessWidget {
-  const _AboutPage();
+/// A bare home; the sheet is opened from it directly.
+class _Home extends StatelessWidget {
+  const _Home();
 
   @override
-  Widget build(BuildContext context) => AppPage.list(
-    title: '设置',
-    children: [
-      SettingsSection(
-        title: '关于',
-        children: [
-          const SettingsTile(icon: AppIcons.info, tint: 7, title: '版本', value: Text('1.0.0 (1)')),
-          const AppUpdateTiles(tint: 7),
-          SettingsTile(icon: AppIcons.document, tint: 7, title: '开源许可', onTap: () {}),
-        ],
+  Widget build(BuildContext context) => Scaffold(
+    body: Center(
+      child: Builder(
+        builder: (context) => TextButton(
+          onPressed: () => unawaited(showUpdateSheet(context)),
+          child: const Text('打开更新面板'),
+        ),
       ),
-    ],
+    ),
   );
 }
 
 Future<void> _openSheet(WidgetTester tester) async {
-  await tester.tap(find.text('检查更新'));
+  await tester.tap(find.text('打开更新面板'));
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 600));
 }
 
 void main() {
-  // 设置 → 关于 with a new version waiting.
-  goldenBoth('settings_about_update', () => const _AboutPage(), overrides: () => _overrides(FakeUpdate(_offer())));
-
-  goldenBoth(
-    'update_sheet',
-    () => const _AboutPage(),
-    overrides: () => _overrides(FakeUpdate(_offer())),
-    before: (tester) async {
-      await _openSheet(tester);
-    },
-  );
-
-  // Public builds: 稍后 / 去 Star / 立即更新.
-  goldenBoth(
-    'update_sheet_star',
-    () => const _AboutPage(),
-    overrides: () => [
-      ..._overrides(FakeUpdate(_offer())),
-      starPromptGateProvider.overrideWithValue(true),
-      starPromptStoreProvider.overrideWithValue(_StarStore()),
-    ],
-    before: (tester) async {
-      await _openSheet(tester);
-    },
-  );
-
-  goldenBoth(
-    'update_sheet_downloading',
-    () => const _AboutPage(),
-    overrides: () => _overrides(
-      FakeUpdate(_offer(task: UpdateTaskPhase.downloading, received: 81 * 1024 * 1024 + 300000, source: 'ghfast.top')),
-    ),
-    before: (tester) async {
-      await _openSheet(tester);
-    },
-  );
-
-  goldenBoth(
-    'update_sheet_signature',
-    () => const _AboutPage(),
-    overrides: () => _overrides(FakeUpdate(_offer(task: UpdateTaskPhase.failed, problem: UpdateProblem.signature))),
-    before: (tester) async {
-      await _openSheet(tester);
-    },
-  );
-
   group('behaviour', () {
     Future<FakeUpdate> pump(WidgetTester tester, FakeUpdate update) async {
       usePhoneSurface(tester);
-      await tester.pumpWidget(
-        goldenApp(home: const _AboutPage(), brightness: Brightness.light, overrides: _overrides(update)),
-      );
+      await tester.pumpWidget(goldenApp(home: const _Home(), brightness: Brightness.light, overrides: _overrides(update)));
       await tester.pump();
       return update;
     }
-
-    testWidgets('the mark shows the version; a skipped one is quiet', (tester) async {
-      await pump(tester, FakeUpdate(_offer()));
-      expect(find.widgetWithText(UpdateBadge, '新版本 1.2.0'), findsOneWidget);
-      await tester.pumpWidget(const SizedBox());
-      await pump(tester, FakeUpdate(_offer().copyWith(skippedVersion: () => '1.2.0')));
-      expect(find.byType(UpdateBadge), findsNothing);
-      expect(find.text('已跳过 1.2.0'), findsOneWidget);
-    });
 
     testWidgets('立即更新 starts the download; 取消下载 stops it', (tester) async {
       final update = await pump(tester, FakeUpdate(_offer()));
@@ -234,7 +171,7 @@ void main() {
       usePhoneSurface(tester);
       await tester.pumpWidget(
         goldenApp(
-          home: const _AboutPage(),
+          home: const _Home(),
           brightness: Brightness.light,
           overrides: [
             ..._overrides(update),
@@ -267,7 +204,6 @@ void main() {
       await tester.pumpAndSettle();
       expect(update.calls, ['skipLatest']);
       expect(find.text('发现新版本'), findsNothing);
-      expect(find.text('已跳过 1.2.0'), findsOneWidget);
     });
 
     testWidgets('an unconfirmed install keeps neutral wording and the system installer', (tester) async {
@@ -315,54 +251,6 @@ void main() {
       expect(find.text('打开发布页'), findsOneWidget);
       expect(find.text('重试'), findsNothing);
     });
-
-    testWidgets('manual check: up to date / unavailable say so in a snack bar, no dialog', (tester) async {
-      final idle = AppUpdateState(loaded: true, current: AppVersion.tryParse('1.2.0+7')!, flavor: ApkFlavor.arm64);
-      final update = await pump(tester, FakeUpdate(idle));
-      await tester.tap(find.text('检查更新'));
-      await tester.pump();
-      expect(update.calls, ['check']);
-      expect(find.text('已是最新版本'), findsOneWidget);
-      expect(find.text('已是最新'), findsOneWidget);
-
-      await tester.pumpWidget(const SizedBox());
-      await pump(tester, FakeUpdate(idle, checkResult: UpdateCheckPhase.unavailable));
-      await tester.tap(find.text('检查更新'));
-      await tester.pump();
-      expect(find.text('暂时检查不了更新，稍后再试'), findsOneWidget);
-      expect(find.text('暂时检查不了'), findsOneWidget);
-      expect(find.byType(AlertDialog), findsNothing);
-      expect(find.byType(BottomSheet), findsNothing);
-    });
-
-    testWidgets('the automatic check switch', (tester) async {
-      final update = await pump(tester, FakeUpdate(_offer()));
-      await tester.tap(find.text('自动检查更新'));
-      await tester.pump();
-      expect(update.calls, ['autoCheck:false']);
-    });
-  });
-
-  testWidgets('设置 marks 关于 DSH Go; the rows are on that page', (tester) async {
-    usePhoneSurface(tester);
-    await tester.pumpWidget(
-      goldenApp(
-        home: const SettingsScreen(),
-        brightness: Brightness.light,
-        overrides: _overrides(FakeUpdate(_offer())),
-      ),
-    );
-    await tester.pump();
-    await tester.drag(find.byType(CustomScrollView), const Offset(0, -5000));
-    await tester.pump(const Duration(milliseconds: 600));
-    expect(find.widgetWithText(UpdateBadge, '有新版本'), findsOneWidget);
-    await tester.ensureVisible(find.text('关于 DSH Go'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('关于 DSH Go'));
-    await tester.pumpAndSettle();
-    expect(find.byType(AboutPage), findsOneWidget);
-    expect(find.byType(AppUpdateTiles), findsOneWidget);
-    expect(find.widgetWithText(UpdateBadge, '新版本 1.2.0'), findsOneWidget);
   });
 
   group('launch check', () {

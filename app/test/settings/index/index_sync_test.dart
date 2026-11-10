@@ -22,13 +22,11 @@ import 'package:dsh_app/ui/phone/phone_control_screen.dart';
 import 'package:dsh_app/ui/providers/providers_page.dart';
 import 'package:dsh_app/ui/remote/remote_screen.dart';
 import 'package:dsh_app/ui/settings/appearance/appearance_page.dart';
-import 'package:dsh_app/ui/settings/about_page.dart';
 import 'package:dsh_app/ui/settings/background_guide_page.dart';
 import 'package:dsh_app/ui/settings/notification_settings.dart';
 import 'package:dsh_app/ui/settings/interface_page.dart';
 import 'package:dsh_app/ui/settings/performance_page.dart';
 import 'package:dsh_app/ui/settings/personalization_page.dart';
-import 'package:dsh_app/ui/settings/privacy_page.dart';
 import 'package:dsh_app/ui/settings/settings_screen.dart';
 import 'package:dsh_app/state/app_info.dart';
 import 'package:dsh_app/ui/settings/index/spots.dart';
@@ -212,9 +210,7 @@ void main() {
     );
   });
 
-  testWidgets('关于 DSH Go', (tester) async {
-    await _check(tester, SettingsPageId.about, () => _app(tester, const AboutPage(), _running()));
-  });
+  // 魔改：「关于 DSH Go」入口已关闭，页面不再出现在设置页与索引里，故不再校验其索引同步。
 
   testWidgets('主题', (tester) async {
     await _check(tester, SettingsPageId.appearance, () => _app(tester, const AppearancePage(), _running()));
@@ -346,8 +342,6 @@ void main() {
     testWidgets('界面', (tester) async {
       await _check(tester, SettingsPageId.interface, () => pumpEngine(tester, const InterfacePage()));
     });
-    testWidgets('隐私与分享', (tester) async {
-      await _check(tester, SettingsPageId.privacy, () => pumpEngine(tester, const PrivacyPage()));
-    });
+    // 魔改：隐私页已删除，对应测试用例移除
   });
 }

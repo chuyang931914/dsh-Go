@@ -278,15 +278,14 @@ void main() {
       expect(harness.controllers['s2']?.models ?? const [], isEmpty);
     });
 
-    testWidgets('a model that needs a newer engine on this phone offers 检查更新', (tester) async {
+    testWidgets('a model that needs a newer engine on this phone offers no action (自动更新已剔除)', (tester) async {
       final update = _UpToDate();
       await refused(tester, 'CLIENT_UPGRADE_REQUIRED', upgrade, extra: [appUpdateProvider.overrideWith(() => update)]);
       expect(find.text('这个模型需要新版引擎'), findsOneWidget);
       expect(find.widgetWithText(TextButton, '换模型'), findsNothing);
-      await tester.tap(find.widgetWithText(TextButton, '检查更新'));
-      await pumpFrames(tester, 3);
-      expect(update.checks, 1);
-      expect(find.text('已是最新版本'), findsOneWidget);
+      // 魔改：不再提供「检查更新」入口，因此也不会触发一次检查。
+      expect(find.widgetWithText(TextButton, '检查更新'), findsNothing);
+      expect(update.checks, 0);
     });
 
     testWidgets('on a remote host the engine is not the app’s: 换模型', (tester) async {

@@ -15737,7 +15737,7 @@ abstract class L10n {
   /// No description provided for @hubGroupHelp.
   ///
   /// In zh, this message translates to:
-  /// **'帮助与关于'**
+  /// **'帮助'**
   String get hubGroupHelp;
 
   /// No description provided for @hubPersonalization.

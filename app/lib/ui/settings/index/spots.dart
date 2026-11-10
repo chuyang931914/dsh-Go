@@ -520,13 +520,7 @@ final _pages = <SettingsPageMeta>[
     keywords: (l) => l.searchKwDiagnostics,
     links: const ['diagnostics'],
   ),
-  SettingsPageMeta(
-    SettingsPageId.about,
-    title: (l) => l.hubAbout,
-    group: _help,
-    keywords: (l) => l.searchKwAbout,
-    links: const ['about'],
-  ),
+  // 魔改：「关于 DSH Go」入口已关闭，不再出现在设置页与搜索结果里。
   // The overview card.
   SettingsPageMeta(
     SettingsPageId.account,
@@ -898,29 +892,6 @@ abstract final class Spots {
     keywords: (l) => l.searchKwNotifySystem,
   );
 
-  // 隐私与分享.
-  static final shareConfig = SettingSpot(
-    'share-config',
-    page: SettingsPageId.privacy,
-    title: (l) => l.hubSettingsShareConfig,
-    keywords: (l) => l.searchKwShareConfig,
-  );
-  static final usageStats = SettingSpot(
-    'usage-stats',
-    page: SettingsPageId.privacy,
-    title: (l) => l.usageStatsTitle,
-    keywords: (l) => l.searchKwUsageStats,
-    link: 'usage-stats',
-  );
-  static final chatLogUpload = SettingSpot(
-    'chat-log-upload',
-    page: SettingsPageId.privacy,
-    title: (l) => l.engineChatLogUpload,
-    keywords: (l) => l.searchKwChatLogUpload,
-    field: const SpotField(['session-log-deepseek'], 'enabled'),
-    condition: SpotCondition.engineField,
-  );
-
   // 本机引擎.
   static final autoStart = SettingSpot(
     'auto-start',
@@ -1009,23 +980,12 @@ abstract final class Spots {
   );
 
   // 关于 dsh-go.
+  // 魔改：自动更新已剔除，「检查更新」「自动更新」两个 Spot 一并删除。
   static final version = SettingSpot(
     'version',
     page: SettingsPageId.about,
     title: (l) => l.commonVersion,
     keywords: (l) => l.searchKwVersion,
-  );
-  static final updateCheck = SettingSpot(
-    'update-check',
-    page: SettingsPageId.about,
-    title: (l) => l.updateCheck,
-    keywords: (l) => l.searchKwUpdate,
-  );
-  static final updateAuto = SettingSpot(
-    'update-auto',
-    page: SettingsPageId.about,
-    title: (l) => l.updateAutoCheck,
-    keywords: (l) => l.searchKwUpdateAuto,
   );
   static final star = SettingSpot(
     'star',
@@ -1092,9 +1052,8 @@ final _rows = <SettingSpot>[
   Spots.notifyQuestion,
   Spots.notifyLive,
   Spots.notifySystem,
-  // 隐私页已从设置中心移除；shareConfig/usageStats/chatLogUpload 的 page=privacy
-  // 不在 _pages 中，若保留在 _rows 会导致设置搜索遍历到它们时 pages[privacy]! 空断言崩溃（灰屏）。
-  // Spots 定义保留，供 privacy_page.dart / usage_stats_section.dart 等仍可达的 widget 使用。
+  // 魔改：隐私页已删除，shareConfig/usageStats/chatLogUpload 三个 Spots 定义
+  // 也已删除（它们的 page=privacy 不在 _pages 中）。
   Spots.autoStart,
   Spots.autoSafe,
   Spots.safeMode,
@@ -1107,9 +1066,4 @@ final _rows = <SettingSpot>[
   Spots.subagentDepth,
   Spots.parallelCalls,
   Spots.commandTimeout,
-  Spots.version,
-  Spots.updateCheck,
-  Spots.updateAuto,
-  Spots.star,
-  Spots.licenses,
 ];

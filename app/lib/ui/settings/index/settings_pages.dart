@@ -32,7 +32,6 @@ import '../media_settings_page.dart';
 import '../notification_settings.dart';
 import '../performance_page.dart';
 import '../personalization_page.dart';
-import '../privacy_page.dart';
 import '../reply_prefs_page.dart';
 import '../settings_screen.dart';
 import '../system_access_page.dart';
@@ -77,8 +76,9 @@ Widget settingsPage(SettingsPageId id, {String? sessionId}) => switch (id) {
   SettingsPageId.agentPresets => const AgentPresetsPage(),
   SettingsPageId.personalization => const PersonalizationPage(),
   SettingsPageId.interface => const InterfacePage(),
-  SettingsPageId.privacy => const PrivacyPage(),
   SettingsPageId.about => const AboutPage(),
+  // 魔改：privacy 页已删除，sharedLinks 虽不在 _pages 中但保留映射（HostedLinksPage 仍可达）
+  SettingsPageId.privacy => const SizedBox.shrink(),
 };
 
 /// What a settings link id opens: a page (by any of its link ids), or the

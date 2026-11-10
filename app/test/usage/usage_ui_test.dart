@@ -10,16 +10,13 @@
 
 import 'package:dsh_app/l10n/l10n.dart';
 import 'package:dsh_app/ui/onboarding/welcome_page.dart';
-import 'package:dsh_app/ui/settings/privacy_page.dart';
 import 'package:dsh_app/usage/usage_stats.dart';
-import 'package:dsh_client/dsh_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../engine_settings/support.dart' as engine;
 import '../shell/golden_harness.dart';
 import '../support/english_preview.dart';
 
@@ -141,45 +138,5 @@ void main() {
     });
   });
 
-  group('设置 › 隐私与分享', () {
-    Future<void> pumpPrivacy(WidgetTester tester) => engine.pumpPage(
-      tester,
-      const PrivacyPage(),
-      overrides: engine.engineOverrides(DshClient.withCarrier(engine.FakeSettingsHost())),
-    );
-
-    testWidgets('the page counts as being told; the switch turns it all off', (tester) async {
-      await pumpPrivacy(tester);
-      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
-      await tester.pump();
-      final container = ProviderScope.containerOf(tester.element(find.byType(PrivacyPage)));
-      expect(container.read(usageStatsProvider).noticed, isTrue);
-      final tile = find.widgetWithText(InkWell, appL10n.usageStatsTitle);
-      expect(tester.widget<Switch>(find.descendant(of: tile, matching: find.byType(Switch))).value, isTrue);
-      expect(find.text(appL10n.usageStatsFooter), findsOneWidget);
-
-      await tester.tap(tile);
-      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
-      await tester.pump();
-      expect(container.read(usageStatsProvider).enabled, isFalse);
-      expect(tester.widget<Switch>(find.descendant(of: tile, matching: find.byType(Switch))).value, isFalse);
-      final stored = (await tester.runAsync(_stored))!;
-      expect(stored[UsageStatsController.enabledKey], isFalse);
-      for (final key in [UsageStatsController.iidKey, UsageStatsController.daysKey]) {
-        expect(stored.containsKey(key), isFalse, reason: key);
-      }
-    });
-
-    testWidgets('a cold start shows it off once it was turned off', (tester) async {
-      SharedPreferences.setMockInitialValues({
-        UsageStatsController.enabledKey: false,
-        UsageStatsController.noticedKey: true,
-      });
-      await pumpPrivacy(tester);
-      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
-      await tester.pump();
-      final tile = find.widgetWithText(InkWell, appL10n.usageStatsTitle);
-      expect(tester.widget<Switch>(find.descendant(of: tile, matching: find.byType(Switch))).value, isFalse);
-    });
-  });
+  // 魔改：隐私页已删除，「设置 › 隐私与分享」测试组移除
 }

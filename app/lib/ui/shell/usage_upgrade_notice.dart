@@ -13,7 +13,6 @@ import '../../l10n/l10n.dart';
 import '../../state/notify_state.dart' show launchNoticeShownProvider;
 import '../../usage/usage_net.dart' show UsageBuild;
 import '../../usage/usage_stats.dart';
-import '../settings/index/settings_pages.dart';
 
 /// How long the toast stays unless a key is used.
 const usageNoticeDuration = Duration(seconds: 8);
@@ -134,7 +133,6 @@ class _UsageUpgradeNoticeState extends ConsumerState<UsageUpgradeNotice> {
         context,
         onLearn: () {
           messenger.hideCurrentSnackBar();
-          if (mounted) unawaited(openSpot(context, Spots.usageStats));
         },
         onOff: () {
           messenger.hideCurrentSnackBar();

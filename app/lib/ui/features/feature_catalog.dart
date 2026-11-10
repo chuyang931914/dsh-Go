@@ -30,7 +30,6 @@ import '../providers/providers_page.dart';
 import '../remote/remote_screen.dart';
 import '../session/session_artifacts.dart';
 import '../session/session_detail_page.dart';
-import '../share_code/profile_share_sheet.dart';
 import '../shell/session_search_page.dart';
 import '../terminal/terminal_page.dart';
 import '../theme/app_icons.dart';
@@ -343,13 +342,7 @@ final featureSections = <FeatureSection>[
       icon: AppIcons.bot,
       native: (_) => const BotsPage(),
     ),
-    FeatureItem.localized(
-      id: 'share-profile',
-      title: (l10n) => l10n.catalogShareProfile,
-      summary: (l10n) => l10n.catalogShareProfileSummary,
-      icon: AppIcons.shareConfig,
-      action: (context, ref, _) => showShareProfileSheet(context),
-    ),
+    // 魔改：移除「分享配置」入口（与隐私页一起剔除）。
   ]),
   FeatureSection.localized((l10n) => l10n.catalogToolsSection, [
     FeatureItem.localized(

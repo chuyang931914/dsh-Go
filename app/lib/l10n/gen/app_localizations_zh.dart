@@ -8540,7 +8540,7 @@ class L10nZh extends L10n {
   String get hubGroupHosts => '主机';
 
   @override
-  String get hubGroupHelp => '帮助与关于';
+  String get hubGroupHelp => '帮助';
 
   @override
   String get hubPersonalization => '个性化';

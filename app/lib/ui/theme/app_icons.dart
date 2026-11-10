@@ -245,8 +245,6 @@ abstract final class AppIcons {
   static const remoteHost = DshGlyphs.devices;
   static const remoteHosts = DshGlyphs.devices;
   static const webConsole = DshGlyphs.globe;
-  static const checkUpdate = DshGlyphs.arrowCircleUp;
-  static const autoUpdate = DshGlyphs.clockClockwise;
 
   // ── 安全与权限 ──────────────────────────────────────────────
   static const lock = DshGlyphs.lockSimple;
@@ -383,7 +381,6 @@ abstract final class AppIcons {
   static const profile = DshGlyphs.user;
   static const avatar = DshGlyphs.userFill;
   static const balance = DshGlyphs.wallet;
-  static const shareConfig = DshGlyphs.export;
   static const chart = DshGlyphs.chartBar;
 
   /// 设置 › 宠物.
