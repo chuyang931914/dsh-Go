@@ -287,6 +287,18 @@ DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 
 因此验收口径固定为 **`cd app && dart analyze`**（结果：23 info、0 error、0 warning），不要用仓库根目录的数字判断是否"有编译错误"。
 
+#### 9.1 既有测试红灯（基线 `ee2ff5b` 上就已存在，不在本轮修）
+
+在 `ee2ff5b` 上建 worktree 跑同批测试，结果与当前一致 → 确认非本轮引入：
+
+| 测试 | 现象 | 根因 | 处理 |
+| --- | --- | --- | --- |
+| `test/settings/index/guide_nav_test.dart`（zh + en 两条） | 期望存在 `设置 › 手机操控 › Android Shell`，索引里没有 | 帮助文档仍把 Android Shell 写在「手机操控」下；索引里 Shell 页已移到「本机引擎」（`SettingsPageId.shell`，`spots.dart:495` 位于引擎分组） | 文档文案与索引漂移，属上游遗留；修法二选一：改 zh/en `04-phone-control.md` 的路径，或给 shell 页加 `links: ['android-shell']` 并把文档指向新路径 |
+| `test/settings/index/spots_test.dart`「every page is registered once and walks back to the hub」 | 报 `pages` 缺少 `SettingsPageId.privacy` | `privacy` 枚举仍存在，但 `_pages` 中没有对应 meta（前序魔改剔除隐私页时只删了页面与入口，没删枚举值） | 修法：删除 `SettingsPageId.privacy` 枚举值及 `settings_pages.dart` 中的 `case`；同时确认 `about` 也要一并删或补 meta（见下） |
+
+**注意**：`about` 目前仍留在 `_pages` 中但 meta 被删（第十节），`spots_test` 修好 privacy 之后大概率会继续报 `about`。要么物理删除 `SettingsPageId.about` + `AboutPage` + 3 个 Spot，要么补一条隐藏 meta。做这件事前需单独确认（会一并失去开源许可入口）。
+
+
 ### 10）关闭「关于 DSH Go」入口（2026-11-11）
 
 需求：设置页「帮助与关于」只保留帮助，关闭关于页入口。
@@ -303,6 +315,16 @@ DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 保留：`AboutPage` 仍在 `settings_pages.dart` 的 `_pages` 中（满足 Rules 15，避免空断言崩溃），但已无任何入口；`Spots.version/star/licenses` 定义保留（`AboutPage` 内部仍引用）。
 
 效果：设置页与设置搜索都不再出现「关于 DSH Go」；版本号不再在设置页展示。
+
+补充（同日回归）：整目录 `flutter test test/settings` 跑出 4 项红灯，其中 **1 项是本轮引入的**——`open_target_test` 报 `share-profile` 无法解析（ui.json 目标仍声明分享配置页）。修法：
+
+| 文件 | 改动 |
+| --- | --- |
+| `lib/ui_config/ui_config_schema.dart` | `UiSchema.pages` 删除 `'share-profile'` |
+| `assets/skills/dsh-go-ui/schema.json` | `page` 枚举同步删除 `share-profile`（否则 `schema_sync_test` 报 drift） |
+
+验证：`flutter test test/ui_config` 143 项全过（30 张金色跳过），`test/settings/index/open_target_test.dart` 2 项全过。
+
 
 
 ---

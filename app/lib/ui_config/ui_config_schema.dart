@@ -152,7 +152,7 @@ abstract final class UiSchema {
     'forum',
     'community',
     'ds-bot',
-    'share-profile',
+    // 魔改：分享配置页已剔除，ui.json 不再支持该目标。
     'search',
     'notifications',
     'workspaces',
