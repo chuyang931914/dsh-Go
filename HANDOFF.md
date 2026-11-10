@@ -12,7 +12,7 @@
 | --- | --- |
 | 上游项目 | dsh-Go（DeepSeek Harness 的 Android 客户端，Flutter 编写） |
 | 上游版本 | 1.0.15（基线提交 `40c73ab`，未改动） |
-| 本项目性质 | **个人魔改版**（去统计 / 锁默认模型档位 / 去隐私分享 / 去自动更新），自签名，不跟随官方更新 |
+| 本项目性质 | **个人魔改版**（去统计 / 锁默认模型档位 / 去隐私分享 / 去自动更新 / 关闭关于页入口），自签名，不跟随官方更新 |
 | 主仓库（GitHub） | https://github.com/chuyang931914/dsh-Go.git （**默认分支已设为 `mogai`**；原 `main` 保留上游历史镜像） |
 | 镜像仓库（Gitee） | https://gitee.com/chuyang931914/dsh-go-mogai.git （`main` = 魔改版，含本交接文档） |
 | Git 身份 | `chuyang` / `200414988+chuyang931914@users.noreply.github.com` |
@@ -368,6 +368,7 @@ git push github HEAD:mogai
 14. **改源码必须同步更新交接文档**：每次修改 `\\wsl.localhost\Ubuntu24\root\dsh-Go\` 下的源码（新增魔改、改配置、改脚本等），必须同步更新本 `D:\HANDOFF.md`（改动明细、Rules、产物路径等），保证文档与代码状态一致；仓库内 `HANDOFF.md` 随 commit 一起推送。
 15. **`SettingsPageId` 枚举值必须在 `_pages` 中有对应条目**：`spots.dart` 里 `SettingsIndex.page(id)` 和 `entry(id)` 用 `pages[id]!` 空断言；若某页面 ID（如 `privacy`/`sharedLinks`）只在枚举里但不在 `_pages` 中，任何遍历到它的代码（设置搜索、`SettingsTile(spot: SettingsIndex.entry(...))`）都会崩溃 → 灰屏。魔改剔除页面时，要么把它从 `_rows` 和所有 `SettingsIndex.entry/page()` 调用处移走，要么在 `_pages` 中补一条 `row: false` 的占位。
 16. **WSLg 弹窗「无法加载远程桌面服务 ActiveX 控件」**：根因是 WSL 3.0 的 `msrdc.exe`（WSLg 组件）启动时加载 `C:\Program Files\WSL\rdclientax.dll`，该 DLL 依赖新版 `mstscax.dll` 的导出函数，但 Win10 19045 的 `mstscax.dll`（10.0.19041.4522）太旧 → `LoadLibrary` 失败（错误码 127）→ 每次用 WSL 都弹错。**修复**：在 `C:\Users\Administrator\.wslconfig` 写入 `[wsl2]\nguiApplications=false` 禁用 WSLg，然后 `wsl --shutdown`。本项目只用 WSL 命令行构建，不需要 GUI，禁用无影响。若以后要用 WSL GUI，需升级 Windows 或降级 WSL 到 2.x。
+17. **关闭页面入口要"三件套"一起改**：① 设置 hub 里的 `SettingsTile`；② `spots.dart` 的 `SettingsPageMeta` + `_rows` 索引项；③ 该页专属的分组标题 l10n、测试断言、`settings_hub_full` 金色图。只删 ① → 搜索仍能搜到（见 Rule 11）；只删 ② → 页面仍从 hub 可达；改了分组标题不重生成金色 → 测试红。已按此完成两次：`privacy`（7-3）、`about`（7-10）。
 
 ---
 
@@ -401,6 +402,7 @@ git push github HEAD:mogai
 1. 备份 keystore 到网盘 + U 盘各一份（最高优先级，丢失不可逆）。
 2. 若要继续魔改，优先"禁用 + 去入口"，尽量不删文件，减少上游 rebase 冲突。
 3. 上游升级时：以新版本为基线重新打 4 处补丁（补丁点见第七节），保留本仓库 commit 作为参考。
+4. 重打 APK（含 commit `c0f5f39` 的「关于页关闭」）→ 上传飞书云空间覆盖同名文件 → 按第十一节逐条验收。
 
 ---
 
