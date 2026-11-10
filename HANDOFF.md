@@ -50,6 +50,7 @@
 - 进入方式：PowerShell 执行 `wsl.exe -d Ubuntu24`
 - 从 Windows 侧访问文件：`\\wsl.localhost\Ubuntu24\...`
 - 从 WSL 侧访问 D 盘：`/mnt/d/...`
+- **WSLg 已禁用**（`C:\Users\Administrator\.wslconfig` 里 `guiApplications=false`）：WSL 3.0 的 `msrdc.exe` 与 Win10 旧版 `mstscax.dll` 不兼容会弹错，本项目只用命令行构建，禁用 GUI 无影响。详见第九节 Rule 16。
 
 ### 3.2 工具链（全部在 `/root/dev`）
 
@@ -155,19 +156,20 @@ DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 
 ---
 
-## 七、四处魔改明细（本次改动清单）
+## 七、魔改明细（本次改动清单）
 
-改动全部在 `/root/dsh-Go/app` 下，共 9 个文件。
+改动全部在 `/root/dsh-Go/app` 下，共 12 个文件。
 
 ### 1）剔除「发送匿名使用统计」
 
 | 文件 | 改动 |
 | --- | --- |
 | `lib/usage/usage_stats.dart` | `build()` 不再调用 `_watch()`（删掉该方法及 `_engineMode`）；`_load()` 直接置 `enabled:false, noticed:true`，不读开关、不读落盘账本；清理不再使用的 import |
+| `lib/usage/usage_net.dart` | `UsageBuild.active` 恒为 `false`（原为 `kReleaseMode \|\| ...`），从源头拦截所有统计上报入口；移除不再使用的 `flutter/foundation.dart` import |
 | `lib/ui/onboarding/welcome_page.dart` | 首屏移除 `UsageNoticeRow()` 及 import（不再出现统计告知条） |
 | 隐私页整体移除后，`UsageStatsSection` 随之不可达 | 文件保留但无入口 |
 
-效果：不上报、不计数、不落盘；进程内即使有 `count()` 调用也会被 `collecting == false` 拦掉。
+效果：不上报、不计数、不落盘；`UsageBuild.active=false` 让所有 `count()/foreground()/send()` 入口在第一行就 return。
 
 ### 2）「模型 → 新对话默认」固定为「低」
 
@@ -183,7 +185,8 @@ DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 | 文件 | 改动 |
 | --- | --- |
 | `lib/ui/settings/settings_screen.dart` | 删除「通用」分组里的隐私入口 `SettingsTile` 与 `privacy_page.dart` import |
-| `lib/ui/settings/index/spots.dart` | 删除 `SettingsPageId.privacy` 与 `SettingsPageId.sharedLinks` 两个页面索引（设置搜索里也不会再搜到） |
+| `lib/ui/settings/index/spots.dart` | 从 `_rows` 中移除 `Spots.shareConfig` / `Spots.usageStats` / `Spots.chatLogUpload`（这三个的 `page=privacy` 不在 `_pages` 中，若留在 `_rows` 会导致设置搜索遍历时 `pages[privacy]!` 空断言崩溃 → 灰屏）。`SettingsPageId.privacy` / `sharedLinks` 枚举值与 `Spots` 定义保留，供仍可达的 widget 使用 |
+| `lib/ui/share_hosted/hosted_links_tile.dart` | `SettingsTile` 的 `spot:` 从 `SettingsIndex.entry(SettingsPageId.sharedLinks)` 改为直接传 `title:`（`sharedLinks` 不在 `_pages` 中，`entry()` 会崩溃） |
 
 被一并"隐藏"的功能（页面文件仍在，但无入口）：
 - 分享链接管理（`HostedLinksTile`）
@@ -193,6 +196,7 @@ DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 - 聊天记录上传开关（`session-log-deepseek`）
 
 > 保留 `privacy_page.dart` 与 `SettingsPageId` 枚举值，是为了不牵连其它引用；页面本身不可达。
+> **注意**：`privacy` / `sharedLinks` 不在 `_pages` 中，任何调用 `SettingsIndex.page(privacy/sharedLinks)` 或 `SettingsIndex.entry()` 的代码都会崩溃。新增代码时务必避开。
 
 ### 4）剔除自动更新
 
@@ -204,6 +208,14 @@ DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 | `app/android/app/src/main/AndroidManifest.xml` | 删除 `REQUEST_INSTALL_PACKAGES` 权限（不再具备安装 APK 的能力） |
 
 效果：不自动检查、不提示、不下载、不能安装更新；关于页只剩版本号。
+
+### 5）聊天界面模型选择器归位（仅打字时在输入框底部显示）
+
+| 文件 | 改动 |
+| --- | --- |
+| `lib/ui/chat/chat_screen.dart` | 窄屏下 `ChatHeader.trailing` 恒为 `null`（不再在顶栏右上角显示 `ModelChip`）；宽屏保持顶栏显示。模型切换由输入框底部的 `ComposerModelPill` 承接，且仅在打字（键盘弹出）时可见 |
+
+效果：窄屏顶栏干净；模型胶囊回到输入框底部，点击输入框打字时出现，与官方 DeepSeek 位置一致；默认思考强度仍为「低」。
 
 ---
 
@@ -266,6 +278,9 @@ git -c http.version=HTTP/1.1 push github main:refs/heads/mogai
 11. **设置搜索索引**：删页面入口时，`spots.dart` 里的页面 meta 也要一起删，否则搜索仍能搜到已"隐藏"的页面。
 12. **改动 UI 后可能出现 unused import / unused_element 警告**，属正常，`flutter analyze` 只要没有 `error` 即可构建。
 13. **APK 分发走飞书云空间**：把 APK 上传到飞书云盘（`lark-cli drive +upload --file <apk>`），用飞书文件链接分发；**不要把 GitHub Release / Gitee 链接发到飞书**，飞书内直接点云空间链接下载最稳。
+14. **改源码必须同步更新交接文档**：每次修改 `\\wsl.localhost\Ubuntu24\root\dsh-Go\` 下的源码（新增魔改、改配置、改脚本等），必须同步更新本 `D:\HANDOFF.md`（改动明细、Rules、产物路径等），保证文档与代码状态一致；仓库内 `HANDOFF.md` 随 commit 一起推送。
+15. **`SettingsPageId` 枚举值必须在 `_pages` 中有对应条目**：`spots.dart` 里 `SettingsIndex.page(id)` 和 `entry(id)` 用 `pages[id]!` 空断言；若某页面 ID（如 `privacy`/`sharedLinks`）只在枚举里但不在 `_pages` 中，任何遍历到它的代码（设置搜索、`SettingsTile(spot: SettingsIndex.entry(...))`）都会崩溃 → 灰屏。魔改剔除页面时，要么把它从 `_rows` 和所有 `SettingsIndex.entry/page()` 调用处移走，要么在 `_pages` 中补一条 `row: false` 的占位。
+16. **WSLg 弹窗「无法加载远程桌面服务 ActiveX 控件」**：根因是 WSL 3.0 的 `msrdc.exe`（WSLg 组件）启动时加载 `C:\Program Files\WSL\rdclientax.dll`，该 DLL 依赖新版 `mstscax.dll` 的导出函数，但 Win10 19045 的 `mstscax.dll`（10.0.19041.4522）太旧 → `LoadLibrary` 失败（错误码 127）→ 每次用 WSL 都弹错。**修复**：在 `C:\Users\Administrator\.wslconfig` 写入 `[wsl2]\nguiApplications=false` 禁用 WSLg，然后 `wsl --shutdown`。本项目只用 WSL 命令行构建，不需要 GUI，禁用无影响。若以后要用 WSL GUI，需升级 Windows 或降级 WSL 到 2.x。
 
 ---
 
@@ -283,6 +298,8 @@ git -c http.version=HTTP/1.1 push github main:refs/heads/mogai
 - [ ] 设置 → 通用：**没有**「隐私与分享」
 - [ ] 设置 → 关于：**没有**"检查更新"；版本号可正常显示
 - [ ] 设置 → 模型 → 新对话默认：显示"… · 低"，改选高/中后保存仍回到"低"
+- [ ] 设置页搜索：输入任意关键词**不灰屏**，能正常显示结果（搜"隐私"无结果属正常）
+- [ ] 聊天界面顶栏右上角**没有**模型胶囊；点击输入框打字时，输入框底部出现模型胶囊且显示"… · 低"
 - [ ] 开启飞行模式静置 10 分钟，抓包/看日志无统计上报请求
 - [ ] `apksigner verify` 通过，指纹 `fb462eb1…` 一致
 - [ ] `aapt dump badging` 输出里**没有** `REQUEST_INSTALL_PACKAGES`

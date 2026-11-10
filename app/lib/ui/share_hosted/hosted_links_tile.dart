@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../l10n/l10n.dart';
 import '../../share_hosted/hosted_links_state.dart';
 import '../settings/settings_widgets.dart';
 import '../theme/app_icons.dart';
@@ -24,7 +25,7 @@ class HostedLinksSettingsTile extends ConsumerWidget {
     return SettingsTile(
       icon: icon ? AppIcons.link : null,
       tint: tint,
-      spot: SettingsIndex.entry(SettingsPageId.sharedLinks),
+      title: context.l10n.remoteHostedMyLinks,
       value: count == 0 ? null : Text('$count', style: AppType.tabular(Theme.of(context).textTheme.bodyMedium!)),
       onTap: () => Navigator.of(context).push(HostedLinksPage.route()),
     );

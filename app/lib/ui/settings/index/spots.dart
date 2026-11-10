@@ -1092,9 +1092,9 @@ final _rows = <SettingSpot>[
   Spots.notifyQuestion,
   Spots.notifyLive,
   Spots.notifySystem,
-  Spots.shareConfig,
-  Spots.usageStats,
-  Spots.chatLogUpload,
+  // 隐私页已从设置中心移除；shareConfig/usageStats/chatLogUpload 的 page=privacy
+  // 不在 _pages 中，若保留在 _rows 会导致设置搜索遍历到它们时 pages[privacy]! 空断言崩溃（灰屏）。
+  // Spots 定义保留，供 privacy_page.dart / usage_stats_section.dart 等仍可达的 widget 使用。
   Spots.autoStart,
   Spots.autoSafe,
   Spots.safeMode,
