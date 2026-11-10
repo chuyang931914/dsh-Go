@@ -13,8 +13,8 @@
 | 上游项目 | dsh-Go（DeepSeek Harness 的 Android 客户端，Flutter 编写） |
 | 上游版本 | 1.0.15（基线提交 `40c73ab`，未改动） |
 | 本项目性质 | **个人魔改版**（去统计 / 锁默认模型档位 / 去隐私分享 / 去自动更新），自签名，不跟随官方更新 |
-| 主仓库（GitHub） | https://github.com/chuyang931914/dsh-Go.git |
-| 镜像仓库（Gitee） | https://gitee.com/chuyang931914/dsh-go-mogai.git |
+| 主仓库（GitHub） | https://github.com/chuyang931914/dsh-Go.git （`main` = 上游历史镜像；**魔改代码在分支 `mogai`**） |
+| 镜像仓库（Gitee） | https://gitee.com/chuyang931914/dsh-go-mogai.git （`main` = 魔改版，含本交接文档） |
 | Git 身份 | `chuyang` / `200414988+chuyang931914@users.noreply.github.com` |
 | 分支 | `main` |
 | 包名 / 版本 | `io.github.ccch1mneyyy.dsh_app`，versionName `1.0.15`，versionCode 由构建脚本按 `MMDDHHmm` 生成（如 11101923） |
@@ -232,9 +232,17 @@ git config user.email # 200414988+chuyang931914@users.noreply.github.com
 cd /root/dsh-Go
 git add -A
 git commit -m "feat(mod): 去匿名统计/锁新对话默认低/去隐私分享/去自动更新"
-git push github main
+
+# Gitee：直接推 main
 git push gitee main
+
+# GitHub：推到 mogai 分支（不要强推 main，会覆盖上游历史）
+git -c http.version=HTTP/1.1 push github main:refs/heads/mogai
 ```
+
+**关键差异（务必记住）**：
+- GitHub 仓库 `chuyang931914/dsh-Go` 的 `main` 是**上游项目历史**（镜像/fork），本地仓库与它**历史无关**；直接 `git push github main` 会因 non-fast-forward 被拒，强推会毁掉上游历史。所以魔改只能推 `mogai` 分支。
+- Gitee 仓库 `dsh-go-mogai` 是纯魔改仓库，`main` 可以直接推。
 
 - `.git` 约 356MB（含 runtime 等二进制），**首次推送慢是正常的**
 - GitHub 直连不稳时可改用镜像域名或开启代理；Gitee 一般直连
