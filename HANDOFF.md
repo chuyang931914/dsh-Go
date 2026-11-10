@@ -371,6 +371,8 @@ git push github HEAD:mogai
 16. **WSLg 弹窗「无法加载远程桌面服务 ActiveX 控件」**：根因是 WSL 3.0 的 `msrdc.exe`（WSLg 组件）启动时加载 `C:\Program Files\WSL\rdclientax.dll`，该 DLL 依赖新版 `mstscax.dll` 的导出函数，但 Win10 19045 的 `mstscax.dll`（10.0.19041.4522）太旧 → `LoadLibrary` 失败（错误码 127）→ 每次用 WSL 都弹错。**修复**：在 `C:\Users\Administrator\.wslconfig` 写入 `[wsl2]\nguiApplications=false` 禁用 WSLg，然后 `wsl --shutdown`。本项目只用 WSL 命令行构建，不需要 GUI，禁用无影响。若以后要用 WSL GUI，需升级 Windows 或降级 WSL 到 2.x。
 17. **关闭页面入口要"三件套"一起改**：① 设置 hub 里的 `SettingsTile`；② `spots.dart` 的 `SettingsPageMeta` + `_rows` 索引项；③ 该页专属的分组标题 l10n、测试断言、`settings_hub_full` 金色图。只删 ① → 搜索仍能搜到（见 Rule 11）；只删 ② → 页面仍从 hub 可达；改了分组标题不重生成金色 → 测试红。已按此完成两次：`privacy`（7-3）、`about`（7-10）。
 18. **测试缺 CJK 字体会故意报错，这不是 App 缺陷**：`test/support/test_fonts.dart` 在字体缺失时主动 `throw StateError('Test font missing: ...')`，目的是防止金色图静默使用测试引擎的方块字体。WSL 需 `apt install fonts-noto-cjk`（默认 `/usr/share/fonts/noto-cjk`，需 `NotoSansCJK-{Light,Regular,Bold}.ttc`）。**真机中文由 Android 系统字体兜底，APK 不受影响**。装好后 `fc-match` 命中的是 Light 字重，与基准图可能有细微差（本次遇到 11% 像素差），统一用 `flutter test --update-goldens <file>` 重新生成，不要手改 PNG。l10n 改动要先跑 `python3 tool/l10n_merge.py` 再 `flutter gen-l10n`，否则生成物不更新。
+19. **【重要】所有改动在交付/提交前必须先跑测试**：至少 `cd app && dart analyze` + 受影响目录的 `flutter test`（改设置类跑 `test/settings`，改聊天类跑 `test/chat`，改更新类跑 `test/update`）。测试未通过不得提交、不得说"完成"。全量 `flutter test` 较慢，按改动面选目录，但不能只凭"看起来没问题"。
+20. **【重要】用户以「重要：」开头的指令，必须同步写入文档**：既写本文件（HANDOFF，随 commit 推送并覆盖上传飞书），也写长期记忆 `project_memory.md`；不能只停留在对话里。
 
 ---
 
