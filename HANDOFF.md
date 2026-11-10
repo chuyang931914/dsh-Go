@@ -27,8 +27,9 @@
 
 | 产物 | 路径 |
 | --- | --- |
-| 魔改版 APK | `D:\Android\apk\dsh-go-1.0.15-mogai-arm64.apk` |
-| APK 下载（GitHub Release） | https://github.com/chuyang931914/dsh-Go/releases/download/v1.0.15-mogai/dsh-go-1.0.15-mogai-arm64.apk |
+| 魔改版 APK（本地） | `D:\Android\apk\dsh-go-1.0.15-mogai-arm64.apk` |
+| **APK 下载（飞书云空间，优先）** | https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR （点开 → 右上角「...」→ 下载；飞书内直接下载，不走 GitHub/Gitee） |
+| APK 备份（GitHub Release） | https://github.com/chuyang931914/dsh-Go/releases/download/v1.0.15-mogai/dsh-go-1.0.15-mogai-arm64.apk |
 | 构建脚本原始输出 | WSL 内 `/root/dsh-Go/app/build/app/outputs/flutter-apk/app-arm64-release.apk` |
 | 签名文件 | `D:\Android\keystore\dsh-go-release.jks` |
 | 签名备份 | `D:\Android\keystore\backup\`（**务必再备份到网盘/U盘，丢了就无法覆盖升级，只能卸载重装**） |
@@ -264,6 +265,7 @@ git -c http.version=HTTP/1.1 push github main:refs/heads/mogai
 10. **PowerShell 调 WSL 时多层引号容易炸**：多行/带引号的命令建议写成脚本文件再执行。
 11. **设置搜索索引**：删页面入口时，`spots.dart` 里的页面 meta 也要一起删，否则搜索仍能搜到已"隐藏"的页面。
 12. **改动 UI 后可能出现 unused import / unused_element 警告**，属正常，`flutter analyze` 只要没有 `error` 即可构建。
+13. **APK 分发走飞书云空间**：把 APK 上传到飞书云盘（`lark-cli drive +upload --file <apk>`），用飞书文件链接分发；**不要把 GitHub Release / Gitee 链接发到飞书**，飞书内直接点云空间链接下载最稳。
 
 ---
 
