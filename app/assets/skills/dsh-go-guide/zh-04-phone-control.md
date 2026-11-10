@@ -29,8 +29,8 @@
 
 ## Android Shell（独立授权）
 
-<!-- nav: commonSettings,hubSettingsPhoneControl,androidShellTitle -->
-`设置 › 手机操控 › Android Shell`。默认关闭；先开启手机操控，再阅读风险说明并单独允许。它运行的是这台手机的 Android `sh`，不是 Ubuntu bash，不要求无障碍、后台屏幕或 Android 14。
+<!-- nav: commonSettings,hubSettingsPhoneControl -->
+`设置 › 手机操控` 页里的 **Android Shell**。默认关闭；先开启手机操控，再阅读风险说明并单独允许。它运行的是这台手机的 Android `sh`，不是 Ubuntu bash，不要求无障碍、后台屏幕或 Android 14。
 
 - Shizuku：自行安装、启动 Shizuku，在本页明确请求授权并连接。服务实际可能是 shell（UID 2000）或 root（UID 0）；以页面和每次确认显示的身份为准。
 - **自连 ADB**：在系统开发者选项开启无线调试，打开配对码对话框，在本页填写六位码和配对端口（或发现端口）。配对后连接；连接端口与配对端口不同，留空时尝试发现本机端口。配对码不保存、不写日志；本功能不连接其他设备。

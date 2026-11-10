@@ -8761,9 +8761,6 @@ class L10nEn extends L10n {
   String get hubSettingsCommunity => 'Community';
 
   @override
-  String get hubSettingsLicenses => 'Open-source licenses';
-
-  @override
   String get hubSettingsAccount => 'DeepSeek account';
 
   @override
@@ -9071,24 +9068,6 @@ class L10nEn extends L10n {
 
   @override
   String get hubTableTintNoneHint => 'Grid lines only, the lightest';
-
-  @override
-  String get hubAbout => 'About DSH Go';
-
-  @override
-  String get hubAboutAuthor => 'Original author of DSH Go';
-
-  @override
-  String get hubAboutBilibili => 'Bilibili profile';
-
-  @override
-  String get hubAboutX => 'X profile';
-
-  @override
-  String get hubAboutGithub => 'GitHub profile';
-
-  @override
-  String get hubAboutNewVersion => 'Update available';
 
   @override
   String get hubValueSet => 'Set';
@@ -16623,9 +16602,6 @@ class L10nEn extends L10n {
   String get searchKwSafeMode => 'safe mode,leave safe mode,troubleshoot';
 
   @override
-  String get searchKwVersion => 'version,about,build';
-
-  @override
   String get searchKwUpdate => 'update,upgrade,new version';
 
   @override
@@ -16636,12 +16612,6 @@ class L10nEn extends L10n {
 
   @override
   String get searchKwCommunity => 'group,forum,feedback,chat group';
-
-  @override
-  String get searchKwStar => 'github,star';
-
-  @override
-  String get searchKwLicenses => 'license,open source';
 
   @override
   String get searchKwDarkMode => 'dark,light,dark mode,night,theme,system,appearance';
@@ -18065,9 +18035,6 @@ class L10nEn extends L10n {
 
   @override
   String get starPromptLater => 'Maybe later';
-
-  @override
-  String get starSettingsTitle => 'Star DSH Go on GitHub';
 
   @override
   String get phoneStartupFailureStopping => 'Startup failed; stopping';

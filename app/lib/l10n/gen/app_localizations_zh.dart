@@ -8314,9 +8314,6 @@ class L10nZh extends L10n {
   String get hubSettingsCommunity => '社区';
 
   @override
-  String get hubSettingsLicenses => '开源许可';
-
-  @override
   String get hubSettingsAccount => 'DeepSeek 账号';
 
   @override
@@ -8592,24 +8589,6 @@ class L10nZh extends L10n {
 
   @override
   String get hubTableTintNoneHint => '只剩网格线，最轻';
-
-  @override
-  String get hubAbout => '关于 DSH Go';
-
-  @override
-  String get hubAboutAuthor => 'DSH Go 原作者';
-
-  @override
-  String get hubAboutBilibili => 'B站主页';
-
-  @override
-  String get hubAboutX => 'X 主页';
-
-  @override
-  String get hubAboutGithub => 'GitHub 主页';
-
-  @override
-  String get hubAboutNewVersion => '有新版本';
 
   @override
   String get hubValueSet => '已设置';
@@ -15795,9 +15774,6 @@ class L10nZh extends L10n {
   String get searchKwSafeMode => '安全模式,恢复正常模式,排障,插件崩溃';
 
   @override
-  String get searchKwVersion => '版本号,关于';
-
-  @override
   String get searchKwUpdate => '更新,升级,新版本';
 
   @override
@@ -15808,12 +15784,6 @@ class L10nZh extends L10n {
 
   @override
   String get searchKwCommunity => '交流群,QQ 群,论坛,反馈';
-
-  @override
-  String get searchKwStar => 'GitHub,星标,点赞';
-
-  @override
-  String get searchKwLicenses => '许可证,开源,License';
 
   @override
   String get searchKwDarkMode => '深色,浅色,暗色,夜间,深色模式,跟随系统,外观';
@@ -17112,9 +17082,6 @@ class L10nZh extends L10n {
 
   @override
   String get starPromptLater => '下次再说';
-
-  @override
-  String get starSettingsTitle => '给 DSH Go 点个 star';
 
   @override
   String get phoneStartupFailureStopping => '启动失败，正在停止';

@@ -26,8 +26,6 @@ import 'package:dsh_app/state/settings_state.dart';
 import 'package:dsh_app/state/star_prompt.dart';
 import 'package:dsh_app/state/voice_state.dart';
 import 'package:dsh_app/ui/common/side_insets.dart';
-import 'package:dsh_app/ui/settings/about_page.dart';
-import 'package:dsh_app/ui/settings/settings_widgets.dart';
 import 'package:dsh_app/ui/shell/root_gate.dart';
 import 'package:dsh_app/ui/star/star_prompt_dialog.dart';
 import 'package:dsh_app/ui/star/star_prompt_host.dart';
@@ -41,7 +39,6 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../phone/support.dart' show FixedActiveHost;
 import '../shell/golden_harness.dart';
 import '../support/test_fonts.dart';
 import '../usage/support.dart' show NoPhone;
@@ -689,37 +686,6 @@ void main() {
         await bench.settle();
         expect(bench.showing, isTrue);
       });
-    });
-  });
-
-  group('设置 › 关于 DSH Go', () {
-    testWidgets('给 DSH Go 点个 star opens GitHub and ends the prompt', (tester) async {
-      usePhoneSurface(tester);
-      final bench = _Bench(tester, MemoryStarStore(_due), TestClock());
-      await tester.pumpWidget(
-        goldenApp(
-          home: const AboutPage(),
-          brightness: Brightness.light,
-          overrides: [
-            activeHostProvider.overrideWith(() => FixedActiveHost(HostRef.local)),
-            localRuntimeProvider.overrideWith(
-              () => FakeRuntime(const LocalRuntimeState(loaded: true, status: runningStatus)),
-            ),
-            settingsProvider.overrideWith(() => FakeSettings(const AppSettings(loaded: true))),
-            ...bench.overrides,
-          ],
-        ),
-      );
-      await tester.pumpAndSettle();
-      final row = find.widgetWithText(SettingsTile, '给 DSH Go 点个 star');
-      await tester.scrollUntilVisible(row, 300, scrollable: find.byType(Scrollable).first);
-      await tester.pumpAndSettle();
-      await tester.tap(row);
-      await tester.pumpAndSettle();
-      expect(bench.opened, [_github]);
-      final container = ProviderScope.containerOf(tester.element(find.byType(AboutPage)));
-      expect(container.read(starPromptProvider).finished, isTrue);
-      expect(bench.store.record!.finished, isTrue);
     });
   });
 

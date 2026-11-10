@@ -37,8 +37,7 @@ Sharing always masks keys, tokens and passwords in URLs, and replaces your user 
 
 ## Manage shared links
 
-<!-- nav: commonSettings,hubPrivacy,remoteHostedMyLinks -->
-`Settings › Privacy and sharing › My shared links` · [Open](dshgo://open/shared-links)
+On the share panel’s **Link** page, tap **My shared links**.
 
 Lists links made on this phone, with their expiry. A link can be deleted only from the phone that made it: after uninstalling the app, clearing its data or switching phones, it can't be deleted, and a **Forever** link stays up. After you delete one and confirm, it disappears right away and you have 4 seconds to tap **Undo**; if you don't, deletion starts after that window and the link stops working once deletion succeeds. If deleting fails, the link comes back with the reason. Expired links leave the list after 30 days.
 

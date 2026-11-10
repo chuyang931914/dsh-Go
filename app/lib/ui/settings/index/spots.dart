@@ -78,8 +78,6 @@ enum SettingsPageId {
   performance,
   background,
   systemAccess,
-  privacy,
-  sharedLinks,
   engine,
   remote,
   engineParams,
@@ -89,7 +87,6 @@ enum SettingsPageId {
   pluginInventory,
   allFeatures,
   diagnostics,
-  about,
   account,
 }
 
@@ -978,27 +975,6 @@ abstract final class Spots {
     field: const SpotField(['bash-sandbox', 'pwsh-sandbox'], 'timeoutMs'),
     condition: SpotCondition.engineField,
   );
-
-  // 关于 dsh-go.
-  // 魔改：自动更新已剔除，「检查更新」「自动更新」两个 Spot 一并删除。
-  static final version = SettingSpot(
-    'version',
-    page: SettingsPageId.about,
-    title: (l) => l.commonVersion,
-    keywords: (l) => l.searchKwVersion,
-  );
-  static final star = SettingSpot(
-    'star',
-    page: SettingsPageId.about,
-    title: (l) => l.starSettingsTitle,
-    keywords: (l) => l.searchKwStar,
-  );
-  static final licenses = SettingSpot(
-    'licenses',
-    page: SettingsPageId.about,
-    title: (l) => l.hubSettingsLicenses,
-    keywords: (l) => l.searchKwLicenses,
-  );
 }
 
 final _rows = <SettingSpot>[
@@ -1052,8 +1028,6 @@ final _rows = <SettingSpot>[
   Spots.notifyQuestion,
   Spots.notifyLive,
   Spots.notifySystem,
-  // 魔改：隐私页已删除，shareConfig/usageStats/chatLogUpload 三个 Spots 定义
-  // 也已删除（它们的 page=privacy 不在 _pages 中）。
   Spots.autoStart,
   Spots.autoSafe,
   Spots.safeMode,

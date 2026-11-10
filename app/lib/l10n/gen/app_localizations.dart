@@ -15362,12 +15362,6 @@ abstract class L10n {
   /// **'社区'**
   String get hubSettingsCommunity;
 
-  /// No description provided for @hubSettingsLicenses.
-  ///
-  /// In zh, this message translates to:
-  /// **'开源许可'**
-  String get hubSettingsLicenses;
-
   /// No description provided for @hubSettingsAccount.
   ///
   /// In zh, this message translates to:
@@ -15841,42 +15835,6 @@ abstract class L10n {
   /// In zh, this message translates to:
   /// **'只剩网格线，最轻'**
   String get hubTableTintNoneHint;
-
-  /// No description provided for @hubAbout.
-  ///
-  /// In zh, this message translates to:
-  /// **'关于 DSH Go'**
-  String get hubAbout;
-
-  /// No description provided for @hubAboutAuthor.
-  ///
-  /// In zh, this message translates to:
-  /// **'DSH Go 原作者'**
-  String get hubAboutAuthor;
-
-  /// No description provided for @hubAboutBilibili.
-  ///
-  /// In zh, this message translates to:
-  /// **'B站主页'**
-  String get hubAboutBilibili;
-
-  /// No description provided for @hubAboutX.
-  ///
-  /// In zh, this message translates to:
-  /// **'X 主页'**
-  String get hubAboutX;
-
-  /// No description provided for @hubAboutGithub.
-  ///
-  /// In zh, this message translates to:
-  /// **'GitHub 主页'**
-  String get hubAboutGithub;
-
-  /// No description provided for @hubAboutNewVersion.
-  ///
-  /// In zh, this message translates to:
-  /// **'有新版本'**
-  String get hubAboutNewVersion;
 
   /// No description provided for @hubValueSet.
   ///
@@ -28862,12 +28820,6 @@ abstract class L10n {
   /// **'安全模式,恢复正常模式,排障,插件崩溃'**
   String get searchKwSafeMode;
 
-  /// No description provided for @searchKwVersion.
-  ///
-  /// In zh, this message translates to:
-  /// **'版本号,关于'**
-  String get searchKwVersion;
-
   /// No description provided for @searchKwUpdate.
   ///
   /// In zh, this message translates to:
@@ -28891,18 +28843,6 @@ abstract class L10n {
   /// In zh, this message translates to:
   /// **'交流群,QQ 群,论坛,反馈'**
   String get searchKwCommunity;
-
-  /// No description provided for @searchKwStar.
-  ///
-  /// In zh, this message translates to:
-  /// **'GitHub,星标,点赞'**
-  String get searchKwStar;
-
-  /// No description provided for @searchKwLicenses.
-  ///
-  /// In zh, this message translates to:
-  /// **'许可证,开源,License'**
-  String get searchKwLicenses;
 
   /// No description provided for @searchKwDarkMode.
   ///
@@ -31261,12 +31201,6 @@ abstract class L10n {
   /// In zh, this message translates to:
   /// **'下次再说'**
   String get starPromptLater;
-
-  /// No description provided for @starSettingsTitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'给 DSH Go 点个 star'**
-  String get starSettingsTitle;
 
   /// No description provided for @phoneStartupFailureStopping.
   ///

@@ -29,8 +29,8 @@ After a system force-stop, reopen DSH Go before it can recover. Repeated failure
 
 ## Android Shell (separate authorization)
 
-<!-- nav: commonSettings,hubSettingsPhoneControl,androidShellTitle -->
-`Settings › Phone control › Android Shell`. Off by default: enable Phone control, then separately accept the Shell risk notice. Commands run in Android `sh` on this phone, not Ubuntu bash. Accessibility, the background display, and Android 14 are not required.
+<!-- nav: commonSettings,hubSettingsPhoneControl -->
+`Settings › Phone control` page, then **Android Shell**. Off by default: enable Phone control, then separately accept the Shell risk notice. Commands run in Android `sh` on this phone, not Ubuntu bash. Accessibility, the background display, and Android 14 are not required.
 
 - Shizuku: install and start Shizuku yourself, explicitly request authorization here, then connect. The actual service identity may be shell (UID 2000) or root (UID 0); check the status and each command confirmation.
 - **Self-ADB**: enable Wireless debugging in Android Developer options, open its pairing-code dialog, and enter the six-digit code and pairing port here (or use discovery). Connect after pairing. The connection port differs from the pairing port; leave it blank to discover a local endpoint. Pairing codes are not saved or logged. This feature does not contact other devices.

@@ -22,8 +22,6 @@ import '../../plugins/plugin_inventory_page.dart';
 import '../../plugins/plugins_screen.dart';
 import '../../providers/providers_page.dart';
 import '../../remote/remote_screen.dart';
-import '../../share_hosted/hosted_links_page.dart';
-import '../about_page.dart';
 import '../appearance/appearance_page.dart';
 import '../background_guide_page.dart';
 import '../diagnostics_page.dart';
@@ -51,7 +49,6 @@ Widget settingsPage(SettingsPageId id, {String? sessionId}) => switch (id) {
   SettingsPageId.voice => const VoiceSettingsPage(),
   SettingsPageId.notifications => const NotificationSettingsPage(),
   SettingsPageId.replyPrefs => const ReplyPrefsPage(),
-  SettingsPageId.sharedLinks => const HostedLinksPage(),
   SettingsPageId.phone => const PhoneControlScreen(),
   SettingsPageId.phoneAppRules => const PhoneAppRulesPage(),
   SettingsPageId.phoneDnd => const PhoneDndPage(),
@@ -76,9 +73,6 @@ Widget settingsPage(SettingsPageId id, {String? sessionId}) => switch (id) {
   SettingsPageId.agentPresets => const AgentPresetsPage(),
   SettingsPageId.personalization => const PersonalizationPage(),
   SettingsPageId.interface => const InterfacePage(),
-  SettingsPageId.about => const AboutPage(),
-  // 魔改：privacy 页已删除，sharedLinks 虽不在 _pages 中但保留映射（HostedLinksPage 仍可达）
-  SettingsPageId.privacy => const SizedBox.shrink(),
 };
 
 /// What a settings link id opens: a page (by any of its link ids), or the

@@ -28,7 +28,7 @@
 | 产物 | 路径 |
 | --- | --- |
 | 魔改版 APK（本地） | `D:\Android\apk\dsh-go-1.0.15-mogai-arm64.apk` |
-| **APK 下载（飞书云空间，优先）** | https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR （`dsh-go-1.0.15-mogai-arm64.apk`，当前 11102334；点开 → 右上角「...」→ 下载；飞书内直接下载，不走 GitHub/Gitee） |
+| **APK 下载（飞书云空间，优先）** | https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR （`dsh-go-1.0.15-mogai-arm64.apk`，当前 11110113；点开 → 右上角「...」→ 下载；飞书内直接下载，不走 GitHub/Gitee） |
 | **源码包（飞书云空间）** | https://my.feishu.cn/file/IEqgbC77zoOqWmxo277cr8Wdnue （`dsh-go-1.0.15-mogai-src.zip`，500MB；已排除 `.git`、`app/build`、`.dart_tool`、`runtime/.work`、`runtime/.cache`，保留 `runtime/out` 可直接重建 APK） |
 | APK 备份（GitHub Release） | https://github.com/chuyang931914/dsh-Go/releases/download/v1.0.15-mogai/dsh-go-1.0.15-mogai-arm64.apk |
 | 构建脚本原始输出 | WSL 内 `/root/dsh-Go/app/build/app/outputs/flutter-apk/app-arm64-release.apk` |
@@ -38,9 +38,9 @@
 | Windows 访问构建源的 UNC 路径 | `\\wsl.localhost\Ubuntu24\root\dsh-Go\`（可直接用编辑器读写） |
 | 交接文档（飞书云空间） | https://my.feishu.cn/file/OJSGbqo2IofCYQxm8uycjTGAn7d （`HANDOFF-dsh-Go.md`，每次更新后覆盖上传） |
 
-**最近一次分发（2026-11-10 23:48）**：APK `11102334` + 源码包 + 本交接文档已上传飞书云空间，并已发到「城南」私聊（message_id `om_x100b60078233aca4c1ee6af25da7b07`）。
+**最近一次分发（2026-11-11 01:20）**：APK `11110113` + 本交接文档已上传飞书云空间，并已发到「城南」私聊。
 
-**当前 APK 与代码的差异（2026-11-11）**：`11102334` 构建于 commit `ee2ff5b`，**不包含**之后提交的「关闭关于 DSH Go 入口」（commit `c0f5f39`）。装上现包仍能在设置里看到「关于 DSH Go」；要看到关闭效果，需按第五节重打 APK 再分发。
+**当前 APK 与代码的差异（2026-11-11）**：`11110113` 构建于本次「物理删除关于/隐私/sharedLinks 残留 + 指南修正」提交，与源码一致。装上后设置里彻底没有「关于 DSH Go」与「隐私与分享」，搜索「关于」「版本」「开源许可」均无结果。
 
 > 注意：`C:\Users\Administrator\Documents\Trae-CN\temp_20261110_04\dsh-Go` 是早期解压副本，**已过时，不要用来构建**。
 
@@ -275,6 +275,8 @@ DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 
 构建验证（11102334）：签名 `fb462eb1…`，无 `REQUEST_INSTALL_PACKAGES`，APK 206MB。
 
+构建验证（11110113，2026-11-11）：签名 `fb462eb1…`（与上一版一致，可覆盖升级），无 `REQUEST_INSTALL_PACKAGES`，APK 206.2MB，sha256 `4c616d47873d96e1821263f5d527db4fdcd69c59c0662866725fe06493fc087e`。
+
 ### 9）上游既有问题（非本项目改动引入，不修）
 
 全仓 `dart analyze`（在 `/root/dsh-Go` 根目录跑）会报 1 万多条，绝大部分来自**上游随仓库带来、但不在任何构建路径上**的独立包脚本，与本项目构建/发版无关：
@@ -287,16 +289,16 @@ DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 
 因此验收口径固定为 **`cd app && dart analyze`**（结果：23 info、0 error、0 warning），不要用仓库根目录的数字判断是否"有编译错误"。
 
-#### 9.1 既有测试红灯（基线 `ee2ff5b` 上就已存在，不在本轮修）
+#### 9.1 既有测试红灯（基线 `ee2ff5b` 上就已存在；2026-11-11 已修复）
 
-在 `ee2ff5b` 上建 worktree 跑同批测试，结果与当前一致 → 确认非本轮引入：
+在 `ee2ff5b` 上建 worktree 跑同批测试，结果与当前一致 → 确认非本轮引入。2026-11-11 按方案 A 一并修掉：
 
-| 测试 | 现象 | 根因 | 处理 |
+| 测试 | 现象 | 根因 | 修复 |
 | --- | --- | --- | --- |
-| `test/settings/index/guide_nav_test.dart`（zh + en 两条） | 期望存在 `设置 › 手机操控 › Android Shell`，索引里没有 | 帮助文档仍把 Android Shell 写在「手机操控」下；索引里 Shell 页已移到「本机引擎」（`SettingsPageId.shell`，`spots.dart:495` 位于引擎分组） | 文档文案与索引漂移，属上游遗留；修法二选一：改 zh/en `04-phone-control.md` 的路径，或给 shell 页加 `links: ['android-shell']` 并把文档指向新路径 |
-| `test/settings/index/spots_test.dart`「every page is registered once and walks back to the hub」 | 报 `pages` 缺少 `SettingsPageId.privacy` | `privacy` 枚举仍存在，但 `_pages` 中没有对应 meta（前序魔改剔除隐私页时只删了页面与入口，没删枚举值） | 修法：删除 `SettingsPageId.privacy` 枚举值及 `settings_pages.dart` 中的 `case`；同时确认 `about` 也要一并删或补 meta（见下） |
+| `test/settings/index/guide_nav_test.dart`（zh + en） | 期望存在 `设置 › 手机操控 › Android Shell`，索引里没有 | 指南把 Android Shell 写成「手机操控」下的三级行，但索引里没有这一行（页面只从手机操控页的 `android-shell-entry` 行进入） | 指南改为二级路径 + 正文点名 **Android Shell**，不再冒充索引行；zh/en `04-phone-control.md` 同步改，`python3 app/tool/guide_sync.py` 重新生成技能资源 |
+| `test/settings/index/spots_test.dart`「every page is registered once and walks back to the hub」 | `pages` 与 `SettingsPageId.values` 不等：缺 `privacy`、`about`，多 `sharedLinks` | 前序魔改只删页面/入口，没删枚举值；`sharedLinks` 反过来只剩枚举与映射 | 物理删除 `privacy`、`about`、`sharedLinks` 三个枚举值及 `settings_pages.dart` 对应 `case`/import；详见第 11 节 |
 
-**注意**：`about` 目前仍留在 `_pages` 中但 meta 被删（第十节），`spots_test` 修好 privacy 之后大概率会继续报 `about`。要么物理删除 `SettingsPageId.about` + `AboutPage` + 3 个 Spot，要么补一条隐藏 meta。做这件事前需单独确认（会一并失去开源许可入口）。
+`guide_sync.py` 同时暴露 4 条死链（`dshgo://open/shared-links`、`dshgo://open/usage-stats`，zh/en 各一），已在同轮改成分享面板路径 / 「本版本不发送统计」文案。
 
 
 ### 10）关闭「关于 DSH Go」入口（2026-11-11）
@@ -312,7 +314,7 @@ DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 | `test/settings/settings_hub_geometry_test.dart` | 分组标题断言改为 `帮助` |
 | `test/settings/goldens/settings_hub_full_{light,dark}.png` | 重新生成（少一个 tile、组名变化） |
 
-保留：`AboutPage` 仍在 `settings_pages.dart` 的 `_pages` 中（满足 Rules 15，避免空断言崩溃），但已无任何入口；`Spots.version/star/licenses` 定义保留（`AboutPage` 内部仍引用）。
+~~保留：`AboutPage` 仍在 `settings_pages.dart` 的 `_pages` 中（满足 Rules 15，避免空断言崩溃），但已无任何入口；`Spots.version/star/licenses` 定义保留（`AboutPage` 内部仍引用）。~~ **2026-11-11 更新：`AboutPage`、`Spots.version/star/licenses` 与 `SettingsPageId.about` 已全部物理删除，见第 11 节。**
 
 效果：设置页与设置搜索都不再出现「关于 DSH Go」；版本号不再在设置页展示。
 
@@ -324,6 +326,32 @@ DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 | `assets/skills/dsh-go-ui/schema.json` | `page` 枚举同步删除 `share-profile`（否则 `schema_sync_test` 报 drift） |
 
 验证：`flutter test test/ui_config` 143 项全过（30 张金色跳过），`test/settings/index/open_target_test.dart` 2 项全过。
+
+### 11）物理删除「关于」「隐私」与 `sharedLinks` 残留（方案 A，2026-11-11）
+
+目标：让 `flutter test test/settings` 全绿，同时不保留死页面、死枚举、死索引。
+
+| 文件 | 改动 |
+| --- | --- |
+| `app/lib/ui/settings/about_page.dart` | **删除** |
+| `app/lib/ui/settings/index/spots.dart` | 枚举删除 `privacy` / `about` / `sharedLinks`；删除 `Spots.version` / `Spots.star` / `Spots.licenses` |
+| `app/lib/ui/settings/index/settings_pages.dart` | 删除 `about_page.dart` / `hosted_links_page.dart` import 与三个 `case` |
+| `app/test/settings/about_page_test.dart` | **删除** |
+| `app/test/settings/goldens/{about,privacy}_{light,dark}.png` | **删除**（`privacy` 两张早已无测试引用） |
+| `app/test/settings/settings_ia_golden_test.dart` | 去掉 about 用例与 import，注释同步 |
+| `app/test/settings/index/index_sync_test.dart` | 删除 `about` 的 `_unlisted` 条目与 `AppInfo` import |
+| `app/test/star/star_prompt_test.dart` | 删除「设置 › 关于 DSH Go」用例及 `about_page`/`settings_widgets`/`phone/support` import |
+| `app/lib/l10n/parts/{hub,search,star}_{zh,en}.arb` | 删除仅被关于页/相关 Spot 使用的 11 个键：`hubAbout*` 6 个、`searchKwVersion`/`Star`/`Licenses`、`starSettingsTitle`、`hubSettingsLicenses`；`python3 tool/l10n_merge.py` + `flutter gen-l10n` 重新生成 |
+| `docs/guide/{zh,en}/{04-phone-control,07-sharing,11-faq}.md` 及 `app/assets/skills/dsh-go-guide/*` | 修 Android Shell 路径漂移；分享链接改走分享面板；匿名统计改为「本版本不发送」；`python3 app/tool/guide_sync.py` 生成技能资源 |
+
+代价：设置里不再有「开源许可」入口（用户已确认接受）。
+
+验证：
+- `cd app && dart analyze`：0 error / 0 warning（仅上游 23 条 `exists` deprecation info）
+- `flutter test test/settings test/star test/ui_config`：443 passed / 30 skipped / 0 failed
+- `python3 app/tool/guide_sync.py`：26 files checked and built，无错误
+
+残留（非本轮范围）：`docs/design/settings-ia.md` 的 S4/S7 与 `docs/design/star-prompt.md` 实现表仍按历史记录提到 `about_page.dart`；`hubSettingsAbout` / `hubPrivacy` / `hubPrivacySharing` / `usageStatsTitle` 等魔改遗留 l10n 键尚未清理，后续做「未使用 l10n 扫描」时一并处理。
 
 
 
@@ -389,12 +417,14 @@ git push github HEAD:mogai
 12. **改动 UI 后可能出现 unused import / unused_element 警告**，属正常，`flutter analyze` 只要没有 `error` 即可构建。
 13. **APK 分发走飞书云空间**：把 APK 上传到飞书云盘（`lark-cli drive +upload --file <apk>`），用飞书文件链接分发；**不要把 GitHub Release / Gitee 链接发到飞书**，飞书内直接点云空间链接下载最稳。
 14. **改源码必须同步更新交接文档**：每次修改 `\\wsl.localhost\Ubuntu24\root\dsh-Go\` 下的源码（新增魔改、改配置、改脚本等），必须同步更新本 `D:\HANDOFF.md`（改动明细、Rules、产物路径等），保证文档与代码状态一致；仓库内 `HANDOFF.md` 随 commit 一起推送。
-15. **`SettingsPageId` 枚举值必须在 `_pages` 中有对应条目**：`spots.dart` 里 `SettingsIndex.page(id)` 和 `entry(id)` 用 `pages[id]!` 空断言；若某页面 ID（如 `privacy`/`sharedLinks`）只在枚举里但不在 `_pages` 中，任何遍历到它的代码（设置搜索、`SettingsTile(spot: SettingsIndex.entry(...))`）都会崩溃 → 灰屏。魔改剔除页面时，要么把它从 `_rows` 和所有 `SettingsIndex.entry/page()` 调用处移走，要么在 `_pages` 中补一条 `row: false` 的占位。
+15. **`SettingsPageId` 枚举值必须与 `_pages` 的页面集合完全一致**（`spots_test` 断言 `SettingsIndex.pages.keys == SettingsPageId.values`）：`spots.dart` 里 `SettingsIndex.page(id)` 和 `entry(id)` 用 `pages[id]!` 空断言，缺 meta 会崩溃；反过来只有枚举没有 meta 会让测试变红。剔除页面时**同时删枚举值、`settings_pages.dart` 的 `case`/import、`_rows` 条目、测试与金色**，不要留下"仅映射可达"的死枚举（`privacy`/`about`/`sharedLinks` 三次踩坑，2026-11-11 已清）。
 16. **WSLg 弹窗「无法加载远程桌面服务 ActiveX 控件」**：根因是 WSL 3.0 的 `msrdc.exe`（WSLg 组件）启动时加载 `C:\Program Files\WSL\rdclientax.dll`，该 DLL 依赖新版 `mstscax.dll` 的导出函数，但 Win10 19045 的 `mstscax.dll`（10.0.19041.4522）太旧 → `LoadLibrary` 失败（错误码 127）→ 每次用 WSL 都弹错。**修复**：在 `C:\Users\Administrator\.wslconfig` 写入 `[wsl2]\nguiApplications=false` 禁用 WSLg，然后 `wsl --shutdown`。本项目只用 WSL 命令行构建，不需要 GUI，禁用无影响。若以后要用 WSL GUI，需升级 Windows 或降级 WSL 到 2.x。
 17. **关闭页面入口要"三件套"一起改**：① 设置 hub 里的 `SettingsTile`；② `spots.dart` 的 `SettingsPageMeta` + `_rows` 索引项；③ 该页专属的分组标题 l10n、测试断言、`settings_hub_full` 金色图。只删 ① → 搜索仍能搜到（见 Rule 11）；只删 ② → 页面仍从 hub 可达；改了分组标题不重生成金色 → 测试红。已按此完成两次：`privacy`（7-3）、`about`（7-10）。
 18. **测试缺 CJK 字体会故意报错，这不是 App 缺陷**：`test/support/test_fonts.dart` 在字体缺失时主动 `throw StateError('Test font missing: ...')`，目的是防止金色图静默使用测试引擎的方块字体。WSL 需 `apt install fonts-noto-cjk`（默认 `/usr/share/fonts/noto-cjk`，需 `NotoSansCJK-{Light,Regular,Bold}.ttc`）。**真机中文由 Android 系统字体兜底，APK 不受影响**。装好后 `fc-match` 命中的是 Light 字重，与基准图可能有细微差（本次遇到 11% 像素差），统一用 `flutter test --update-goldens <file>` 重新生成，不要手改 PNG。l10n 改动要先跑 `python3 tool/l10n_merge.py` 再 `flutter gen-l10n`，否则生成物不更新。
 19. **【重要】所有改动在交付/提交前必须先跑测试**：至少 `cd app && dart analyze` + 受影响目录的 `flutter test`（改设置类跑 `test/settings`，改聊天类跑 `test/chat`，改更新类跑 `test/update`）。测试未通过不得提交、不得说"完成"。全量 `flutter test` 较慢，按改动面选目录，但不能只凭"看起来没问题"。
 20. **【重要】用户以「重要：」开头的指令，必须同步写入文档**：既写本文件（HANDOFF，随 commit 推送并覆盖上传飞书），也写长期记忆 `project_memory.md`；不能只停留在对话里。
+21. **指南里的设置路径必须能在索引里找到**：`guide_nav_test` 会把 `<!-- nav: commonSettings,... -->` 路径与 `SettingsIndex.trail` 对照；页面内的行若没有对应 Spot（如「手机操控 › Android Shell」），指南不要写成三级路径，改成二级页路径 + 正文点名该行。改完 `docs/guide/**` 必须跑 `python3 app/tool/guide_sync.py`（会校验死链并重新生成 `app/assets/skills/dsh-go-guide/`），否则技能资源与文档不一致。
+22. **删除页面的连带清单**：页面文件、`SettingsPageId` 枚举、`settings_pages.dart` 的 `case`/import、`_pages` meta、`_rows` 里的 Spot、相关 l10n 键（`parts/*.arb` 改完跑 `l10n_merge.py` + `gen-l10n`）、测试文件/用例、金色图、指南路径。漏任何一项都会在 `test/settings` 或 `guide_sync.py` 里报出来。
 
 ---
 
@@ -428,7 +458,7 @@ git push github HEAD:mogai
 1. 备份 keystore 到网盘 + U 盘各一份（最高优先级，丢失不可逆）。
 2. 若要继续魔改，优先"禁用 + 去入口"，尽量不删文件，减少上游 rebase 冲突。
 3. 上游升级时：以新版本为基线重新打 4 处补丁（补丁点见第七节），保留本仓库 commit 作为参考。
-4. 重打 APK（含 commit `c0f5f39` 的「关于页关闭」）→ 上传飞书云空间覆盖同名文件 → 按第十一节逐条验收。
+4. 重打 APK（本轮 `11110113` 已包含删除关于/隐私/sharedLinks 残留与指南修正）→ 上传飞书云空间覆盖同名文件 → 按第十一节逐条验收。
 
 ---
 
