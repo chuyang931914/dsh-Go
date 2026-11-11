@@ -534,7 +534,7 @@ git push github HEAD:mogai
 - `.git` 约 356MB（含 runtime 等二进制），**首次推送慢是正常的**
 - GitHub 直连不稳时可改用镜像域名或开启代理；Gitee 一般直连
 - Gitee 仓库名是 `dsh-go-mogai`，**不是** `dsh-Go`，别写错
-- **推送策略（2026-11-11 更新）：Gitee 为主、GitHub 为辅**。任务完成标志 = 已推 Gitee `main`；GitHub `mogai` 推不上**不算未完成**。GitHub 当次最多重试 **3 次**，仍失败则记入待补推，**下次任何推送时必须先补上**（手机端 `dsh-push.sh` 已自动实现：欠账记录在 `/root/dev/github_backlog`，下次运行先补推再推本次，直到 GitHub 与 Gitee 一致才清零）。长期方案：在 Gitee 仓库设置里配置「仓库镜像」指向 GitHub 仓库，Gitee 每次 push 后自动同步，两端都不用手动管 GitHub。
+- **推送策略（2026-11-11 更新）：Gitee 为主、GitHub 为辅**。任务完成标志 = 已推 Gitee `main`；GitHub `mogai` 推不上**不算未完成**。GitHub 当次最多重试 **3 次**，仍失败则记入待补推，**下次任何推送时必须先补上**（手机端 `dsh-push.sh` 已自动实现：欠账记录在 `/root/dev/github_backlog`，下次运行先补推再推本次，直到 GitHub 与 Gitee 一致才清零）。长期方案：在 Gitee 仓库设置里配置「仓库镜像」指向 GitHub 仓库，Gitee 每次 push 后自动同步，两端都不用手动管 GitHub（**已于 2026-11-11 配置 Push 镜像**；镜像生效后手机端只需推 Gitee，脚本里的 GitHub 推送属双保险）。
 - **GitHub 待补推状态**：无（2026-11-11 已同步至最新）。
 
 ### 8.3 手机端分支约定（2026-11-11）
