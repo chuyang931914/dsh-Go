@@ -46,6 +46,7 @@ class AssistantMessage extends StatefulWidget {
     super.key,
     required this.item,
     this.showActions = false,
+    this.isTurnTail = false,
     this.onBranch,
     this.branching = false,
     this.onRegenerate,
@@ -58,6 +59,9 @@ class AssistantMessage extends StatefulWidget {
 
   /// 是否在正文下方显示复制等操作(只给一轮里最后一条助手正文)。
   final bool showActions;
+
+  /// 是当前轮的最后一条回复:轮结束时会拿到操作行(自带 ⋯),所以不补独立 ⋯。
+  final bool isTurnTail;
 
   /// "从这里分叉";null = 这条不是已完成一轮的最后一条回复。
   final VoidCallback? onBranch;
@@ -219,7 +223,9 @@ class _AssistantMessageState extends State<AssistantMessage> {
                 : const SizedBox.shrink(),
           ),
           // 中间回复没有操作行:补一个 ⋯ 入口(长按正文已经是选字,不再出菜单)。
-          if (!actions && !streaming && text.isNotEmpty)
+          // 轮尾那条不给:它结算后会拿到操作行(自带 ⋯),这里先出现再让位,
+          // 完成的那一帧会凭空少 40px,正文被顶一下(turn_settle 拦的就是这个)。
+          if (!actions && !widget.isTurnTail && !streaming && text.isNotEmpty)
             Align(
               alignment: Alignment.centerRight,
               child: IconButton(

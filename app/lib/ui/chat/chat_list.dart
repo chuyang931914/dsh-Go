@@ -914,7 +914,7 @@ class _ChatListState extends ConsumerState<ChatList> with SingleTickerProviderSt
   // ---------------------------------------------------------------------------
   // 消息操作:分叉打开的是一个新对话,原对话不动。
 
-  Widget _reply(AssistantChatItem item, bool showActions, TurnTrace? footnote) {
+  Widget _reply(AssistantChatItem item, bool showActions, TurnTrace? footnote, {bool isTurnTail = false}) {
     // A picture a media card shows is not drawn again in the reply.
     if (withoutShownImages(item.text, ref.read(sessionMediaPathsProvider(widget.sessionId))) case final text?) {
       item = replyWithText(item, text);
@@ -928,6 +928,7 @@ class _ChatListState extends ConsumerState<ChatList> with SingleTickerProviderSt
     final message = AssistantMessage(
       item: item,
       showActions: showActions,
+      isTurnTail: isTurnTail,
       onBranch: branchable ? () => _branch(item) : null,
       branching: _forkingId == item.id,
       onRegenerate: prompt == null ? null : () => _regenerate(item, prompt),
@@ -1127,6 +1128,12 @@ class _ChatListState extends ConsumerState<ChatList> with SingleTickerProviderSt
   }
 
   Widget _rowWidget(ChatRow row) {
+    // 当前轮的最后一条回复:轮结束后它才长操作行(自带 ⋯),所以不补独立 ⋯。
+    AssistantRow? tail;
+    for (final r in _rows) {
+      if (r is AssistantRow) tail = r;
+    }
+    final isTurnTail = row is AssistantRow && row.key == tail?.key;
     return switch (row) {
       UserRow(:final item) when dshUiReplyChip(item.text) != null => DshUiReplyChip(label: dshUiReplyChip(item.text)!),
       UserRow(:final item) => UserBubble(
@@ -1137,7 +1144,8 @@ class _ChatListState extends ConsumerState<ChatList> with SingleTickerProviderSt
         onEdit: widget.onEditPrompt == null ? null : () => _editPrompt(item),
       ),
       PendingRow(:final prompt) => _pendingBubble(prompt),
-      AssistantRow(:final item, :final showActions, :final footnote) => _reply(item, showActions, footnote),
+      AssistantRow(:final item, :final showActions, :final footnote) =>
+        _reply(item, showActions, footnote, isTurnTail: isTurnTail),
       TurnFootnoteRow(:final trace) => Bleed(
         horizontal: 8,
         child: Align(alignment: Alignment.centerLeft, child: _footnote(trace)),
