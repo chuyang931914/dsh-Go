@@ -1,5 +1,19 @@
 # 更新日志 · Changelog
 
+## 1.0.19 · 2026-11-12
+
+### 中文
+
+- **每条消息下方显示时间。** 今天只显示 `HH:mm`，昨天为 `昨天 HH:mm`，更早为 `11月9日 HH:mm`；日期只在每天第一条消息上出现，同一天后续只显示时刻，不采用微信“几分钟内不显示”。
+- **点任意一条时间，整个当前聊天统一切换完整格式**（周几 + 秒），再点收回；完整格式如 `昨天 周一 23:42:53`、`11月9日 周一 23:42:53`。
+- **左右边缘手势更好触发。** 可起手区域从 24dp 扩到 `8–40dp`，0–8dp 留给系统返回手势；中间仍然不响应。
+
+### English
+
+- **Every message now shows a time.** Today shows `HH:mm`, yesterday `Yesterday HH:mm`, older `Nov 9 HH:mm`; the date appears only on the first message of a day, later messages show just the clock. Unlike WeChat, times are never hidden within a few minutes.
+- **Tap any time to switch the whole chat between compact and full** (weekday + seconds); tap again to collapse. Full examples: `Yesterday Mon 23:42:53`, `Nov 9 Mon 23:42:53`.
+- **Edge gestures are easier to trigger.** The start band is now `8–40dp` instead of 24dp; 0–8dp stays reserved for the system back gesture, and the middle still does nothing.
+
 ## 1.0.18 · 2026-11-11
 
 ### 中文

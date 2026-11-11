@@ -16,6 +16,7 @@ import '../../plugins/native/message_plugin_menu.dart';
 import '../../share/share_entry.dart' show shareReply;
 import '../render/markdown_body.dart';
 import 'message_actions.dart';
+import 'message_time.dart';
 import 'selection_actions.dart';
 import 'stream_row.dart';
 import 'thinking_pill.dart';
@@ -54,6 +55,10 @@ class AssistantMessage extends StatefulWidget {
     this.regenerating = false,
     this.onQuote,
     this.footnote,
+    this.timestampTime,
+    this.timestampExpanded = false,
+    this.timestampShowDate = false,
+    this.onToggleTimestamp,
   });
 
   final AssistantChatItem item;
@@ -81,6 +86,12 @@ class AssistantMessage extends StatefulWidget {
 
   /// 回合脚注(这一轮在这条回复处结束),挂在操作行右端。
   final Widget? footnote;
+
+  /// 正文下方的小时间；null 不显示。
+  final DateTime? timestampTime;
+  final bool timestampExpanded;
+  final bool timestampShowDate;
+  final VoidCallback? onToggleTimestamp;
 
   @override
   State<AssistantMessage> createState() => _AssistantMessageState();
@@ -256,8 +267,23 @@ class _AssistantMessageState extends State<AssistantMessage> {
         ],
       ),
     );
+    // 正文下方的小时间；流式期间不显示，结束后固定。
+    final timed = !streaming && widget.timestampTime != null
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              reply,
+              MessageTime(
+                time: widget.timestampTime!,
+                expanded: widget.timestampExpanded,
+                showDate: widget.timestampShowDate,
+                onTap: widget.onToggleTimestamp,
+              ),
+            ],
+          )
+        : reply;
     // 一条回复是读屏里的一个分组,里面的段落、标题照常逐个读。
-    final message = Semantics(key: const ValueKey('reply'), container: true, explicitChildNodes: true, child: reply);
+    final message = Semantics(key: const ValueKey('reply'), container: true, explicitChildNodes: true, child: timed);
     return _waited ? _HandOff(waiting: false, child: message) : message;
   }
 

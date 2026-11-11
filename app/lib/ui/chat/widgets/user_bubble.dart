@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 
+import 'message_time.dart';
+
 import '../../../l10n/l10n.dart';
 import '../../../state/composer_quote.dart' show splitQuote;
 import '../../common/expand_reveal.dart';
@@ -37,6 +39,10 @@ class UserBubble extends StatelessWidget {
     this.pendingIcon = AppIcons.queued,
     this.pendingActions = const [],
     this.onEdit,
+    this.time,
+    this.timestampExpanded = false,
+    this.timestampShowDate = false,
+    this.onToggleTimestamp,
   });
 
   final String text;
@@ -55,6 +61,12 @@ class UserBubble extends StatelessWidget {
   /// "编辑后重发" in the long-press menu; null leaves it out (optimistic
   /// bubbles: they have "撤回" instead).
   final VoidCallback? onEdit;
+
+  /// 气泡下方的小时间；null 不显示。
+  final DateTime? time;
+  final bool timestampExpanded;
+  final bool timestampShowDate;
+  final VoidCallback? onToggleTimestamp;
 
   /// What the bubble shows: a generation request without its header.
   String get _shown => GenerateHeader.parse(text)?.description ?? text;
@@ -160,6 +172,14 @@ class UserBubble extends StatelessWidget {
                   ),
                 ),
               _PendingSlot(label: pendingLabel, icon: pendingIcon, actions: pendingActions),
+              if (time case final time?)
+                MessageTime(
+                  time: time,
+                  expanded: timestampExpanded,
+                  showDate: timestampShowDate,
+                  onTap: onToggleTimestamp,
+                  alignEnd: true,
+                ),
             ],
           ),
         );

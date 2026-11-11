@@ -41,6 +41,7 @@ import 'trajectory_sheet.dart';
 import 'widgets/approval_card.dart';
 import 'widgets/artifact_card.dart';
 import 'widgets/assistant_message.dart';
+import 'widgets/message_time.dart';
 import 'widgets/selection_actions.dart';
 import 'widgets/attachments.dart';
 import 'widgets/background_task_notice.dart';
@@ -151,6 +152,11 @@ class ChatList extends ConsumerStatefulWidget {
 }
 
 class _ChatListState extends ConsumerState<ChatList> with SingleTickerProviderStateMixin {
+  /// 当前聊天是否展开完整时间（周几 + 秒）；点任意一条时间统一切换。
+  bool _timestampsExpanded = false;
+
+  void _toggleTimestamps() => setState(() => _timestampsExpanded = !_timestampsExpanded);
+
   late final _scroll = _TopBoundedScrollController(_leadingBoundary);
   final _centerKey = UniqueKey();
   final _beforeKey = GlobalKey();
@@ -775,11 +781,13 @@ class _ChatListState extends ConsumerState<ChatList> with SingleTickerProviderSt
     final previous = index > 0 ? _rows[index - 1] : null;
     final fresh = _fresh.remove(row.key);
     final padding = EdgeInsets.fromLTRB(AppSpace.gutter, _gapBefore(row, previous), AppSpace.gutter, 0);
+    final time = _messageTime(row);
+    final showDate = time != null && _showsDate(index, time);
     final body = StreamFadeIn(
       enabled: fresh != null,
       index: fresh ?? 0,
       rise: row is UserRow || row is PendingRow,
-      child: _rowWidget(row),
+      child: _rowWidget(row, time: time, showDate: showDate),
     );
     return KeyedSubtree(
       key: ValueKey<String>(row.key),
@@ -828,7 +836,7 @@ class _ChatListState extends ConsumerState<ChatList> with SingleTickerProviderSt
     return AppSpace.sm;
   }
 
-  Widget _pendingBubble(PendingPrompt prompt) {
+  Widget _pendingBubble(PendingPrompt prompt, {required bool showDate}) {
     if (prompt.isBackgroundTask) {
       return BackgroundTaskNotice(key: ValueKey((widget.sessionId, prompt.requestId, prompt.inboxId)), prompt: prompt);
     }
@@ -850,6 +858,10 @@ class _ChatListState extends ConsumerState<ChatList> with SingleTickerProviderSt
     final canAct = prompt.inboxId != null;
     return UserBubble(
       text: prompt.text,
+      time: prompt.time,
+      timestampExpanded: _timestampsExpanded,
+      timestampShowDate: showDate,
+      onToggleTimestamp: _toggleTimestamps,
       attachments: prompt.attachments.isEmpty ? null : SentAttachments.pending(prompt.attachments),
       pendingLabel: prompt.failed ? appL10n.chatFailedSubmission : label,
       pendingIcon: prompt.failed ? AppIcons.error : icon,
@@ -919,7 +931,7 @@ class _ChatListState extends ConsumerState<ChatList> with SingleTickerProviderSt
   // ---------------------------------------------------------------------------
   // 消息操作:分叉打开的是一个新对话,原对话不动。
 
-  Widget _reply(AssistantChatItem item, bool showActions, TurnTrace? footnote, {bool isTurnTail = false}) {
+  Widget _reply(AssistantChatItem item, bool showActions, TurnTrace? footnote, {bool isTurnTail = false, required bool showDate}) {
     // A picture a media card shows is not drawn again in the reply.
     if (withoutShownImages(item.text, ref.read(sessionMediaPathsProvider(widget.sessionId))) case final text?) {
       item = replyWithText(item, text);
@@ -940,6 +952,10 @@ class _ChatListState extends ConsumerState<ChatList> with SingleTickerProviderSt
       regenerating: _regeneratingId == item.id,
       onQuote: widget.onQuote,
       footnote: footnote == null ? null : _footnote(footnote),
+      timestampTime: item.time,
+      timestampExpanded: _timestampsExpanded,
+      timestampShowDate: showDate,
+      onToggleTimestamp: _toggleTimestamps,
     );
     // Always in a scope, so a reply that grows a visual block keeps its
     // State; only replies that carry one pay for working out whether it can
@@ -1135,7 +1151,31 @@ class _ChatListState extends ConsumerState<ChatList> with SingleTickerProviderSt
     return (label: appL10n.commonContinue, onPressed: () => chat.send(appL10n.commonContinue));
   }
 
-  Widget _rowWidget(ChatRow row) {
+  /// 这条行对应的时间；工具/过程行没有时间。
+  DateTime? _messageTime(ChatRow row) => switch (row) {
+    UserRow(:final item) => item.time,
+    PendingRow(:final prompt) => prompt.time,
+    AssistantRow(:final item) => item.time,
+    _ => null,
+  };
+
+  /// 是不是当天第一条消息：往前跳过工具/过程行，找上一条带时间的消息。
+  bool _showsDate(int index, DateTime time) {
+    for (var i = index - 1; i >= 0; i--) {
+      final previous = _messageTime(_rows[i]);
+      if (previous != null) return !sameChatDay(previous, time);
+    }
+    return true;
+  }
+
+  bool _showsDateFor(ChatRow row) {
+    final time = _messageTime(row);
+    if (time == null) return false;
+    final index = _rows.indexWhere((r) => r.key == row.key);
+    return index < 0 ? false : _showsDate(index, time);
+  }
+
+  Widget _rowWidget(ChatRow row, {required DateTime? time, required bool showDate}) {
     // 当前轮的最后一条回复:轮结束后它才长操作行(自带 ⋯),所以不补独立 ⋯。
     AssistantRow? tail;
     for (final r in _rows) {
@@ -1150,10 +1190,14 @@ class _ChatListState extends ConsumerState<ChatList> with SingleTickerProviderSt
             ? null
             : SentAttachments.echoed(sessionId: widget.sessionId, images: item.images, files: item.files),
         onEdit: widget.onEditPrompt == null ? null : () => _editPrompt(item),
+        time: time,
+        timestampExpanded: _timestampsExpanded,
+        timestampShowDate: showDate,
+        onToggleTimestamp: _toggleTimestamps,
       ),
-      PendingRow(:final prompt) => _pendingBubble(prompt),
+      PendingRow(:final prompt) => _pendingBubble(prompt, showDate: showDate),
       AssistantRow(:final item, :final showActions, :final footnote) =>
-        _reply(item, showActions, footnote, isTurnTail: isTurnTail),
+        _reply(item, showActions, footnote, isTurnTail: isTurnTail, showDate: showDate),
       TurnFootnoteRow(:final trace) => Bleed(
         horizontal: 8,
         child: Align(alignment: Alignment.centerLeft, child: _footnote(trace)),
@@ -1177,7 +1221,11 @@ class _ChatListState extends ConsumerState<ChatList> with SingleTickerProviderSt
       final TurnProcessRow row => TurnProcess(
         row: row,
         settle: _settling.remove(row.key),
-        buildRow: _rowWidget,
+        buildRow: (row) => _rowWidget(
+          row,
+          time: _messageTime(row),
+          showDate: _showsDateFor(row),
+        ),
         gapBefore: _gapBefore,
       ),
       NoticeRowData(:final item) => NoticeRow(item: item, action: _noticeAction(item)),

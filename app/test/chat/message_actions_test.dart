@@ -5,6 +5,7 @@ import 'package:dsh_app/state/draft_store.dart';
 import 'package:dsh_app/state/connection_state.dart';
 import 'package:dsh_app/state/sessions_state.dart';
 import 'package:dsh_app/ui/chat/chat_screen.dart';
+import 'package:dsh_app/ui/chat/widgets/message_time.dart';
 import 'package:dsh_app/ui/common/segmented_pill.dart';
 import 'package:dsh_app/ui/settings/settings_widgets.dart' show SettingsTile;
 import 'package:dsh_app/ui/share/share_panel.dart';
@@ -335,6 +336,25 @@ void main() {
       expect(platform.shared, isEmpty);
       Navigator.of(tester.element(find.byType(SharePanel))).pop();
       await pumpFrames(tester);
+    });
+
+    testWidgets('tapping one timestamp expands every timestamp in the chat', (tester) async {
+      _platform(tester);
+      final harness = ChatHarness(session: 's1', states: {'s1': _conversation()});
+      await _pump(tester, harness);
+      await pumpFrames(tester);
+
+      final times = find.byType(MessageTime);
+      expect(times, findsWidgets);
+      expect(find.textContaining(RegExp(r'\d\d:\d\d:\d\d')), findsNothing);
+
+      await tester.tap(find.descendant(of: times.first, matching: find.byType(Text)).first);
+      await pumpFrames(tester);
+      expect(find.textContaining(RegExp(r'\d\d:\d\d:\d\d')), findsWidgets);
+
+      await tester.tap(find.descendant(of: find.byType(MessageTime).first, matching: find.byType(Text)).first);
+      await pumpFrames(tester);
+      expect(find.textContaining(RegExp(r'\d\d:\d\d:\d\d')), findsNothing);
     });
 
     testWidgets('long-press on a reply starts selection, not the menu', (tester) async {
