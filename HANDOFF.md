@@ -433,7 +433,7 @@ flutter test > /tmp/full_test.log 2>&1                # 全量，目标 0 失败
 - [x] `test/settings test/star test/ui_config` 473 / 0 / 0（原 443/30/0，check_mjs_parity 30 用例从 skip 变 pass）
 - [x] 全量 `flutter test` 0 失败（10845 passed / 288 skipped / 0 failed），9.2 已改写为历史基线
 - [x] 代码已推 Gitee `main`；GitHub 自 2026-11-11 起由 Gitee Push 镜像自动同步（默认分支 `main`，`mogai` 已删除）
-- [ ] `D:\HANDOFF.md` 覆盖 + 飞书云空间覆盖上传（token `OJSGbqo2IofCYQxm8uycjTGAn7d`，电脑侧执行）
+- [x] `D:\HANDOFF.md` 覆盖 + 飞书云空间覆盖上传（token `OJSGbqo2IofCYQxm8uycjTGAn7d`，电脑侧执行，2026-11-11 完成：D盘 60516 字节一致，飞书 version 7706799604033768711）
 
 ### 10）关闭「关于 DSH Go」入口（2026-11-11）
 
