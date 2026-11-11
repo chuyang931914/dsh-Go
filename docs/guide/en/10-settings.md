@@ -44,28 +44,17 @@ Shows your DeepSeek account or API key and balance; tap it to open your account.
 - **Voice input**: which recognition turns speech into text.
 - **Performance**: **Auto**, **Full** or **Light**, plus glass blur, interface motion, fluid motion and **Refresh rate** (Auto / Max / System).
 - **Background running**: see [FAQ](11-faq.md). Until it's set up, the row says so on the right.
-- **Privacy and sharing**:
-  - **My shared links**: see [Sharing and replay](07-sharing.md).
-  - **Share configuration**: select the current host's settings, plugins, skills and personal preferences to share, and share them as a link, QR code or file.
-  - **Send anonymous usage stats**: on by default, off anytime; see [FAQ](11-faq.md).
-  - **Upload chat logs to DeepSeek**: shown when the current host has it.
 
 ## Hosts
 
 - **Local engine** and **Remote host**: see [Engine and remote hosts](03-engine-hosts.md).
 - **Engine parameters**: the current host's engine parameters. **Runtime** has **Subagent**, **Agent loop** and **Command execution**; **Plugins** has **Plugin inventory** and plugins' own settings. [Open](dshgo://open/engine-settings)
 
-## Help and about
+## Help
 
 - **Help**: takes "what can this app do" to a new chat, where the AI answers from this guide. Not shown in Web mode.
 - **Community**: chat groups and the forum.
 - **Diagnostics**: see [FAQ](11-faq.md).
-- **About DSH Go**:
-  - **Version**: the app version, such as 0.9.2 (10251234), with the build number in parentheses. When there's a new version, this row on the Settings page says **Update available**.
-  - **Check for updates**: when there's a new version, the update window opens. Read **What’s new**, tap **Update now**, and once the download is verified, tap **Install** and confirm in the system prompt. DSH Go closes to install; your chats and settings stay. If the version changes the runtime, only `/root` stays in the Linux environment: software installed with `apt`, and files in `/usr/local`, `/opt` and similar places, need installing again. To pass on a version, tap **Skip this version**. The first time, you'll need to allow DSH Go to install apps. If the installed app has a different signature (usually a test build), it can't be updated in place: uninstall it first, which erases your chats, Linux environment and settings.
-  - **Installation route**: after the full update APK is downloaded and verified, keep normal installation (the default), or explicitly choose Shizuku or local ADB. The latter routes accept only this app, with matching current signers and a higher build number, and require native confirmation for this attempt; Phone control and AI Shell need not be enabled. Shizuku permission is separate from approval to install. Local ADB uses an already-paired identity; the existing Android Shell page can guide pairing. All routes remain subject to system and vendor security policies, do not guarantee skipping a scan, do not support root, and never automatically switch routes or retry after failure. Installation may replace the app process. If the outcome is unknown, read the actual installed state first. End the wait only after checking that no system installation is running; clearing this record does not cancel or retry an installation.
-  - **Check automatically**: on by default; checks when the app opens, at most once a day. A new version opens the update window, unless you're on another page or typing, in which case **Check for updates** shows it. Skipped versions aren't offered again, and nothing downloads or installs on its own.
-  - **Open-source licenses**.
 
 ## Permissions
 

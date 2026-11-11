@@ -4,7 +4,7 @@
 > 最后更新：2026-11-11
 > 权威副本：本文件同时放在仓库根目录 `HANDOFF.md`（随 Git 推送，跨设备可用）。
 >
-> **当前状态（2026-11-11 17:00）**：「全量 99 红清账」已完成；手机端已接手并完成四线核对（见 3.5）：仓库 `main` = `c07ad5c`，`phone` 已快进对齐并在其上追加本记录，APK `11111558` 与已装版本一致，`dart analyze` = 0 error / 0 warning / 23 info，聊天相关非金色图测试 35/35 通过。**剩余收尾：`D:\HANDOFF.md` 与飞书云空间副本仍是 14:xx 的 60,516 字节旧版，需电脑侧重新覆盖为当前仓库版本**（token `OJSGbqo2IofCYQxm8uycjTGAn7d`）；装机后验收见第十一节；其他方向见第十二节；双端协作约定见 8.4 与第十四节。
+> **当前状态（2026-11-11 17:50）**：Gitee `main` = `6b7a611`；`phone` 已快进对齐并在其上追加版本策略记录。**覆盖安装已实测通过**：`11111558 → 11111711`，手机端数据保留（详见 3.5）。电脑侧 `main` 最新 `6b7a611`（含 `2f66a55` 分发记录），飞书与 D 盘副本为 69,861 字节的 `6b7a611` 版。下一版要求 versionCode > `11111711`、证书 `fb462eb1…` 不变；**versionName 自 `1.0.16` 起按第十节递增**。
 
 ---
 
@@ -19,7 +19,7 @@
 | 镜像仓库（Gitee） | https://gitee.com/chuyang931914/dsh-go-mogai.git （`main` = 魔改版，含本交接文档） |
 | Git 身份 | `chuyang` / `200414988+chuyang931914@users.noreply.github.com` |
 | 分支 | Gitee `main`（唯一事实源）；GitHub `main`/`phone`（镜像自动同步，`mogai` 已删除） |
-| 包名 / 版本 | `io.github.ccch1mneyyy.dsh_app`，versionName `1.0.15`，versionCode 由构建脚本按 `MMDDHHmm` 生成（如 11101923） |
+| 包名 / 版本 | `io.github.ccch1mneyyy.dsh_app`；versionName `1.0.15`（历史），自 `1.0.16` 起按第十节递增；versionCode 由构建脚本按 `MMDDHHmm` 生成 |
 
 **重要：魔改版用自建签名，与官方签名不同 → 官方 APK 覆盖安装会失败，官方"应用内更新"天然装不上（双保险，即使忘了关更新也装不进去）。**
 
@@ -63,11 +63,10 @@
 
 **版本号编码**：`11111711` = 2026-11-11 17:11 (UTC+8)，由 `tooling/build-apk.sh` 传入 `--build-number`，高于上一版 `11111558`（15:58）。APK 可覆盖安装。
 
-**首次覆盖安装验证（待执行）**：装完查 `firstInstallTime` 是否与旧版一致、应用内数据还在。命令：
+**首次覆盖安装验证（✅ 已完成，2026-11-11 17:37）**：`11111558 → 11111711`，数据保留。证据见 3.5 节覆盖安装条。`firstInstallTime` 因手机端无 dumpsys 权限未读；等价证据已充分（卸载重装会清空数据目录）。电脑侧若连手机可补跑：
 ```bash
 adb shell dumpsys package io.github.ccch1mneyyy.dsh_app | grep -E "firstInstallTime|lastUpdateTime"
 ```
-或在手机设置 → 应用 → 存储里确认数据未被清空。
 
 **40px 抽动修复（`eb94753`）**：手机端给中间回复加独立 ⋯ 按钮（`IconButton` + `VisualDensity.compact` = 40px）后，**轮尾那条回复**在结算前也会出现 ⋯，结算后 ⋯ 让位给操作行 → 完成那一帧凭空少 40px，正文被顶一下（`turn_settle_test` 的 `The handoff must not insert a header-sized jump` 就是拦这个）。修法：`AssistantMessage` 增加 `isTurnTail`，由 `chat_list` 传入「当前轮最后一条助手正文」，轮尾不再补独立 ⋯（它的 ⋯ 在操作行里）。**没有改任何断言**（断言是设计约束）。
 
@@ -122,15 +121,15 @@ export PATH="/root/dev/jdk-17/bin:/root/dev/flutter/bin:/root/dev/android-sdk/cm
 - 凭据：`~/.git-credentials`（chmod 600，`credential.helper=store`）已存 Gitee 与 GitHub 令牌，推送可用。
 - 基线（2026-11-11）：电脑侧五批清账后，回归面 `test/settings test/star test/ui_config` = 473 通过 / 0 跳过 / 0 失败，全量 `flutter test` = 10845 通过 / ~288 跳过 / 0 失败；`dart analyze` = 0 error / 0 warning / 23 info。手机端复跑时金色图会因字体渲染不同而像素漂移（见 Rule 31），只验收 analyze 与非金色图结果。手机端交叉验证（`d746042`）：电脑侧改动过的 12 个测试文件 = 381 通过 / 39 金色图漂移 / 0 真实失败。
 
-### 3.5 四线一致性（2026-11-11 17:00，手机端接手）
+### 3.5 四线一致性（2026-11-11 17:50，手机端接手 + 首次覆盖安装实测）
 
 | 线 | 事实 | 状态 |
 | --- | --- | --- |
-| 仓库 | Gitee `main` = `c07ad5c`；`phone` 于 16:47 快进到 `c07ad5c` 后追加本记录（FF，无重写） | ✅ |
-| 代码 | HEAD `c07ad5c`；构建提交 `eb94753`；之后只有 2 个 docs 提交 | ✅ |
-| APK | `11111558`，206.2 MB，sha256 `8951fdd9…d7b1`，证书 `fb462eb1…3c2f` | ✅ |
-| 实机 | 已装 `1.0.15+11111558`；`cmd package list --show-versioncode` = `11111558` | ✅ |
-| 文档 | 本文件为权威；`D:\HANDOFF.md` 与飞书副本仍是 14:xx 的 60,516 字节旧版 | ⚠️ 电脑待同步 |
+| 仓库 | Gitee `main` = `6b7a611`；`phone` 已快进到 `main` 后追加版本策略记录（FF，无重写） | ✅ |
+| 代码 | HEAD `6b7a611`；构建提交 `eb94753`；之后只有 docs 提交（`11111711` 代码同 `11111558`） | ✅ |
+| APK | `11111711`，206.2 MB，sha256 `8a5ffc76…563e9d`，证书 `fb462eb1…3c2f` | ✅ |
+| 实机 | 已装 `1.0.15+11111711`（覆盖安装实测通过，数据保留）；`cmd package list --show-versioncode` = `11111711` | ✅ |
+| 文档 | 本文件为权威；D 盘/飞书为 `6b7a611` 的 69,861 字节版，本次版本策略记录需再覆盖 | ⚠️ 电脑待同步 |
 
 手机端环境与验证（本机）：
 - 仓库 `/root/workspace/dsh-Go`（`/root/dsh-Go` 软链）；Flutter 3.47.7 linux-arm64（`/root/dev/flutter`）；Dart 3.13.5。
@@ -139,7 +138,14 @@ export PATH="/root/dev/jdk-17/bin:/root/dev/flutter/bin:/root/dev/android-sdk/cm
 - `flutter test test/chat/turn_settle_test.dart` = 7/7；`message_actions_test` + `message_flow_test` = 28/28。
 - `flutter test test/settings/index test/ui_config` = 203 通过 / 4 金色图像素漂移（0.00%–0.04%，Rule 31）/ 0 真实失败。
 - 金色图不在手机端验收（Rule 31），未跑 `--update-goldens`。
-- 覆盖安装：静态条件满足（同包名、同签名链、已装 `11111558`）；**尚未做真机覆盖安装实测**——本机数据目录 16:14 新建，看起来是全新安装；下一版需 versionCode > `11111558` 且同证书。
+- 覆盖安装：**已实测通过（2026-11-11 17:37 手机端）**。`11111558 → 11111711` 覆盖安装，证据：
+  - 安装前 17:36:29 的两个应用内标记文件仍在（未被卸载清理）
+  - `sessions` 目录 mtime 仍是 16:15、数量 1（旧数据保留）
+  - 仓库 HEAD `0583f58` 未丢（应用自身的 Git 快照未重置）
+  - `proot` 子进程已被系统重启但数据目录未重建（数据未被 app wipe）
+  - APK 独立校验：sha256 `8a5ffc763a24ae49f8fb42428e22a42b2e12f36af99e7b02122c86ad6f563e9d` ✓、证书 `fb462eb1…` ✓、versionCode `11111711` ✓
+  - 注：手机端无 `dumpsys` 权限读不到 `firstInstallTime`；但「数据目录未重建 + sessions 保留」已构成 Android 覆盖安装的等价证明（卸载重装 = 数据目录被删）。电脑侧 `adb shell dumpsys package io.github.ccch1mneyyy.dsh_app | grep -E "firstInstallTime|lastUpdateTime"` 可补证，需要 PC 连手机时跑一下。
+  - 下一版：versionCode 必须 > `11111711`、证书不变。
 
 ---
 
@@ -662,9 +668,17 @@ git push origin phone   # 手机工作分支
 
 ## 十、版本策略
 
-- 版本名跟随上游（当前 `1.0.15`），build number 由 `build-apk.sh` 按 `MMDDHHmm` 生成（例：`11101923` = 11-10 19:23，构建日志首行会打印 `dsh-go 1.0.15 (11101923, ...)`）。
+- **versionName 自 `1.0.16` 起按发布递增**，不再固定跟随上游 `1.0.15`：每次对外发布把 `app/pubspec.yaml` 的 `version: X.Y.Z+1` patch +1（大功能才 bump minor）；`build-apk.sh` 默认读取它，不必再传 `--build-name`。
+- build number 仍由 `build-apk.sh` 按 `MMDDHHmm` 生成（例：`11111711` = 11-11 17:11）；versionCode 递增与 versionName 无关。
 - 由于已剔除自动更新，**发版不再需要考虑官方版本号**；只要 build number 递增即可正常覆盖安装。
-- 命名建议：`dsh-go-<版本号>-mogai-arm64.apk`。
+- APK 命名：`dsh-go-<versionName>-<buildNumber>-mogai-arm64.apk`（例：`dsh-go-1.0.16-11121830-mogai-arm64.apk`）；飞书覆盖同一文件 token 时把标题同步改成新文件名，链接不变。
+- 每次发布在下方映射表补一行，并同步 HANDOFF / D 盘 / 飞书，避免“同名 APK 分不清”。
+
+| versionName | buildNumber | 说明 |
+| --- | --- | --- |
+| 1.0.15 | 11111558 | 正文长按选字 + 40px 修复 |
+| 1.0.15 | 11111711 | 首次覆盖安装验证（代码同 11111558） |
+| 1.0.16 | 待构建 | 下一个功能/修复版本 |
 
 ---
 
