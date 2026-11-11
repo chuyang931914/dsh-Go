@@ -432,7 +432,7 @@ flutter test > /tmp/full_test.log 2>&1                # 全量，目标 0 失败
 - [x] 批次 5 零散项清零，真回归已记录并上报（`886e699`）
 - [x] `test/settings test/star test/ui_config` 473 / 0 / 0（原 443/30/0，check_mjs_parity 30 用例从 skip 变 pass）
 - [x] 全量 `flutter test` 0 失败（10845 passed / 288 skipped / 0 failed），9.2 已改写为历史基线
-- [x] 代码已推 Gitee `main`；GitHub 自 2026-11-11 起由 Gitee Push 镜像自动同步（默认分支 `main`，`mogai` 冻结）
+- [x] 代码已推 Gitee `main`；GitHub 自 2026-11-11 起由 Gitee Push 镜像自动同步（默认分支 `main`，`mogai` 已删除）
 - [ ] `D:\HANDOFF.md` 覆盖 + 飞书云空间覆盖上传（token `OJSGbqo2IofCYQxm8uycjTGAn7d`，电脑侧执行）
 
 ### 10）关闭「关于 DSH Go」入口（2026-11-11）
@@ -528,7 +528,7 @@ git push origin phone   # 手机工作分支
 **关键差异（务必记住）**：
 - Gitee 仓库 `dsh-go-mogai` 是**唯一事实源**，`main` 直接推。
 - GitHub 仓库 `chuyang931914/dsh-Go` 已配置 Gitee **Push 镜像**（2026-11-11）：Gitee 每次 push 后约 5 分钟内按**同名分支**自动同步到 GitHub（`main→main`、`phone→phone`），**不再手动推 GitHub**。
-- 镜像带来的变化（2026-11-11，用户已确认不再依赖上游更新）：① GitHub 原 `main`（上游历史镜像）已被镜像覆盖为魔改历史；② GitHub 默认分支已切换为 `main`（自动镜像分支）；③ `mogai` 分支**冻结**为历史，不再更新；④ GitHub Actions 已禁用（避免镜像推送反复触发失败邮件）。
+- 镜像带来的变化（2026-11-11，用户已确认不再依赖上游更新）：① GitHub 原 `main`（上游历史镜像）已被镜像覆盖为魔改历史；② GitHub 默认分支已切换为 `main`（自动镜像分支）；③ `mogai` 分支**已删除**（2026-11-11，GitHub 上不再保留历史分支）；④ GitHub Actions 已禁用（避免镜像推送反复触发失败邮件）。
 - `.git` 约 356MB（含 runtime 等二进制），首次推送慢是正常的；Gitee 一般直连。
 - Gitee 仓库名是 `dsh-go-mogai`，**不是** `dsh-Go`，别写错。
 - **镜像失效时的兜底**：手动 `git push github HEAD:main`（其他分支同名推），然后回到正常节奏。
@@ -584,7 +584,7 @@ git push origin phone   # 手机工作分支
 
 30. **手机端（proot aarch64）不能构建 APK，也不要尝试**：① 引擎不发布 linux-arm64 的 Android 宿主构建工具（gen_snapshot 等只有 linux-x64/darwin/windows，release 构建必失败）；② Google 官方无 linux-arm64 版 NDK（项目 `ndkVersion = flutter.ndkVersion` 需要 NDK）；③ `runtime/out` 不随 git 仓库分发，手机克隆里没有（重建风险高，见 Rule 2）；④ keystore 只在电脑 `D:\Android\keystore`。APK 构建与分发继续走电脑 WSL + 飞书；手机端最多做装机后的校验（sha256 / apksigner 指纹 / aapt 权限检查）。
 31. **手机端金色图与本机基线必然漂移，禁止在手机端 `--update-goldens` 并提交 PNG**：字体渲染跨机器有差异（同 Rule 18 的问题），手机端验收只看非金色图测试结果 + `dart analyze` 口径；金色图重建只允许在电脑侧批次 4 做。
-32. **GitHub 网络与镜像（2026-11-11 起）**：Gitee 为唯一事实源，GitHub 由 Gitee Push 镜像自动同步同名分支（`main`/`phone`），镜像最短间隔约 5 分钟；GitHub 默认分支已切到 `main`，`mogai` 冻结，Actions 已禁用。**手机端/电脑端只需推 Gitee**。镜像万一失效：手动兜底 `git push github HEAD:main`（GitHub 直连不稳时备用代理 `https://gitclone.com/github.com/...`、`https://gh-proxy.com/https://github.com/...` 实测可达）。
+32. **GitHub 网络与镜像（2026-11-11 起）**：Gitee 为唯一事实源，GitHub 由 Gitee Push 镜像自动同步同名分支（`main`/`phone`），镜像最短间隔约 5 分钟；GitHub 默认分支已切到 `main`，`mogai` 已删除，Actions 已禁用。**手机端/电脑端只需推 Gitee**。镜像万一失效：手动兜底 `git push github HEAD:main`（GitHub 直连不稳时备用代理 `https://gitclone.com/github.com/...`、`https://gh-proxy.com/https://github.com/...` 实测可达）。
 
 ---
 
