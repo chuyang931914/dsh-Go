@@ -30,7 +30,7 @@
 | 产物 | 路径 |
 | --- | --- |
 | 魔改版 APK（本地） | `D:\Android\apk\dsh-go-1.0.15-mogai-arm64.apk` |
-| **APK 下载（飞书云空间，优先）** | https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR （`dsh-go-1.0.15-mogai-arm64.apk`，当前 11110113；点开 → 右上角「...」→ 下载；飞书内直接下载，不走 GitHub/Gitee） |
+| **APK 下载（飞书云空间，优先）** | https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR （`dsh-go-1.0.15-mogai-arm64.apk`，当前 11111558；点开 → 右上角「...」→ 下载；飞书内直接下载，不走 GitHub/Gitee） |
 | **源码包（飞书云空间）** | https://my.feishu.cn/file/IEqgbC77zoOqWmxo277cr8Wdnue （`dsh-go-1.0.15-mogai-src.zip`，500MB；已排除 `.git`、`app/build`、`.dart_tool`、`runtime/.work`、`runtime/.cache`，保留 `runtime/out` 可直接重建 APK） |
 | APK 备份（GitHub Release） | https://github.com/chuyang931914/dsh-Go/releases/download/v1.0.15-mogai/dsh-go-1.0.15-mogai-arm64.apk |
 | 构建脚本原始输出 | WSL 内 `/root/dsh-Go/app/build/app/outputs/flutter-apk/app-arm64-release.apk` |
@@ -45,7 +45,13 @@
 
 **最近一次分发（2026-11-11 01:26）**：APK `11110113` + 本交接文档已上传飞书云空间，并已发到「城南」私聊（message_id `om_x100b600175a05ca0dd7af731446ceea`）。
 
-**当前 APK 与代码的差异（2026-11-11）**：`11110113` 构建于本次「物理删除关于/隐私/sharedLinks 残留 + 指南修正」提交，与源码一致。装上后设置里彻底没有「关于 DSH Go」与「隐私与分享」，搜索「关于」「版本」「开源许可」均无结果。
+**本次重建（2026-11-11 16:03）**：APK `11111558`（`dsh-go 1.0.15`），源码 `eb94753`，206.2 MB，SHA-256 `8951fdd97954395d16926f71096faeabbf4e7774facdf0f4bf487f237916d7b1`；验签证书 SHA-256 `fb462eb1…3c2f`（与 keystore 一致）。含手机端新功能「正文长按直接选字 + ⋯ 菜单 + 中间回复 ⋯ 入口」，并含本轮 40px 抽动修复。
+
+**40px 抽动修复（`eb94753`）**：手机端给中间回复加独立 ⋯ 按钮（`IconButton` + `VisualDensity.compact` = 40px）后，**轮尾那条回复**在结算前也会出现 ⋯，结算后 ⋯ 让位给操作行 → 完成那一帧凭空少 40px，正文被顶一下（`turn_settle_test` 的 `The handoff must not insert a header-sized jump` 就是拦这个）。修法：`AssistantMessage` 增加 `isTurnTail`，由 `chat_list` 传入「当前轮最后一条助手正文」，轮尾不再补独立 ⋯（它的 ⋯ 在操作行里）。**没有改任何断言**（断言是设计约束）。
+
+**验证结果（电脑侧，2026-11-11）**：`dart analyze` 0 error；`test/chat/turn_settle_test.dart` 7/7 通过；`test/chat` 全量 **1961 通过 / 0 失败**；重建 7 张金色图（`auto_approve_*`、`conversation*`、`en_conversation_light`，仅因轮尾不再出现 ⋯ + 选字排版变化）。
+
+**当前 APK 与代码的差异（2026-11-11）**：`11110113` 构建于「物理删除关于/隐私/sharedLinks 残留 + 指南修正」提交。`11111558` 在此基础上含手机端聊天改进 + 40px 修复，均与源码一致。装上后设置里彻底没有「关于 DSH Go」与「隐私与分享」，搜索「关于」「版本」「开源许可」均无结果。
 
 > 注意：`C:\Users\Administrator\Documents\Trae-CN\temp_20261110_04\dsh-Go` 是早期解压副本，**已过时，不要用来构建**。
 
