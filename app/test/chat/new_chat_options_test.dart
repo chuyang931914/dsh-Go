@@ -253,15 +253,21 @@ void main() {
     expect(harness.controllers['fresh']!.sent, ['你好']);
   });
 
-  testWidgets('the model is picked from the header before typing and goes with the first message', (tester) async {
+  testWidgets('the model is picked from the composer pill before typing and goes with the first message', (tester) async {
     final host = _Host();
     final harness = ChatHarness(created: 'fresh', newChatCatalogs: true);
     await _pump(tester, harness, host);
-    // On a phone too: the new chat's header has room for the model chip.
-    expect(find.byType(ModelChip), findsOneWidget);
+    // 魔改：窄屏顶栏不再有模型胶囊（ModelChip 移除），模型选择在输入框
+    // 打开时由左下角的 ComposerModelPill 承接。
+    expect(find.byType(ModelChip), findsNothing);
     expect(find.byKey(const ValueKey('new-chat-model')), findsNothing);
+    // 打字态下，输入框左下角出现模型胶囊。
+    await tester.tap(find.byType(TextField));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(find.byKey(const ValueKey('composer-model')), findsOneWidget);
 
-    await tester.tap(find.byType(ModelChip));
+    await tester.tap(find.byKey(const ValueKey('composer-model')));
     await pumpFrames(tester, 6);
     expect(find.text('选择模型'), findsOneWidget);
     await tester.tap(find.text('V41 Flash'));
@@ -269,7 +275,10 @@ void main() {
     expect(_container(tester).read(pendingModelProvider)?.model, 'deepseek-flash');
     await tester.tapAt(const Offset(20, 120)); // dismiss the sheet
     await pumpFrames(tester, 4);
-    expect(find.descendant(of: find.byType(ModelChip), matching: find.textContaining('V41 Flash')), findsOneWidget);
+    expect(
+      find.descendant(of: find.byKey(const ValueKey('composer-model')), matching: find.textContaining('V41 Flash')),
+      findsOneWidget,
+    );
 
     await _send(tester, '你好');
     expect(harness.controllers['fresh']!.models.single.model, 'deepseek-flash');
