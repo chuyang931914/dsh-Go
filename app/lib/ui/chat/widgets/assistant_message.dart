@@ -38,9 +38,9 @@ const _firstTextIn = Duration(milliseconds: 200);
 ///                    ↻ 重新回答只给整个对话的最后一条)
 /// ```
 ///
-/// ⇪ 和菜单里的「分享」打开同一个分享面板。长按或 ⋯:同一个消息菜单(复制 /
-/// 选择文字 / 引用 / 分享 / 重新回答 / 从这里分叉)。正文因此不再直接长按选字,选字走菜单里的
-/// "选择文字",选中一段还能「引用」(Claude 式)。
+/// ⇪ 和菜单里的「分享」打开同一个分享面板。长按正文直接进入选择(选中的一段
+/// 可以「引用」);一轮最后一条的 ⋯ 打开消息菜单(复制 / 引用 / 分享 / 重新回答 /
+/// 从这里分叉)。中间回复(没有操作行)在右下方补一个 ⋯。
 class AssistantMessage extends StatefulWidget {
   const AssistantMessage({
     super.key,
@@ -131,10 +131,10 @@ class _AssistantMessageState extends State<AssistantMessage> {
   Widget _markdown(String text, bool streaming) {
     final reveal = _reveal = _reveal || (streaming && _startedEmpty && AppMotion.fluid(context));
     if (_body == null || _bodyText != text || _bodyStreaming != streaming || _bodyReveal != reveal) {
-      // Long-press opens the menu; selecting text is one of its entries.
+      // 长按正文直接选字(系统工具栏含复制/全选);消息菜单走右下的 ⋯。
       // repairBareViews: a model that forgets the ```dsh-ui fence still gets
       // its view drawn instead of a wall of JSON.
-      _body = MarkdownBody(text: text, streaming: streaming, reveal: reveal, selectable: false, repairBareViews: true);
+      _body = MarkdownBody(text: text, streaming: streaming, reveal: reveal, selectable: !streaming, repairBareViews: true);
       _bodyText = text;
       _bodyStreaming = streaming;
       _bodyReveal = reveal;
@@ -218,6 +218,19 @@ class _AssistantMessageState extends State<AssistantMessage> {
                   )
                 : const SizedBox.shrink(),
           ),
+          // 中间回复没有操作行:补一个 ⋯ 入口(长按正文已经是选字,不再出菜单)。
+          if (!actions && !streaming && text.isNotEmpty)
+            Align(
+              alignment: Alignment.centerRight,
+              child: IconButton(
+                key: const ValueKey('reply-more'),
+                tooltip: l10n.commonMore,
+                onPressed: () => _menu(text),
+                visualDensity: VisualDensity.compact,
+                icon: Icon(AppIcons.more, size: 18),
+                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: .55),
+              ),
+            ),
         ],
       ),
     );
@@ -238,7 +251,6 @@ class _AssistantMessageState extends State<AssistantMessage> {
       extra: nativeMessageMenuGroups(context, widget.item, text: markdown),
       actions: [
         MessageAction.copy,
-        MessageAction.selectText,
         if (onQuote != null) MessageAction.quote,
         MessageAction.share,
         if (onRegenerate != null && !widget.regenerating) MessageAction.regenerate,
@@ -249,8 +261,6 @@ class _AssistantMessageState extends State<AssistantMessage> {
     switch (action) {
       case MessageAction.copy:
         await copyMessage(context, text);
-      case MessageAction.selectText:
-        await showSelectTextSheet(context, text, markdown: true, onQuote: onQuote);
       case MessageAction.quote:
         onQuote?.call(text);
       case MessageAction.share:
@@ -259,7 +269,7 @@ class _AssistantMessageState extends State<AssistantMessage> {
         onRegenerate?.call();
       case MessageAction.branch:
         onBranch?.call();
-      case MessageAction.edit:
+      case MessageAction.selectText || MessageAction.edit:
         break;
     }
   }

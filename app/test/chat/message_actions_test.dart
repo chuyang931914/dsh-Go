@@ -303,7 +303,7 @@ void main() {
       expect(container.read(currentSessionProvider), 's1');
     });
 
-    testWidgets('long-press menu: copy, select text, share, branch', (tester) async {
+    testWidgets('⋯ menu: copy, share, branch', (tester) async {
       final platform = _platform(tester);
       final harness = ChatHarness(session: 's1', states: {'s1': _conversation()});
       await _pump(tester, harness);
@@ -312,12 +312,12 @@ void main() {
       await pumpFrames(tester);
 
       Future<void> menu() async {
-        await tester.longPress(find.textContaining('多发了一次请求', findRichText: true).first);
+        await tester.tap(find.byTooltip('更多'));
         await pumpFrames(tester);
       }
 
       await menu();
-      for (final label in ['复制', '选择文字', '分享', '从这里分叉']) {
+      for (final label in ['复制', '分享', '从这里分叉']) {
         expect(find.widgetWithText(SettingsTile, label), findsOneWidget);
       }
       await tester.tap(find.widgetWithText(SettingsTile, '复制'));
@@ -335,12 +335,19 @@ void main() {
       expect(platform.shared, isEmpty);
       Navigator.of(tester.element(find.byType(SharePanel))).pop();
       await pumpFrames(tester);
+    });
 
-      await menu();
-      await tester.tap(find.widgetWithText(SettingsTile, '选择文字'));
+    testWidgets('long-press on a reply starts selection, not the menu', (tester) async {
+      _platform(tester);
+      final harness = ChatHarness(session: 's1', states: {'s1': _conversation()});
+      await _pump(tester, harness);
       await pumpFrames(tester);
-      expect(find.text('全部复制'), findsOneWidget);
-      expect(find.byType(SelectionArea), findsOneWidget);
+
+      await tester.longPress(find.textContaining('多发了一次请求', findRichText: true).first);
+      await pumpFrames(tester);
+      // 长按正文 = 选字:消息菜单不弹出,系统工具栏带复制。
+      expect(find.byType(SettingsTile), findsNothing);
+      expect(find.text('复制'), findsWidgets);
     });
 
   });

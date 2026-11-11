@@ -162,9 +162,9 @@ void main() {
       expect(find.byTooltip('从这里分叉'), findsOneWidget);
     });
 
-    testWidgets('also in the long-press menu, with the same result', (tester) async {
+    testWidgets('also in the ⋯ menu, with the same result', (tester) async {
       final harness = await _pump(tester);
-      await tester.longPress(find.textContaining('多发了一次请求', findRichText: true).first);
+      await tester.tap(find.byTooltip('更多'));
       await pumpFrames(tester);
       await tester.tap(find.widgetWithText(SettingsTile, '重新回答'));
       await pumpFrames(tester);
@@ -172,11 +172,11 @@ void main() {
     });
   });
 
-  testWidgets('⋯ opens the same menu as a long-press', (tester) async {
+  testWidgets('⋯ opens the message menu', (tester) async {
     await _pump(tester);
     await tester.tap(find.byTooltip('更多'));
     await pumpFrames(tester);
-    for (final label in ['复制', '选择文字', '引用', '分享', '重新回答', '从这里分叉']) {
+    for (final label in ['复制', '引用', '分享', '重新回答', '从这里分叉']) {
       expect(find.widgetWithText(SettingsTile, label), findsOneWidget);
     }
     expect(find.widgetWithText(SettingsTile, '分享图片'), findsNothing, reason: 'one 分享 for every form');
@@ -201,7 +201,7 @@ void main() {
 
     testWidgets('✕ drops the quote; a quote alone does not send', (tester) async {
       final harness = await _pump(tester);
-      await tester.longPress(find.textContaining('多发了一次请求', findRichText: true).first);
+      await tester.tap(find.byTooltip('更多'));
       await pumpFrames(tester);
       await tester.tap(find.widgetWithText(SettingsTile, '引用'));
       await pumpFrames(tester);

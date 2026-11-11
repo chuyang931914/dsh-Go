@@ -491,6 +491,22 @@ flutter test > /tmp/full_test.log 2>&1                # 全量，目标 0 失败
 
 
 
+### 12）聊天正文长按直接选择（2026-11-11）
+
+需求：聊天页选择文字原先必须「长按 → 菜单 → 选择文字 → 弹出全选面板」，多一步跳转；改为像系统聊天一样，长按正文直接进入选择。
+
+| 文件 | 改动 |
+| --- | --- |
+| `app/lib/ui/chat/widgets/assistant_message.dart` | 非流式回复 `MarkdownBody(selectable: !streaming)`——长按正文直接起选择手柄与系统工具栏（复制/全选）；菜单去掉「选择文字」项；没有操作行的中间回复补一个右下角 ⋯ 入口打开菜单 |
+| `app/test/chat/message_actions_test.dart` | 菜单用例改为点 ⋯ 打开；新增「长按正文进入选字、不弹菜单」用例 |
+| `app/test/chat/message_flow_test.dart` | 引用/重新回答等用例改走 ⋯；菜单项列表去掉「选择文字」 |
+
+效果：长按回复正文 → 直接选字 → 工具栏复制，不再跳弹层；消息菜单（复制/引用/分享/重新回答/分叉）走 ⋯（一轮最后一条本来就有 ⋯；中间回复新增 ⋯）。
+
+未改：用户消息（`UserBubble`）仍走菜单里的「选择文字」弹层；如需一致再单独处理。
+
+验证（手机端）：`dart analyze` = 0 error / 0 warning / 23 info；`flutter test test/chat` 除金色图（跨机字体漂移，Rule 31）外 0 失败。**电脑侧需重生成受影响的聊天金色图**（新增 ⋯ 行可能影响 `chat_components`/`conversation` 等基准）。
+
 ---
 
 ## 八、Git 与双仓库同步
@@ -587,6 +603,8 @@ git push origin phone   # 手机工作分支
 32. **GitHub 网络与镜像（2026-11-11 起）**：Gitee 为唯一事实源，GitHub 由 Gitee Push 镜像自动同步同名分支（`main`/`phone`），镜像最短间隔约 5 分钟；GitHub 默认分支已切到 `main`，`mogai` 已删除，Actions 已禁用。**手机端/电脑端只需推 Gitee**。镜像万一失效：手动兜底 `git push github HEAD:main`（GitHub 直连不稳时备用代理 `https://gitclone.com/github.com/...`、`https://gh-proxy.com/https://github.com/...` 实测可达）。
 
 33. **【重要】交接文档改完必须先推**（2026-11-11 用户指令）：HANDOFF.md 是双端的「通话渠道」。任何一次更新完成后，先 `commit + 推 Gitee`，**推完才算更新完成**，然后再干别的活；禁止带着未推送的文档改动继续工作，否则另一端读到的还是旧文档。
+
+34. **聊天回复正文的长按已是选字**（2026-11-11）：助手回复 `selectable: !streaming`，长按正文 = 选择（系统工具栏复制/全选），消息菜单走 ⋯；不要再把 `selectable` 改回 false 或把选择塞回弹层。用户消息（`UserBubble`）暂仍走菜单里的「选择文字」弹层。
 
 ---
 
