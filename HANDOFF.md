@@ -691,7 +691,7 @@ git push origin phone   # 手机工作分支
 32. **GitHub 网络与镜像（2026-11-11 起）**：Gitee 为唯一事实源，GitHub 由 Gitee Push 镜像自动同步同名分支（`main`/`phone`），镜像最短间隔约 5 分钟；GitHub 默认分支已切到 `main`，`mogai` 已删除，Actions 已禁用。**手机端/电脑端只需推 Gitee**。镜像万一失效：手动兜底 `git push github HEAD:main`（GitHub 直连不稳时备用代理 `https://gitclone.com/github.com/...`、`https://gh-proxy.com/https://github.com/...` 实测可达）。
 
 33. **【重要】交接文档改完必须先推**（2026-11-11 用户指令）：HANDOFF.md 是双端的「通话渠道」。任何一次更新完成后，先 `commit + 推 Gitee`，**推完才算更新完成**，然后再干别的活；禁止带着未推送的文档改动继续工作，否则另一端读到的还是旧文档。
-34. **PowerShell 里调 WSL 不要用双引号 + `$(...)` / 内嵌双引号**：`wsl.exe -d Ubuntu24 -- bash -lc "echo BRANCH=$(git rev-parse ...)"` 会被 **PowerShell 先展开** `$(...)`（报 `not a git repository`），内嵌 `grep -E "..."` 的双引号也会被吞（报 `SHA256:: command not found`）。正确做法：外层用单引号且内部全用单引号，或**写成 `.sh` 文件**放 `C:\Users\Administrator\AppData\Local\Temp\`，再 `wsl.exe -d Ubuntu24 -- bash /mnt/c/.../x.sh`。
+34. **PowerShell 里调 WSL 不要用双引号 + `$(...)` / 内嵌双引号**：`wsl.exe -d Ubuntu24 -- bash -lc "echo BRANCH=$(git rev-parse ...)"` 会被 **PowerShell 先展开** `$(...)`（报 `not a git repository`），内嵌 `grep -E "..."` 的双引号也会被吞（报 `SHA256:: command not found`）。正确做法：外层用单引号且内部全用单引号，或**写成 `.sh` 文件**放 `C:\Users\Administrator\AppData\Local\Temp\`，再 `wsl.exe -d Ubuntu24 -- bash /mnt/c/.../x.sh`。PowerShell 直接调 `lark-cli` 时，`@./file` 也必须写成 `'@./file'`，否则 `@` 会被 PowerShell 当作语法符号并报 `UnrecognizedToken`（2026-11-12 已踩坑）。
 35. **`apksigner` / `keytool` 直接调会 `java: not found`**：WSL 里 JDK 在 `/root/dev/jdk-17`，未 `source tooling/env.sh` 时不在 PATH。验签写成 `source /root/dsh-Go/tooling/env.sh && apksigner ...`，或用绝对路径 `/root/dev/jdk-17/bin/keytool`。
 
 36. **聊天回复正文的长按已是选字**（2026-11-11）：助手回复 `selectable: !streaming`，长按正文 = 选择（系统工具栏复制/全选），消息菜单走 ⋯；不要再把 `selectable` 改回 false 或把选择塞回弹层。用户消息（`UserBubble`）暂仍走菜单里的「选择文字」弹层。
