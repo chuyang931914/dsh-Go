@@ -1,5 +1,21 @@
 # 更新日志 · Changelog
 
+## 1.0.17 · 2026-11-11
+
+### 中文
+
+- **长按选字菜单收干净。** 顶层只留复制、全选、翻译；分享、朗读、问AI收进「⋯」。AI搜索、浏览器搜索、爱奇艺搜索、快速搜索、搜视频、重复翻译和「问问 DeepSeek」不再出现，系统翻译也不再单独占一项。
+- **问AI直接填输入框。** 选中的文字会出现在输入框并聚焦，你自己改完再发，不会自动提问。
+- **聊天页不再显示小宠物。** 悬浮窗和设置里的宠物不受影响。
+- **左右滑动不再误触。** 聊天页中间区域不再拉开抽屉或快捷面板，只有屏幕左右边缘 24dp 内起手才生效。
+
+### English
+
+- **The long-press selection menu is trimmed.** The top level keeps Copy, Select all and Translate; Share, Read aloud and Ask AI move under “⋯”. AI search, browser search, iQiyi search, quick search, video search, duplicate translate items and “Ask DeepSeek” no longer appear, and the system translate item is no longer a separate entry.
+- **Ask AI fills the composer.** The selected text lands in the input box, focused, for you to edit and send; it never sends on its own.
+- **No more pet on the chat page.** The floating pet and the pet settings are unchanged.
+- **No more accidental horizontal swipes.** The middle of the chat no longer opens the drawer or quick panel; only a gesture starting within 24dp of either screen edge does.
+
 每个版本先中文、后英文。发版时把对应版本的正文（不含版本标题）作为 Release 正文，见 `docs/release.md`。
 
 ## 1.0.15 · 2026-11-10
