@@ -3,6 +3,11 @@
 > 追加式流水账：每次构建、装机、真机反馈、重要决策后加一条（最新在上）。
 > 这里记“发生了什么”；当前状态看 [`PROJECT_STATE.md`](PROJECT_STATE.md)，完整实现看 [`HANDOFF.md`](HANDOFF.md)。
 
+## 2026-11-12 07:46 · 1.0.19 私聊通知完成
+
+- 以 user 身份发至「城南」当前单聊 `oc_ef1b285c3aa75900a8d4221654d58b20`，message_id `om_x100b607baa11c4a4c0ebfee8b0c0f2a`；附原 APK 链接与时间戳/全局切换、8–40dp 边缘手势复验清单。
+- 旧 chat_id `oc_5f1bf17fa051caa90b02dcb06d597b7a` 返回 `invalid receive_id`；通过 `im +chat-list --as user --types p2p` 重新定位。PowerShell `@file` 与旧会话 ID 两个坑已写入 HANDOFF Rules 34/37。
+
 ## 2026-11-12 07:33 · 1.0.19 飞书分发恢复
 
 - 飞书授权恢复；APK 已覆盖原 file token `RzcFbpFCyokpPqxVIq5cUI1QnuR`，版本 `7707061086150757632`，链接不变。

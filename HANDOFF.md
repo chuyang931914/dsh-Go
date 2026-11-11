@@ -45,6 +45,8 @@
 | Windows 访问构建源的 UNC 路径 | `\\wsl.localhost\Ubuntu24\root\dsh-Go\`（可直接用编辑器读写） |
 | 交接文档（飞书云空间） | https://my.feishu.cn/file/OJSGbqo2IofCYQxm8uycjTGAn7d （`HANDOFF-dsh-Go.md`，每次更新后覆盖上传） |
 
+**分发 `11120055`（2026-11-12 07:46）**：APK `1.0.19+11120055` 已覆盖飞书原链接，并以 user 身份发到「城南」当前单聊 `oc_ef1b285c3aa75900a8d4221654d58b20`（message_id `om_x100b607baa11c4a4c0ebfee8b0c0f2a`），附时间戳/全局切换与 8–40dp 边缘手势复验清单。
+
 **最近一次分发（2026-11-11 01:26）**：APK `11110113` + 本交接文档已上传飞书云空间，并已发到「城南」私聊（message_id `om_x100b600175a05ca0dd7af731446ceea`）。
 
 **分发 `11111711`（2026-11-11 17:28）**：已发到「城南」私聊（message_id `om_x100b60771c11c8a4dfb095d0331603d`）。走云空间链接（APK 196MB > 飞书 IM 100MB 上限），提示覆盖安装 + 验 `firstInstallTime`。
@@ -695,6 +697,8 @@ git push origin phone   # 手机工作分支
 35. **`apksigner` / `keytool` 直接调会 `java: not found`**：WSL 里 JDK 在 `/root/dev/jdk-17`，未 `source tooling/env.sh` 时不在 PATH。验签写成 `source /root/dsh-Go/tooling/env.sh && apksigner ...`，或用绝对路径 `/root/dev/jdk-17/bin/keytool`。
 
 36. **聊天回复正文的长按已是选字**（2026-11-11）：助手回复 `selectable: !streaming`，长按正文 = 选择（系统工具栏复制/全选），消息菜单走 ⋯；不要再把 `selectable` 改回 false 或把选择塞回弹层。用户消息（`UserBubble`）暂仍走菜单里的「选择文字」弹层。
+
+37. **飞书重新授权后不要复用旧私聊 `chat_id`**（2026-11-12）：旧「城南」会话 `oc_5f1bf17fa051caa90b02dcb06d597b7a` 在重新授权后返回 `230001 / invalid receive_id`。先用 `lark-cli im +chat-list --as user --types p2p` 查当前账号可见的单聊，确认名称与 `p2p_target_id`，再用 `+messages-send --user-id <p2p_target_id>` 发送；不要连续拿旧 ID 重试，也不要擅自切换 bot。
 
 ---
 
