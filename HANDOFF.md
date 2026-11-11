@@ -47,7 +47,27 @@
 
 **分发 `11111558`（2026-11-11 16:12）**：已发到「城南」私聊（message_id `om_x100b607676fafca0df46c6bacd080bd`）。**注意：走的是云空间链接，不是文件附件**——飞书 IM 单文件消息上限 100MB，本 APK 196.7MB 被拒；以后大包一律发链接。
 
-**本次重建（2026-11-11 16:03）**：APK `11111558`（`dsh-go 1.0.15`），源码 `eb94753`，206.2 MB，SHA-256 `8951fdd97954395d16926f71096faeabbf4e7774facdf0f4bf487f237916d7b1`；验签证书 SHA-256 `fb462eb1…3c2f`（与 keystore 一致）。含手机端新功能「正文长按直接选字 + ⋯ 菜单 + 中间回复 ⋯ 入口」，并含本轮 40px 抽动修复。
+**本次重建（2026-11-11 17:11）**：APK `11111711`（`dsh-go 1.0.15`），源码 `0583f58`（main ← phone 快进合并，`6ccfbd7` + `0583f58` 两个手机端 commit），206.2 MB，SHA-256 `8a5ffc763a24ae49f8fb42428e22a42b2e12f36af99e7b02122c86ad6f563e9d`；验签证书 SHA-256 `fb462eb1…3c2f`（与 keystore 一致）。
+
+**电脑端构建验证（2026-11-11 17:08 前）**：
+- `dart analyze app` = 0 error / 0 warning / （未全量跑，只跑过 phone 接手的四线）
+- `test/chat` = **1961 通过 / 0 失败**（含 turn_settle 7/7、message_actions、message_flow、goldens）
+- GitHub 镜像 main/phone 均在 `0583f58`，0 差异（`git rev-list --left-right --count origin/main...github/main` = `0 0`）
+
+**手机端接手验证（2026-11-11，phone 分支 `0583f58`）**：
+- `dart analyze app` = 0 error / 0 warning / 23 info
+- `turn_settle_test` 7/7，`message_actions + message_flow` 28/28
+- 手机端环境：`/root/workspace/dsh-Go`（软链 `/root/dsh-Go`），Flutter 3.47.7 linux-arm64；**仍不构建 APK**（只负责验证）
+
+**Gitee 合并历史**：phone 分支自 `c07ad5c`（电脑端最后一次 docs）增加两个 commit → `0583f58`。main 直接 `--ff-only` 合并（merge-base `c07ad5c`），无冲突。main 与 phone 现在 **同一个 HEAD** `0583f58`。
+
+**版本号编码**：`11111711` = 2026-11-11 17:11 (UTC+8)，由 `tooling/build-apk.sh` 传入 `--build-number`，高于上一版 `11111558`（15:58）。APK 可覆盖安装。
+
+**首次覆盖安装验证（待执行）**：装完查 `firstInstallTime` 是否与旧版一致、应用内数据还在。命令：
+```bash
+adb shell dumpsys package io.github.ccch1mneyyy.dsh_app | grep -E "firstInstallTime|lastUpdateTime"
+```
+或在手机设置 → 应用 → 存储里确认数据未被清空。
 
 **40px 抽动修复（`eb94753`）**：手机端给中间回复加独立 ⋯ 按钮（`IconButton` + `VisualDensity.compact` = 40px）后，**轮尾那条回复**在结算前也会出现 ⋯，结算后 ⋯ 让位给操作行 → 完成那一帧凭空少 40px，正文被顶一下（`turn_settle_test` 的 `The handoff must not insert a header-sized jump` 就是拦这个）。修法：`AssistantMessage` 增加 `isTurnTail`，由 `chat_list` 传入「当前轮最后一条助手正文」，轮尾不再补独立 ⋯（它的 ⋯ 在操作行里）。**没有改任何断言**（断言是设计约束）。
 
