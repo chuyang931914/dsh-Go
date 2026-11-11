@@ -609,7 +609,7 @@ git push origin phone   # 手机工作分支
 34. **PowerShell 里调 WSL 不要用双引号 + `$(...)` / 内嵌双引号**：`wsl.exe -d Ubuntu24 -- bash -lc "echo BRANCH=$(git rev-parse ...)"` 会被 **PowerShell 先展开** `$(...)`（报 `not a git repository`），内嵌 `grep -E "..."` 的双引号也会被吞（报 `SHA256:: command not found`）。正确做法：外层用单引号且内部全用单引号，或**写成 `.sh` 文件**放 `C:\Users\Administrator\AppData\Local\Temp\`，再 `wsl.exe -d Ubuntu24 -- bash /mnt/c/.../x.sh`。
 35. **`apksigner` / `keytool` 直接调会 `java: not found`**：WSL 里 JDK 在 `/root/dev/jdk-17`，未 `source tooling/env.sh` 时不在 PATH。验签写成 `source /root/dsh-Go/tooling/env.sh && apksigner ...`，或用绝对路径 `/root/dev/jdk-17/bin/keytool`。
 
-34. **聊天回复正文的长按已是选字**（2026-11-11）：助手回复 `selectable: !streaming`，长按正文 = 选择（系统工具栏复制/全选），消息菜单走 ⋯；不要再把 `selectable` 改回 false 或把选择塞回弹层。用户消息（`UserBubble`）暂仍走菜单里的「选择文字」弹层。
+36. **聊天回复正文的长按已是选字**（2026-11-11）：助手回复 `selectable: !streaming`，长按正文 = 选择（系统工具栏复制/全选），消息菜单走 ⋯；不要再把 `selectable` 改回 false 或把选择塞回弹层。用户消息（`UserBubble`）暂仍走菜单里的「选择文字」弹层。
 
 ---
 
