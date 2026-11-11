@@ -127,11 +127,11 @@ export PATH="/root/dev/jdk-17/bin:/root/dev/flutter/bin:/root/dev/android-sdk/cm
 
 | 线 | 事实 | 状态 |
 | --- | --- | --- |
-| 仓库 | `main` = `5ec9b88`；`phone` 已含 1.0.18 修复与记忆文档（以 `git log -1` 为准） | ✅ |
-| 代码 | HEAD `92f683a`；构建提交同 HEAD | ✅ |
+| 仓库 | `main` = `phone` = `f088aa9`（1.0.18 收口 + 开机记忆） | ✅ |
+| 代码 | HEAD `f088aa9`；APK 构建提交 `92f683a`（`11112142`） | ✅ |
 | APK | `11112142`（1.0.18），206.2 MB，sha256 `52f0cdc0…b770`，证书 `fb462eb1…3c2f` | ✅ |
 | 实机 | 已装 `1.0.18+11112142`；覆盖安装数据保留，翻译/朗读两项复验通过 | ✅ |
-| 文档 | 本文件为权威；D 盘/飞书需随本次 1.0.18 收口覆盖 | ⚠️ 电脑待同步 |
+| 文档 | 本文件为权威；D 盘/飞书已随 `f088aa9` 覆盖 | ✅ |
 
 手机端环境与验证（本机）：
 - 仓库 `/root/workspace/dsh-Go`（`/root/dsh-Go` 软链）；Flutter 3.47.7 linux-arm64（`/root/dev/flutter`）；Dart 3.13.5。
