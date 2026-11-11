@@ -544,7 +544,7 @@ git push origin phone   # 手机工作分支
 - **分工**：电脑侧 = WSL 构建 / 全量测试 / APK 构建分发 / `D:\HANDOFF.md` 与飞书同步；手机端 = `dart analyze` / 非金色图测试 / 交叉复跑 / 文档维护 / 装机校验（见 3.4、Rule 30）。
 - **动手前先拉最新**：任何一方改代码/文档前先 `git fetch origin && git pull`，禁止在旧提交上开工。
 - **分支纪律**：手机端新改动一律走 `phone`（8.3）；电脑侧产出合并进 `main` 后，由**合并者**负责推完 Gitee `main`，别留半截；GitHub 交给镜像。
-- **HANDOFF.md 是双方信使**：谁改谁立即 commit + 推送，防双写冲突；合并时规则编号、清单勾选以最新事实为准，发现文档与代码不一致先修文档。
+- **HANDOFF.md 是双方信使（通话渠道）**：谁改谁**先 commit + 推 Gitee**，推完才算更新完成，再干别的活（Rule 33）；禁止带着未推送的文档改动继续工作。合并时规则编号、清单勾选以最新事实为准，发现文档与代码不一致先修文档。
 - **GitHub 无需手动推**：由 Gitee Push 镜像自动同步；镜像失效时才手动兜底（Rule 32）。
 - **进度同步**：电脑侧每批完成即推 Gitee；手机侧复跑结论写回 3.4 / 9.2 的基线行。两边都不在对方未推送的工作上开工。
 
@@ -585,6 +585,8 @@ git push origin phone   # 手机工作分支
 30. **手机端（proot aarch64）不能构建 APK，也不要尝试**：① 引擎不发布 linux-arm64 的 Android 宿主构建工具（gen_snapshot 等只有 linux-x64/darwin/windows，release 构建必失败）；② Google 官方无 linux-arm64 版 NDK（项目 `ndkVersion = flutter.ndkVersion` 需要 NDK）；③ `runtime/out` 不随 git 仓库分发，手机克隆里没有（重建风险高，见 Rule 2）；④ keystore 只在电脑 `D:\Android\keystore`。APK 构建与分发继续走电脑 WSL + 飞书；手机端最多做装机后的校验（sha256 / apksigner 指纹 / aapt 权限检查）。
 31. **手机端金色图与本机基线必然漂移，禁止在手机端 `--update-goldens` 并提交 PNG**：字体渲染跨机器有差异（同 Rule 18 的问题），手机端验收只看非金色图测试结果 + `dart analyze` 口径；金色图重建只允许在电脑侧批次 4 做。
 32. **GitHub 网络与镜像（2026-11-11 起）**：Gitee 为唯一事实源，GitHub 由 Gitee Push 镜像自动同步同名分支（`main`/`phone`），镜像最短间隔约 5 分钟；GitHub 默认分支已切到 `main`，`mogai` 已删除，Actions 已禁用。**手机端/电脑端只需推 Gitee**。镜像万一失效：手动兜底 `git push github HEAD:main`（GitHub 直连不稳时备用代理 `https://gitclone.com/github.com/...`、`https://gh-proxy.com/https://github.com/...` 实测可达）。
+
+33. **【重要】交接文档改完必须先推**（2026-11-11 用户指令）：HANDOFF.md 是双端的「通话渠道」。任何一次更新完成后，先 `commit + 推 Gitee`，**推完才算更新完成**，然后再干别的活；禁止带着未推送的文档改动继续工作，否则另一端读到的还是旧文档。
 
 ---
 
