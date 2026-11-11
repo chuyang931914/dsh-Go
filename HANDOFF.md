@@ -35,7 +35,10 @@
 | APK 备份（GitHub Release） | https://github.com/chuyang931914/dsh-Go/releases/download/v1.0.15-mogai/dsh-go-1.0.15-mogai-arm64.apk |
 | 构建脚本原始输出 | WSL 内 `/root/dsh-Go/app/build/app/outputs/flutter-apk/app-arm64-release.apk` |
 | 签名文件 | `D:\Android\keystore\dsh-go-release.jks` |
-| 签名备份 | `D:\Android\keystore\backup\`（**务必再备份到网盘/U盘，丢了就无法覆盖升级，只能卸载重装**） |
+| 签名备份（本地） | `D:\Android\keystore\backup\`：`dsh-go-release-backup.jks`、`dsh-go-keystore-20261111.zip`（含 jks + key.properties + 恢复说明 + SHA256SUMS） |
+| 签名备份（第二本地） | `D:\备份\keystore-20261111\`（同 zip + 裸 jks，防误删 `D:\Android` 时一并丢失） |
+| **签名备份（飞书云空间）** | https://my.feishu.cn/file/HPwebhSADomeoax2hQpcdc9YnXg （`dsh-go-keystore-20261111.zip`，4335 字节，2026-11-11 上传） |
+| 签名备份（U 盘） | **待补**：插入 U 盘后拷贝 `dsh-go-keystore-20261111.zip`（第四份介质） |
 | 构建源（唯一有效副本） | WSL `Ubuntu24` 内 `/root/dsh-Go` |
 | Windows 访问构建源的 UNC 路径 | `\\wsl.localhost\Ubuntu24\root\dsh-Go\`（可直接用编辑器读写） |
 | 交接文档（飞书云空间） | https://my.feishu.cn/file/OJSGbqo2IofCYQxm8uycjTGAn7d （`HANDOFF-dsh-Go.md`，每次更新后覆盖上传） |
@@ -587,6 +590,8 @@ git push origin phone   # 手机工作分支
 32. **GitHub 网络与镜像（2026-11-11 起）**：Gitee 为唯一事实源，GitHub 由 Gitee Push 镜像自动同步同名分支（`main`/`phone`），镜像最短间隔约 5 分钟；GitHub 默认分支已切到 `main`，`mogai` 已删除，Actions 已禁用。**手机端/电脑端只需推 Gitee**。镜像万一失效：手动兜底 `git push github HEAD:main`（GitHub 直连不稳时备用代理 `https://gitclone.com/github.com/...`、`https://gh-proxy.com/https://github.com/...` 实测可达）。
 
 33. **【重要】交接文档改完必须先推**（2026-11-11 用户指令）：HANDOFF.md 是双端的「通话渠道」。任何一次更新完成后，先 `commit + 推 Gitee`，**推完才算更新完成**，然后再干别的活；禁止带着未推送的文档改动继续工作，否则另一端读到的还是旧文档。
+34. **PowerShell 里调 WSL 不要用双引号 + `$(...)` / 内嵌双引号**：`wsl.exe -d Ubuntu24 -- bash -lc "echo BRANCH=$(git rev-parse ...)"` 会被 **PowerShell 先展开** `$(...)`（报 `not a git repository`），内嵌 `grep -E "..."` 的双引号也会被吞（报 `SHA256:: command not found`）。正确做法：外层用单引号且内部全用单引号，或**写成 `.sh` 文件**放 `C:\Users\Administrator\AppData\Local\Temp\`，再 `wsl.exe -d Ubuntu24 -- bash /mnt/c/.../x.sh`。
+35. **`apksigner` / `keytool` 直接调会 `java: not found`**：WSL 里 JDK 在 `/root/dev/jdk-17`，未 `source tooling/env.sh` 时不在 PATH。验签写成 `source /root/dsh-Go/tooling/env.sh && apksigner ...`，或用绝对路径 `/root/dev/jdk-17/bin/keytool`。
 
 ---
 
@@ -617,7 +622,7 @@ git push origin phone   # 手机工作分支
 
 ## 十二、下一步可推进方向
 
-1. 备份 keystore 到网盘 + U 盘各一份（最高优先级，丢失不可逆）。
+1. ~~备份 keystore 到网盘 + U 盘各一份（最高优先级，丢失不可逆）~~ **部分完成（2026-11-11）**：本地两份（`D:\Android\keystore\backup\`、`D:\备份\keystore-20261111\`）+ 飞书云空间一份（token `HPwebhSADomeoax2hQpcdc9YnXg`）；keystore 已验证：别名 `dsh-go`、证书 SHA-256 `fb462eb1…`、有效期至 2054-03-28、文件 SHA-256 `e089f9c4…`。**剩余：U 盘/其他物理介质一份**（当前未检测到可移动盘）。
 2. 若要继续魔改，优先"禁用 + 去入口"，尽量不删文件，减少上游 rebase 冲突。
 3. 上游升级时：以新版本为基线重新打 4 处补丁（补丁点见第七节），保留本仓库 commit 作为参考。
 4. 重打 APK（本轮 `11110113` 已包含删除关于/隐私/sharedLinks 残留与指南修正）→ 上传飞书云空间覆盖同名文件 → 按第十一节逐条验收。后续 `7cdf795` 只删未使用 l10n 键，无 UI 可见变化，**不需要**为此重打 APK。
