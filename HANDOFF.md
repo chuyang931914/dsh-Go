@@ -534,7 +534,8 @@ git push github HEAD:mogai
 - `.git` 约 356MB（含 runtime 等二进制），**首次推送慢是正常的**
 - GitHub 直连不稳时可改用镜像域名或开启代理；Gitee 一般直连
 - Gitee 仓库名是 `dsh-go-mogai`，**不是** `dsh-Go`，别写错
-- **推送策略（2026-11-11 更新）：Gitee 为主、GitHub 为辅**。任务完成标志 = 已推 Gitee `main`；GitHub `mogai` 推不上**不算未完成**，网络好时补推 `git push github HEAD:mogai` 即可。长期方案：在 Gitee 仓库设置里配置「仓库镜像」指向 GitHub 仓库，Gitee 每次 push 后自动同步，两端都不用手动管 GitHub。
+- **推送策略（2026-11-11 更新）：Gitee 为主、GitHub 为辅**。任务完成标志 = 已推 Gitee `main`；GitHub `mogai` 推不上**不算未完成**。GitHub 当次最多重试 **3 次**，仍失败则记入待补推，**下次任何推送时必须先补上**（手机端 `dsh-push.sh` 已自动实现：欠账记录在 `/root/dev/github_backlog`，下次运行先补推再推本次，直到 GitHub 与 Gitee 一致才清零）。长期方案：在 Gitee 仓库设置里配置「仓库镜像」指向 GitHub 仓库，Gitee 每次 push 后自动同步，两端都不用手动管 GitHub。
+- **GitHub 待补推状态**：无（2026-11-11 已同步至最新）。
 
 ### 8.3 手机端分支约定（2026-11-11）
 
@@ -587,7 +588,7 @@ git push github HEAD:mogai
 
 30. **手机端（proot aarch64）不能构建 APK，也不要尝试**：① 引擎不发布 linux-arm64 的 Android 宿主构建工具（gen_snapshot 等只有 linux-x64/darwin/windows，release 构建必失败）；② Google 官方无 linux-arm64 版 NDK（项目 `ndkVersion = flutter.ndkVersion` 需要 NDK）；③ `runtime/out` 不随 git 仓库分发，手机克隆里没有（重建风险高，见 Rule 2）；④ keystore 只在电脑 `D:\Android\keystore`。APK 构建与分发继续走电脑 WSL + 飞书；手机端最多做装机后的校验（sha256 / apksigner 指纹 / aapt 权限检查）。
 31. **手机端金色图与本机基线必然漂移，禁止在手机端 `--update-goldens` 并提交 PNG**：字体渲染跨机器有差异（同 Rule 18 的问题），手机端验收只看非金色图测试结果 + `dart analyze` 口径；金色图重建只允许在电脑侧批次 4 做。
-32. **手机端 GitHub 直连时通时断**：偶发 `Failed to connect to github.com port 443`（60 秒+超时）。推送失败就重试几次；备用代理 `https://gitclone.com/github.com/...`、`https://gh-proxy.com/https://github.com/...` 实测可达（2026-11-11）。按 8.2「Gitee 为主」策略：手机端完成标志 = 推 Gitee，GitHub 推不上不阻塞，由 Gitee 仓库镜像或电脑侧补推。
+32. **手机端 GitHub 直连时通时断**：偶发 `Failed to connect to github.com port 443`（60 秒+超时）。推送失败就重试几次；备用代理 `https://gitclone.com/github.com/...`、`https://gh-proxy.com/https://github.com/...` 实测可达（2026-11-11）。按 8.2「Gitee 为主」策略：手机端完成标志 = 推 Gitee；GitHub 当次最多 3 次，仍失败记入 `/root/dev/github_backlog`，**下次推送自动补上**，直到 GitHub 与 Gitee 一致才算清零；也可由 Gitee 仓库镜像或电脑侧补推。
 
 ---
 
