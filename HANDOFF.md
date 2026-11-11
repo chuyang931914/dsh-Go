@@ -85,11 +85,11 @@ export PATH="/root/dev/jdk-17/bin:/root/dev/flutter/bin:/root/dev/android-sdk/cm
 
 ### 3.4 手机端辅助环境（2026-11-11，Android 手机 proot Ubuntu 24.04，aarch64）
 
-- **分工**：9.3 五批清账在电脑（WSL）侧执行；手机端只做 `dart analyze` / `flutter test`（非金色图判定）/ 文档维护 / 独立分支提交。**手机端不构建、不分发 APK**（四个硬阻断见 Rule 26）。
+- **分工**：9.3 五批清账已于 2026-11-11 由电脑（WSL）侧完成（新基线见 9.2）；手机端只做 `dart analyze` / `flutter test`（非金色图判定）/ 文档维护 / 独立分支提交。**手机端不构建、不分发 APK**（四个硬阻断见 Rule 30）。
 - 布局：`/root/dsh-Go`（工作分支 `phone`，见 8.3）、`/root/dev/flutter`（3.47.7，linux-arm64；官方无 arm64 预编译包，用 Gitee 镜像 `gitee.com/mirrors/Flutter` 按 tag `3.47.7` 浅克隆自举）、`/root/dev/dsh-env.sh`（测试环境变量）、`/root/dev/dsh-push.sh`（双推脚本）。
 - 使用：`source /root/dev/dsh-env.sh` 后 `cd /root/dsh-Go/app` 即可 analyze/test。env 内 `DSH_TEST_FONT_DIR=/usr/share/fonts/opentype/noto`（noble 的 `fonts-noto-cjk` 装在 opentype 下；Light 字重要另装 `fonts-noto-cjk-extra`，两个包都要）。
 - 凭据：`~/.git-credentials`（chmod 600，`credential.helper=store`）已存 Gitee 与 GitHub 令牌，双推可用。
-- 基线（2026-11-11 验证）：`dart analyze` = 0 error / 0 warning / 23 info；`flutter test test/settings test/star test/ui_config` = 418 通过 / 55 失败（失败全为金色图像素漂移，见 Rule 27）。
+- 基线（2026-11-11）：电脑侧五批清账后，回归面 `test/settings test/star test/ui_config` = 473 通过 / 0 跳过 / 0 失败，全量 `flutter test` = 10845 通过 / ~288 跳过 / 0 失败；`dart analyze` = 0 error / 0 warning / 23 info。手机端复跑时金色图会因字体渲染不同而像素漂移（见 Rule 31），只验收 analyze 与非金色图结果。
 
 ---
 
@@ -574,9 +574,9 @@ git push github HEAD:mogai
 28. **`ensureVisible` 的 `alignment` 参数决定目标位置**：`Scrollable.ensureVisible(element, alignment: 0.5)` 居中目标元素，默认 `alignment: 0.0`（顶部对齐）可能把目标上方的不透明组件（如 AppBar）盖住，导致 `tester.drag()` 落空。`phone_floating_bar_test.dart` 里 Slider 被顶栏 89px 盖住就是这个坑，改成 `alignment: 0.5` 后 pass。
 29. **WSL 里 pip 装包遇到 "externally-managed-environment"**：Ubuntu 24 的 PEP 668 限制，用 `pip install --break-system-packages <pkg>` 绕过（别用虚拟环境，测试工具链跑在 WSL root 用户下）。
 
-26. **手机端（proot aarch64）不能构建 APK，也不要尝试**：① 引擎不发布 linux-arm64 的 Android 宿主构建工具（gen_snapshot 等只有 linux-x64/darwin/windows，release 构建必失败）；② Google 官方无 linux-arm64 版 NDK（项目 `ndkVersion = flutter.ndkVersion` 需要 NDK）；③ `runtime/out` 不随 git 仓库分发，手机克隆里没有（重建风险高，见 Rule 2）；④ keystore 只在电脑 `D:\Android\keystore`。APK 构建与分发继续走电脑 WSL + 飞书；手机端最多做装机后的校验（sha256 / apksigner 指纹 / aapt 权限检查）。
-27. **手机端金色图与本机基线必然漂移，禁止在手机端 `--update-goldens` 并提交 PNG**：字体渲染跨机器有差异（同 Rule 18 的问题），手机端验收只看非金色图测试结果 + `dart analyze` 口径；金色图重建只允许在电脑侧批次 4 做。
-28. **手机端 GitHub 直连时通时断**：偶发 `Failed to connect to github.com port 443`（60 秒+超时）。推送失败就重试几次；备用代理 `https://gitclone.com/github.com/...`、`https://gh-proxy.com/https://github.com/...` 实测可达（2026-11-11）。
+30. **手机端（proot aarch64）不能构建 APK，也不要尝试**：① 引擎不发布 linux-arm64 的 Android 宿主构建工具（gen_snapshot 等只有 linux-x64/darwin/windows，release 构建必失败）；② Google 官方无 linux-arm64 版 NDK（项目 `ndkVersion = flutter.ndkVersion` 需要 NDK）；③ `runtime/out` 不随 git 仓库分发，手机克隆里没有（重建风险高，见 Rule 2）；④ keystore 只在电脑 `D:\Android\keystore`。APK 构建与分发继续走电脑 WSL + 飞书；手机端最多做装机后的校验（sha256 / apksigner 指纹 / aapt 权限检查）。
+31. **手机端金色图与本机基线必然漂移，禁止在手机端 `--update-goldens` 并提交 PNG**：字体渲染跨机器有差异（同 Rule 18 的问题），手机端验收只看非金色图测试结果 + `dart analyze` 口径；金色图重建只允许在电脑侧批次 4 做。
+32. **手机端 GitHub 直连时通时断**：偶发 `Failed to connect to github.com port 443`（60 秒+超时）。推送失败就重试几次；备用代理 `https://gitclone.com/github.com/...`、`https://gh-proxy.com/https://github.com/...` 实测可达（2026-11-11）。
 
 ---
 
