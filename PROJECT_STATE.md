@@ -1,6 +1,6 @@
 # dsh-Go 项目记忆（新对话先读这一页）
 
-> 最后更新：2026-11-12 01:15（Asia/Shanghai）
+> 最后更新：2026-11-12 07:33（Asia/Shanghai）
 >
 > 这一页是给每个新对话的“开机记忆”：项目是什么、当前状态、双端分工、必须遵守的规则、正在做的事和下一步。
 > 详细实现与历史看 [`HANDOFF.md`](HANDOFF.md)；长期用户指令与决策看 [`project_memory.md`](project_memory.md)。
@@ -17,7 +17,7 @@
 
 - 仓库：`main` 已合并 `phone 3bf2914`，电脑侧金色图/测试适配为 `81bcd98`；`phone = 3bf2914`。
 - 实机：仍是 **`1.0.18+11112142`**；1.0.19 已出包，待装机验时间戳/全局切换与 8–40dp 手感。
-- 1.0.19 APK：`11120055`，证书 `fb462eb1…3c2f`，sha256 `0db5bb9a…ba4c`，在 `D:\Android\apk\`；电脑重建 44 张金色图，`test/chat + test/shell` 2184 全通过。飞书令牌过期，暂未覆盖云端。
+- 1.0.19 APK：`11120055`，证书 `fb462eb1…3c2f`，sha256 `0db5bb9a…ba4c`，在 `D:\Android\apk\`；电脑重建 44 张金色图，`test/chat + test/shell` 2184 全通过。APK 与 HANDOFF 已覆盖飞书原链接。
 - 1.0.17 已交付：长按菜单裁剪（复制/全选/翻译 + ⋯ 分享/朗读/问AI）、问AI填入输入框、聊天页宠物关闭、左右滑只保留边缘 24dp、系统翻译。
 - 1.0.17 真机反馈两个问题：翻译跳到了 vivo **浏览器**、朗读语速太快；菜单/问AI/宠物/滑动手势三项未报问题。
 - 1.0.18 已收口：`SelectionPlugin.kt` 优先 `com.vivo.translator`、排除浏览器；朗读 `rate: 0.8, pitch: 1.0`；真机两项复验通过。
@@ -56,7 +56,7 @@
 
 ## 6. 当前待办（按顺序）
 
-1. **1.0.19 待真机**：安装 `11120055`，验时间戳显示/全局切换与 8–40dp 边缘手感；飞书授权恢复后覆盖 APK 与 HANDOFF。新问题继续追加 [`BACKLOG.md`](BACKLOG.md)。
+1. **1.0.19 待真机**：从飞书原链接安装 `11120055`，验时间戳显示/全局切换与 8–40dp 边缘手感。新问题继续追加 [`BACKLOG.md`](BACKLOG.md)。
 2. **Live2D 聊天页宠物**：用户在确认素材/绑定能否做完；能做完做实时交互，做不完再议，未排期（见 `BACKLOG.md`）。
 3. 安全项（令牌与 keystore 密码复用）用户已决定暂缓，不主动提。
 4. 新对话可直接接手，不用重复 1.0.18 验收。
@@ -89,7 +89,7 @@ DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 - 进度日志：`PROGRESS.md`
 - 长期记忆：`project_memory.md`
 - 安装/覆盖验证：`/sdcard/Download/DSH-Go/` 下的反馈与标记文件
-- APK 下载（飞书）：`https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR`（当前仍为 1.0.18；1.0.19 待授权后覆盖）
+- APK 下载（飞书）：`https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR`（当前 `1.0.19+11120055`）
 
 ## 9. 维护这一页
 

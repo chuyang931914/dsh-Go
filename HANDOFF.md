@@ -4,7 +4,7 @@
 > 最后更新：2026-11-12
 > 权威副本：本文件同时放在仓库根目录 `HANDOFF.md`（随 Git 推送，跨设备可用）。
 >
-> **当前状态（2026-11-12 01:15）**：`main` 已合并 `phone 3bf2914`；电脑侧金色图/测试适配为 `81bcd98`。APK **`1.0.19+11120055`** 已构建并核验（证书 `fb462eb1…3c2f`，sha256 `0db5bb9a…ba4c`），位于 `D:\Android\apk\dsh-go-1.0.19-11120055-mogai-arm64.apk`。`dart analyze` 0 error / 0 warning；`test/chat + test/shell` 2184 全通过。实机仍是 `1.0.18+11112142`，待装 1.0.19 验时间戳/全局切换与 8–40dp 手感。**飞书用户令牌过期，本次 APK 与文档尚未覆盖飞书。**
+> **当前状态（2026-11-12 07:33）**：`main` 已合并 `phone 3bf2914`；电脑侧金色图/测试适配为 `81bcd98`。APK **`1.0.19+11120055`** 已构建、核验并覆盖飞书原链接（证书 `fb462eb1…3c2f`，sha256 `0db5bb9a…ba4c`），本地位于 `D:\Android\apk\dsh-go-1.0.19-11120055-mogai-arm64.apk`。`dart analyze` 0 error / 0 warning；`test/chat + test/shell` 2184 全通过。实机仍是 `1.0.18+11112142`，待装 1.0.19 验时间戳/全局切换与 8–40dp 手感。**飞书 APK 与本文档均已同步。**
 
 > **新对话记忆**：`/root/workspace/AGENTS.md` 是指向 [`PROJECT_STATE.md`](PROJECT_STATE.md) 的软链，新对话会自动加载；换机/重装后运行 `bash tooling/install-workspace-memory.sh`。
 
@@ -32,7 +32,7 @@
 | 产物 | 路径 |
 | --- | --- |
 | 魔改版 APK（本地） | `D:\Android\apk\dsh-go-1.0.15-mogai-arm64.apk` |
-| **APK 下载（飞书云空间，优先）** | https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR （`dsh-go-1.0.15-mogai-arm64.apk`，当前 11111558；点开 → 右上角「...」→ 下载；飞书内直接下载，不走 GitHub/Gitee） |
+| **APK 下载（飞书云空间，优先）** | https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR （`dsh-go-1.0.19-11120055-mogai-arm64.apk`，当前 11120055；点开 → 右上角「...」→ 下载；飞书内直接下载，不走 GitHub/Gitee） |
 | **源码包（飞书云空间）** | https://my.feishu.cn/file/IEqgbC77zoOqWmxo277cr8Wdnue （`dsh-go-1.0.15-mogai-src.zip`，500MB；已排除 `.git`、`app/build`、`.dart_tool`、`runtime/.work`、`runtime/.cache`，保留 `runtime/out` 可直接重建 APK） |
 | APK 备份（GitHub Release） | https://github.com/chuyang931914/dsh-Go/releases/download/v1.0.15-mogai/dsh-go-1.0.15-mogai-arm64.apk |
 | 构建脚本原始输出 | WSL 内 `/root/dsh-Go/app/build/app/outputs/flutter-apk/app-arm64-release.apk` |
@@ -131,7 +131,7 @@ export PATH="/root/dev/jdk-17/bin:/root/dev/flutter/bin:/root/dev/android-sdk/cm
 | 代码 | 产品代码 `3bf2914`；金色图/测试适配 `81bcd98` | ✅ |
 | APK | `11120055`（1.0.19），206.2 MB，sha256 `0db5bb9a…ba4c`，证书 `fb462eb1…3c2f` | ✅ |
 | 实机 | 已装 `1.0.18+11112142`；`11120055` 待装机验时间戳与边缘手感 | ⏳ 待验证 |
-| 文档 | 本文件为权威；D 盘已同步，飞书待用户令牌恢复后覆盖 | ⚠️ 飞书待同步 |
+| 文档 | 本文件为权威；D 盘/飞书已同步 | ✅ |
 
 手机端环境与验证（本机）：
 - 仓库 `/root/workspace/dsh-Go`（`/root/dsh-Go` 软链）；Flutter 3.47.7 linux-arm64（`/root/dev/flutter`）；Dart 3.13.5。
@@ -593,7 +593,7 @@ flutter test > /tmp/full_test.log 2>&1                # 全量，目标 0 失败
 - **电脑合并与金色图**：`main` 快进至 `3bf2914`；重建 44 张 chat/shell PNG。`quick_panel_golden_test` 起手从外侧 1dp 修正到有效带内 20dp；`run_info_golden_test` 删除“展开后仍读取回复屏幕坐标”的过期断言（内容增高后回复可离屏，保留展开方向与折叠回原位校验）。提交 `81bcd98`，**未改产品代码**。
 - **电脑回归**：`dart analyze` 0 error / 0 warning / 24 info（新增一条为 `message_time.dart` 冗余 import，按本轮“不改产品代码”保留）；`test/chat + test/shell` **2184 通过 / 0 失败**。
 - **构建**：`dsh-go-1.0.19-11120055-mogai-arm64.apk`，206,211,210 字节，versionCode `11120055` > `11112142`，证书 `fb462eb1…3c2f`，sha256 `0db5bb9a3c1f5f1da6a9de59350b795ac76981fcb633693f8bce82f25144ba4c`；已复制到 `D:\Android\apk\`。
-- **分发/待真机**：飞书上传遇用户令牌过期（`99991677`），宿主授权超时且 strict mode 禁止 bot 上传，旧链接暂未更新。授权恢复后覆盖既有 APK 与 HANDOFF 文件。装机验：时间戳显示、点任意时间全聊天切换、8–40dp 边缘手感（0–8dp 留给系统返回）。
+- **分发/待真机**：2026-11-12 07:33 飞书授权恢复，APK 已覆盖原 file token（版本 `7707061086150757632`），HANDOFF 同步覆盖；链接不变。装机验：时间戳显示、点任意时间全聊天切换、8–40dp 边缘手感（0–8dp 留给系统返回）。
 
 ---
 
@@ -741,7 +741,7 @@ git push origin phone   # 手机工作分支
 3. 上游升级时：以新版本为基线重新打 4 处补丁（补丁点见第七节），保留本仓库 commit 作为参考。
 4. 重打 APK（本轮 `11110113` 已包含删除关于/隐私/sharedLinks 残留与指南修正）→ 上传飞书云空间覆盖同名文件 → 按第十一节逐条验收。后续 `7cdf795` 只删未使用 l10n 键，无 UI 可见变化，**不需要**为此重打 APK。
 5. ~~全量 99 红清账~~ **✅ 已完成（2026-11-11）**：按第 9.3 节五批顺序全部清零，commit 序列 `a2889e5` → `886e699`（批次1-5）。全量 `flutter test` = 10845 passed / ~288 skipped / 0 failed；回归面 = 473 passed / 0 skipped / 0 failed。新基线已写回 9.2。
-6. **1.0.19 已出包（2026-11-12）**：APK `11120055` 在 `D:\Android\apk\`，全量 chat/shell 2184 通过；待真机验时间戳/全局切换与 8–40dp 手感。飞书待授权恢复后覆盖。其他问题继续追加到 [`BACKLOG.md`](BACKLOG.md)。
+6. **1.0.19 已出包并分发（2026-11-12）**：APK `11120055` 已覆盖飞书原链接，全量 chat/shell 2184 通过；待真机验时间戳/全局切换与 8–40dp 手感。其他问题继续追加到 [`BACKLOG.md`](BACKLOG.md)。
 
 ---
 
