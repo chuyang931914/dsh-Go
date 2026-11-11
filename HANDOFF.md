@@ -316,6 +316,26 @@ DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 
 **验收口径**：改动面验收仍以 `test/settings test/star test/ui_config` = **443 通过 / 30 跳过 / 0 失败**为准；全量 99 红是既有技术债，逐项修复需单独立项（工作量另评），不得作为本次改动未完成的依据，也不得声称"全量绿"。
 
+#### 9.3 全量 99 红处置方案（待实施，需先确认）
+
+目标：把 `flutter test` 拉回「0 失败」的可信基线，避免每次改动都要人工分辨真假红。按「语义类 → 批量类 → 零散类」分五批推进，每批独立提交、独立验证。
+
+| 批次 | 范围 | 处置方式 | 说明 |
+| --- | --- | --- | --- |
+| 1 匿名统计（26） | `usage_stats_test`、`usage_ui_test`、`usage_e2e_test` | 断言改写为魔改后的真实行为：`UsageBuild.active=false` 时不采集、不落盘、不发送；保留 UI 呈现类断言 | 推荐改写而非 skip——默认关断是产品决策，测试应锁住它，防止将来误开 |
+| 2 自动更新（4） | `update_state_test`、`beta_channel_test` | 自动更新已剔除 → 删除对应用例，或改写为「入口不存在」断言 | 删除前确认代码侧无残留引用 |
+| 3 默认模型（8） | `new_chat_defaults_test`、`new_chat_options_test` | 期望值改为「低」档，并补一条「用户手动选择可覆盖」用例 | 默认值口径需与产品确认 |
+| 4 金色图（约 35） | `shell`、`onboarding/parallel_setup`、`local_chat`、`providers`、`chat_golden`、`share_landed`、`drawer`、`wallpaper`、`account` 等 | 确认新 UI 为预期后逐文件 `flutter test --update-goldens <file>` 重建并提交 PNG | 测试机 CJK 为 Light 字重，基线依赖环境，换机/换字体需重跑；禁止手改 PNG |
+| 5 零散（约 26） | `chat_features`、`empty_actions`、`seats_pages`、`page_links`、`app_icons`、`feature_logic`、`phone_floating_bar`、`plugin_view_styles_parity`、`model_sheet` | 逐个定位是 IA/图标/指南 ID 漂移还是真实回归：真回归修代码，漂移则更新测试 | 均已在 `fe029ba` 基线复现，属历史遗留 |
+
+执行顺序与验收：
+
+1. 每批完成后只跑该批文件 + `test/settings test/star test/ui_config`，确认无新增红；
+2. 连续两批无新增红后再进下一批；
+3. 全量归零后，把 9.2 标注为「历史基线」，并写入新的全量数字与日期；
+4. 任何一批都不得为转绿而放宽断言到无意义（如 `expect(true, true)`），也不得用 `skip` 掩盖真实回归。
+
+前置确认：批次 1/2/3 会改动测试语义，属改动程序范畴，需你确认后我再动手（Rule 2：先敲定方案再实施）。
 
 ### 10）关闭「关于 DSH Go」入口（2026-11-11）
 
@@ -479,7 +499,8 @@ git push github HEAD:mogai
 1. 备份 keystore 到网盘 + U 盘各一份（最高优先级，丢失不可逆）。
 2. 若要继续魔改，优先"禁用 + 去入口"，尽量不删文件，减少上游 rebase 冲突。
 3. 上游升级时：以新版本为基线重新打 4 处补丁（补丁点见第七节），保留本仓库 commit 作为参考。
-4. 重打 APK（本轮 `11110113` 已包含删除关于/隐私/sharedLinks 残留与指南修正）→ 上传飞书云空间覆盖同名文件 → 按第十一节逐条验收。
+4. 重打 APK（本轮 `11110113` 已包含删除关于/隐私/sharedLinks 残留与指南修正）→ 上传飞书云空间覆盖同名文件 → 按第十一节逐条验收。后续 `7cdf795` 只删未使用 l10n 键，无 UI 可见变化，**不需要**为此重打 APK。
+5. 全量 99 红清账：按第 **9.3** 节分五批处置，先把 `flutter test` 拉回 0 失败的可信基线；批次 1/2/3 涉及测试语义改动，动手前需先确认。
 
 ---
 
