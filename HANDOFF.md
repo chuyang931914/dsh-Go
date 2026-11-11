@@ -302,9 +302,11 @@ DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 
 `guide_sync.py` 同时暴露 4 条死链（`dshgo://open/shared-links`、`dshgo://open/usage-stats`，zh/en 各一），已在同轮改成分享面板路径 / 「本版本不发送统计」文案。
 
-#### 9.2 全量 `flutter test` 基线（2026-11-11，99 红均为既有问题）
+#### 9.2 全量 `flutter test` 基线（**历史基线，已清零 2026-11-11**）
 
 全量结果：**+10661 通过 / ~387 跳过 / -99 失败**，分布在 26 个文件。已在改动前的 `fe029ba` 建 worktree 做 A/B：`app_icons`、`page_links`、`integration/wiring`、`features/feature_logic` 四个可疑文件在基线同样失败 → 与本次 l10n 清理无关。
+
+> ✅ **新基线（2026-11-11，五批清账后）**：全量 `flutter test` = **+10845 通过 / ~288 跳过（金色图） / 0 失败**；回归面 `test/settings test/star test/ui_config` = **+473 通过 / 0 跳过 / 0 失败**（原 443/30/0，`check_mjs_parity` 30 个用例从 skip → pass，因装了 Linux 原生 Node v24.22.2）。`dart analyze --format machine | grep -c '^ERROR'` = 0。
 
 失败归类（按文件）：
 
@@ -316,7 +318,7 @@ DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 | 默认模型 | `new_chat_defaults_test`(7)、`new_chat_options_test`(1) | 魔改「新对话默认低」未同步测试期望 |
 | 其他 | `chat_features`(5)、`empty_actions`(6)、`seats_pages`(4)、`page_links`(1)、`app_icons`(1)、`feature_logic`(1)、`phone_floating_bar`(1)、`plugin_view_styles_parity`(1)、`model_sheet`(2) | 上游 IA/图标/指南 ID 漂移，基线同样红 |
 
-**验收口径**：改动面验收仍以 `test/settings test/star test/ui_config` = **443 通过 / 30 跳过 / 0 失败**为准；全量 99 红是既有技术债，逐项修复需单独立项（工作量另评），不得作为本次改动未完成的依据，也不得声称"全量绿"。
+**验收口径（更新 2026-11-11）**：`test/settings test/star test/ui_config` = **473 通过 / 0 跳过 / 0 失败**；全量 `flutter test` = **10845 通过 / ~288 跳过（金色图） / 0 失败**。
 
 #### 9.3 全量 99 红清账：接手即办（方案已确认 2026-11-11）
 
@@ -404,7 +406,7 @@ cd /root/dsh-Go/app && source ../tooling/env.sh
 **6. 验收与收尾**
 
 ```bash
-flutter test test/settings test/star test/ui_config   # 必须 443 通过 / 30 跳过 / 0 失败
+flutter test test/settings test/star test/ui_config   # 必须 473 通过 / 0 跳过 / 0 失败（原 443/30/0）
 flutter test > /tmp/full_test.log 2>&1                # 全量，目标 0 失败
 ```
 
@@ -415,13 +417,13 @@ flutter test > /tmp/full_test.log 2>&1                # 全量，目标 0 失败
 
 **接手核对清单**
 
-- [ ] 批次 1 `test/usage` 0 失败，已提交
-- [ ] 批次 2 `test/update` 0 失败，已提交
-- [ ] 批次 3 `new_chat_defaults` + `new_chat_options` 0 失败，已提交
-- [ ] 批次 4 九个 golden 文件重建，diff 仅 PNG，已提交
-- [ ] 批次 5 零散项清零，真回归已记录并上报
-- [ ] `test/settings test/star test/ui_config` 443 / 30 / 0
-- [ ] 全量 `flutter test` 0 失败，9.2 已改写为历史基线
+- [x] 批次 1 `test/usage` 0 失败，已提交（`a2889e5`）
+- [x] 批次 2 `test/update` 0 失败，已提交（`a991554`）
+- [x] 批次 3 `new_chat_defaults` + `new_chat_options` 0 失败，已提交（`bb8c855`）
+- [x] 批次 4 九个 golden 文件重建，diff 仅 PNG，已提交（`e9b58cf`）
+- [x] 批次 5 零散项清零，真回归已记录并上报（`886e699`）
+- [x] `test/settings test/star test/ui_config` 473 / 0 / 0（原 443/30/0，check_mjs_parity 30 用例从 skip 变 pass）
+- [x] 全量 `flutter test` 0 失败（10845 passed / 288 skipped / 0 failed），9.2 已改写为历史基线
 - [ ] HANDOFF 已同步 D 盘 + 飞书，代码已双推
 
 ### 10）关闭「关于 DSH Go」入口（2026-11-11）
@@ -553,6 +555,10 @@ git push github HEAD:mogai
 23. **【最高优先级】停滞三分钟必须主动同步**：任何命令/构建/测试超过 **3 分钟没有新的有效输出**，立刻向用户同步三件事：当前在等什么、已等多久、判断是在推进还是卡住（附证据，如 CPU 时间、进程数、日志尾行）。禁止连续长时间静默等待，也不允许只说"还在跑"。判定标准：`ps` 里 CPU 时间不再增长、没有子进程、日志无新增行 → 视为停滞，立即切换排查思路（用户 Rule 4/5）。
 24. **`flutter test` 挂死优先查编译错误，不要盲等**：症状是主进程 CPU 时间几乎不涨、没有 `flutter_tester` 子进程、`frontend_server` 反复重启。直接跑单个测试文件 `timeout 240 flutter test <file>`，`loading ...` 失败会打印真实编译错误。全量测试必须重定向日志（`> /tmp/full_test.log 2>&1`）再轮询 `tail`，否则 `| tail -n` 会缓冲到进程结束，看起来像"没有任何输出"。
 25. **未使用 l10n 键扫描的排除范围**：只能排除 `lib/l10n/gen/` 与 `lib/l10n/parts/`，**不能排除整个 `lib/l10n`**——手写的 `lib/l10n/l10n.dart` 里有 `commonMonthDay` 这类调用（`monthDay()` 扩展）。2026-11-11 因排除整个目录误删 `commonMonthDay`，全量测试编译失败并挂死 55 分钟。删除后必须用 `dart analyze --format machine | grep '^ERROR'` 计数为 0 来确认，**不能用 `tail -3` 看结尾**（错误会排在 24 条 info 之前被截掉）。
+26. **WSL 上 node 必须用原生 Linux 版**：`check_mjs_parity_test.dart` 有 30 个用例依赖 PATH 上的 `node`。不要 `ln -sf /mnt/d/node.exe /usr/local/bin/node`——Windows 版 node 通过 WSL interop 把 `/tmp/...` 映射成 UNC 路径 `\\wsl.localhost\Ubuntu24\tmp\...` 写回 JSON，测试期望 POSIX 路径格式就会失败。正确做法：`curl -fsSL https://deb.nodesource.com/setup_24.x | bash - && apt-get install -y nodejs`，然后 `ln -sf /usr/bin/node /usr/local/bin/node` 确保 PATH 优先。**不要混装**：如果之前装过 `npm i -g xxx`，Linux 原生版和 Windows 版互相覆盖。
+27. **图标删改后必须同步跑 `python3 tool/make_icon_font.py`**：魔改从 `app_icons.dart` 删了 `checkUpdate`/`autoUpdate` 两个角色，`make_icon_font.py` 才是真正产出 `dsh_glyphs.dart` + `DshIcons.ttf` + `codepoints.json` 的入口。只改 Dart 文件不跑生成器 → 字体文件和 glyph 数据仍引用已删图标，`app_icons_test.dart` 会红。pip 装依赖（`fonttools` + `skia-pathops`）需加 `--break-system-packages`（PEP 668，见 Rule 29）。
+28. **`ensureVisible` 的 `alignment` 参数决定目标位置**：`Scrollable.ensureVisible(element, alignment: 0.5)` 居中目标元素，默认 `alignment: 0.0`（顶部对齐）可能把目标上方的不透明组件（如 AppBar）盖住，导致 `tester.drag()` 落空。`phone_floating_bar_test.dart` 里 Slider 被顶栏 89px 盖住就是这个坑，改成 `alignment: 0.5` 后 pass。
+29. **WSL 里 pip 装包遇到 "externally-managed-environment"**：Ubuntu 24 的 PEP 668 限制，用 `pip install --break-system-packages <pkg>` 绕过（别用虚拟环境，测试工具链跑在 WSL root 用户下）。
 
 ---
 
@@ -587,7 +593,7 @@ git push github HEAD:mogai
 2. 若要继续魔改，优先"禁用 + 去入口"，尽量不删文件，减少上游 rebase 冲突。
 3. 上游升级时：以新版本为基线重新打 4 处补丁（补丁点见第七节），保留本仓库 commit 作为参考。
 4. 重打 APK（本轮 `11110113` 已包含删除关于/隐私/sharedLinks 残留与指南修正）→ 上传飞书云空间覆盖同名文件 → 按第十一节逐条验收。后续 `7cdf795` 只删未使用 l10n 键，无 UI 可见变化，**不需要**为此重打 APK。
-5. 全量 99 红清账（**接手即办，无需再确认**）：按第 **9.3** 节五批顺序执行，把 `flutter test` 拉回 0 失败的可信基线；每批独立提交，验收命令与红线见 9.3。
+5. ~~全量 99 红清账~~ **✅ 已完成（2026-11-11）**：按第 9.3 节五批顺序全部清零，commit 序列 `a2889e5` → `886e699`（批次1-5）。全量 `flutter test` = 10845 passed / ~288 skipped / 0 failed；回归面 = 473 passed / 0 skipped / 0 failed。新基线已写回 9.2。
 
 ---
 
