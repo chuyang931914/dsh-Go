@@ -87,7 +87,17 @@ Future<void> _swipe(WidgetTester tester, Offset from, Offset by, {int steps = 40
 /// The middle of the chat's message area on [_phone].
 const _chatMiddle = Offset(195, 420);
 
-Future<void> _swipeOpen(WidgetTester tester) => _swipe(tester, _chatMiddle, const Offset(-6, 0));
+Offset _rightEdge(WidgetTester tester) {
+  final size = tester.getSize(find.byType(HomeShell));
+  return Offset(size.width - 1, size.height / 2);
+}
+
+Offset _leftEdge(WidgetTester tester) {
+  final size = tester.getSize(find.byType(HomeShell));
+  return Offset(1, size.height / 2);
+}
+
+Future<void> _swipeOpen(WidgetTester tester) => _swipe(tester, _rightEdge(tester), const Offset(-6, 0));
 
 Finder get _panel => find.byType(QuickPanel);
 Finder get _drawer => find.byType(SessionsDrawer);
@@ -134,7 +144,7 @@ void main() {
       await _pump(tester);
       expect(_panel, findsNothing);
 
-      final finger = await tester.startGesture(_chatMiddle);
+      final finger = await tester.startGesture(_rightEdge(tester));
       await _move(tester, finger, const Offset(-6, 0));
       expect(_panel, findsNothing, reason: 'nothing before real movement');
       await _move(tester, finger, const Offset(-6, 0), steps: 10);
@@ -157,7 +167,7 @@ void main() {
 
     testWidgets('past the middle it opens, short of it it falls back, a fling carries it', (tester) async {
       await _pump(tester);
-      await _swipe(tester, _chatMiddle, const Offset(-6, 0), steps: 12);
+      await _swipe(tester, _rightEdge(tester), const Offset(-6, 0), steps: 12);
       expect(_panel, findsNothing);
 
       await _swipeOpen(tester);
@@ -166,21 +176,21 @@ void main() {
       expect(tester.getSize(_panel).width, _panelWidth);
 
       await _back(tester);
-      await tester.fling(find.byType(HomeShell), const Offset(-80, 0), 1500);
+      await tester.flingFrom(_rightEdge(tester), const Offset(-80, 0), 1500);
       await pumpFrames(tester, 8);
       expect(_panel, findsOneWidget);
     });
 
     testWidgets('a fling settles it on the edge and never past', (tester) async {
       await _pump(tester);
-      await tester.fling(find.byType(HomeShell), const Offset(-80, 0), 3000);
+      await tester.flingFrom(_rightEdge(tester), const Offset(-80, 0), 3000);
       await tester.pump();
       for (var i = 0; i < 60; i++) {
         await tester.pump(const Duration(milliseconds: 16));
         expect(_panelIn(tester), lessThanOrEqualTo(_panelWidth));
       }
       expect(_panelIn(tester), _panelWidth);
-      await tester.fling(find.byType(HomeShell), const Offset(80, 0), 3000);
+      await tester.flingFrom(_rightEdge(tester), const Offset(80, 0), 3000);
       await pumpFrames(tester, 8);
       expect(_panel, findsNothing);
     });
@@ -202,7 +212,7 @@ void main() {
       // [TestGesture] stamps every event zero unless told: real times, or no speed to measure.
       var time = Duration.zero;
       Future<void> pull(int steps) async {
-        final finger = await tester.startGesture(_chatMiddle);
+        final finger = await tester.startGesture(_rightEdge(tester));
         for (var i = 0; i < steps; i++) {
           time += const Duration(milliseconds: 16);
           await finger.moveBy(const Offset(-24, 0), timeStamp: time);
@@ -230,7 +240,7 @@ void main() {
 
     testWidgets('right still opens the drawer, and reversing never becomes the panel', (tester) async {
       await _pump(tester);
-      final finger = await tester.startGesture(_chatMiddle);
+      final finger = await tester.startGesture(_leftEdge(tester));
       await _move(tester, finger, const Offset(6, 0), steps: 20);
       expect(_drawer, findsOneWidget);
       await _move(tester, finger, const Offset(-6, 0), steps: 40);
@@ -364,17 +374,17 @@ void main() {
       expect(_panel, findsNothing);
     });
 
-    testWidgets('a code block that fits has none to keep: over it the panel opens', (tester) async {
+    testWidgets('a code block that fits keeps the middle swipe: the panel stays closed', (tester) async {
       await _pump(tester, reply: '```dart\nshort();\n```');
       await _swipe(tester, tester.getCenter(find.byType(CodeBlock)), const Offset(-6, 0));
-      expect(_panel, findsOneWidget);
+      expect(_panel, findsNothing);
     });
 
-    testWidgets('selectable reply text gives way, as a code block\'s scroll wouldn\'t', (tester) async {
+    testWidgets('selectable reply text keeps the middle swipe: the panel stays closed', (tester) async {
       await _pump(tester, reply: 'A short reply anyone could long-press to select.');
       final text = find.textContaining('A short reply', findRichText: true).first;
       await _swipe(tester, tester.getCenter(text), const Offset(-6, 0));
-      expect(_panel, findsOneWidget);
+      expect(_panel, findsNothing);
     });
 
     testWidgets('对话详情 on a phone is a page of its own: its tabs keep the swipe', (tester) async {
@@ -392,9 +402,9 @@ void main() {
       await _swipe(tester, const Offset(1100, 420), const Offset(-6, 0));
       expect(_panel, findsNothing);
 
-      // The folded list leaves the drawer's swipe on, so this one too.
+      // 中间区域不再拉面板；边缘手势在宽屏的对话列上也不越界。
       await _swipe(tester, const Offset(500, 420), const Offset(-6, 0));
-      expect(_panel, findsOneWidget);
+      expect(_panel, findsNothing);
     });
   });
 
@@ -457,7 +467,7 @@ void main() {
       mockClipboard(tester);
       await tester.pumpWidget(homeApp());
       await pumpFrames(tester, 8);
-      await _swipe(tester, const Offset(400, 200), const Offset(-8, 0));
+      await _swipe(tester, const Offset(739, 200), const Offset(-8, 0));
       expect(tester.getSize(_panel).width, QuickPanel.conversationWidth + 40);
       expect(tester.getTopRight(_panel).dx, 780);
       expect(tester.getTopRight(_row(DrawerDestination.plugins)).dx, lessThanOrEqualTo(740));
@@ -466,7 +476,7 @@ void main() {
 
     testWidgets('a finger still pulling it when the window grows lets go of it', (tester) async {
       await _pump(tester, prefs: _foldedDetail);
-      final finger = await tester.startGesture(_chatMiddle);
+      final finger = await tester.startGesture(_rightEdge(tester));
       await _move(tester, finger, const Offset(-6, 0), steps: 12);
       expect(_panel, findsOneWidget);
 
@@ -555,7 +565,7 @@ void main() {
     Future<void> leftAndRight(WidgetTester tester) async {
       await _swipe(tester, _chatMiddle, const Offset(-6, 0));
       expect(_panel, findsNothing);
-      await _swipe(tester, const Offset(60, 420), const Offset(6, 0));
+      await _swipe(tester, const Offset(1, 420), const Offset(6, 0));
       expect(_drawer, findsOneWidget, reason: 'the drawer\'s swipe is no different');
     }
 

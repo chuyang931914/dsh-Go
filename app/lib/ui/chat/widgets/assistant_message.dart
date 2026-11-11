@@ -16,6 +16,7 @@ import '../../plugins/native/message_plugin_menu.dart';
 import '../../share/share_entry.dart' show shareReply;
 import '../render/markdown_body.dart';
 import 'message_actions.dart';
+import 'selection_actions.dart';
 import 'stream_row.dart';
 import 'thinking_pill.dart';
 
@@ -86,6 +87,8 @@ class AssistantMessage extends StatefulWidget {
 }
 
 class _AssistantMessageState extends State<AssistantMessage> {
+  final _selection = ValueNotifier<String>('');
+
   Widget? _body;
   String? _bodyText;
   bool? _bodyStreaming;
@@ -133,12 +136,25 @@ class _AssistantMessageState extends State<AssistantMessage> {
   /// 同一段文字只建一次 Markdown 子树:列表每 32ms 重建一次时,
   /// 没变的消息直接复用同一个 widget 实例,Flutter 不会再往下走。
   Widget _markdown(String text, bool streaming) {
+    final selectionActions = SelectionActionsScope.maybeOf(context);
     final reveal = _reveal = _reveal || (streaming && _startedEmpty && AppMotion.fluid(context));
     if (_body == null || _bodyText != text || _bodyStreaming != streaming || _bodyReveal != reveal) {
       // 长按正文直接选字(系统工具栏含复制/全选);消息菜单走右下的 ⋯。
       // repairBareViews: a model that forgets the ```dsh-ui fence still gets
       // its view drawn instead of a wall of JSON.
-      _body = MarkdownBody(text: text, streaming: streaming, reveal: reveal, selectable: !streaming, repairBareViews: true);
+      _body = MarkdownBody(
+        text: text,
+        streaming: streaming,
+        reveal: reveal,
+        selectable: !streaming,
+        repairBareViews: true,
+        onSelectionChanged: (content) => _selection.value = content?.plainText ?? '',
+        contextMenuBuilder: (context, region) => SelectionToolbar(
+          region: region,
+          text: _selection.value,
+          actions: selectionActions,
+        ),
+      );
       _bodyText = text;
       _bodyStreaming = streaming;
       _bodyReveal = reveal;
@@ -278,6 +294,12 @@ class _AssistantMessageState extends State<AssistantMessage> {
       case MessageAction.selectText || MessageAction.edit:
         break;
     }
+  }
+
+  @override
+  void dispose() {
+    _selection.dispose();
+    super.dispose();
   }
 }
 

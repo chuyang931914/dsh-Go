@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:dsh_client/dsh_client.dart' show DshRemoteException;
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show SelectedContent;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gpt_markdown/gpt_markdown.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -59,6 +60,8 @@ class MarkdownBody extends StatefulWidget {
     this.selectable = true,
     this.secondary = false,
     this.repairBareViews = false,
+    this.onSelectionChanged,
+    this.contextMenuBuilder,
   });
 
   final String text;
@@ -78,6 +81,12 @@ class MarkdownBody extends StatefulWidget {
   /// 助手回复:模型把 `dsh-ui` 的 JSON 裸着写进正文时,也当成视图画
   /// (见 [fenceBareDshUiViews])。别的 Markdown(文档、说明页)不开。
   final bool repairBareViews;
+
+  /// 选区变化:正文长按选字时,菜单拿它知道要复制/翻译/朗读哪一段。
+  final ValueChanged<SelectedContent?>? onSelectionChanged;
+
+  /// 长按选字的工具栏;null 用系统默认(会把 OEM 的搜索/翻译项全带出来)。
+  final Widget Function(BuildContext, SelectableRegionState)? contextMenuBuilder;
 
   /// 表格单列最宽多少;更长的单元格在列内换行,而不是把整表拉得很长。
   static const _maxColumnWidth = 260.0;
@@ -664,7 +673,13 @@ class _MarkdownBodyState extends State<MarkdownBody> {
     // 表格、成块公式横向放不下时,两端淡出提示还能横滑。
     markdown = ScrollConfiguration(behavior: const EdgeFadeScrollBehavior(), child: markdown);
     if (widget.reveal) markdown = _RevealStreaming(streaming: widget.streaming, blocks: _blocks, child: markdown);
-    if (widget.selectable) markdown = SelectionArea(child: markdown);
+    if (widget.selectable) {
+      markdown = SelectionArea(
+        onSelectionChanged: widget.onSelectionChanged,
+        contextMenuBuilder: widget.contextMenuBuilder,
+        child: markdown,
+      );
+    }
     return MarkdownGalleryScope(child: markdown);
   }
 }

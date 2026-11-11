@@ -40,6 +40,7 @@ class DrawerDragRecognizer extends OneSequenceGestureRecognizer {
     required this.onStart,
     required this.onDelta,
     required this.onEnd,
+    this.acceptAt,
     super.debugOwner,
   });
 
@@ -56,6 +57,10 @@ class DrawerDragRecognizer extends OneSequenceGestureRecognizer {
 
   /// 手势结束:带横向速度(像素/秒,向右为正),用来决定落到全开还是全关。
   final ValueChanged<double> onEnd;
+
+  /// 只在 [acceptAt] 返回 true 的落点开始跟踪(屏幕边缘),中间的横向拖动
+  /// 留给内容本身;抽屉/面板已经开着时由调用方放行任意落点,方便推回。
+  final bool Function(Offset globalPosition)? acceptAt;
 
   /// 判定横向意图前要累计的位移。
   ///
@@ -93,6 +98,7 @@ class DrawerDragRecognizer extends OneSequenceGestureRecognizer {
 
   @override
   void addAllowedPointer(PointerDownEvent event) {
+    if (acceptAt?.call(event.position) == false) return;
     _accum = Offset.zero;
     _accepted = false;
     _velocity = VelocityTracker.withKind(event.kind);
@@ -186,6 +192,7 @@ class QuickPanelDragRecognizer extends DrawerDragRecognizer {
     required super.onStart,
     required super.onDelta,
     required super.onEnd,
+    super.acceptAt,
     super.debugOwner,
   });
 

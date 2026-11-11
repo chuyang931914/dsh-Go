@@ -9,6 +9,9 @@ import 'package:dsh_client/dsh_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
+
+import '../../companion/companion_voice.dart';
 
 import '../../l10n/l10n.dart';
 import '../../notify/chat_alerts.dart' show approvalText, questionText;
@@ -102,6 +105,7 @@ import 'widgets/permission_pill.dart';
 import 'widgets/plus_panel.dart';
 import 'widgets/quote_chip.dart';
 import 'widgets/read_only_bar.dart';
+import 'widgets/selection_actions.dart';
 
 /// 聊天页:玻璃顶栏 + 消息列表 + 玻璃输入条。
 ///
@@ -164,6 +168,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
   }
 
   final _input = MentionTextController();
+
+  /// 选区「朗读」用的手机 TTS；和下面的听写 _voice 不是一回事。
+  final _selectionVoice = CompanionVoice();
 
   /// The composer as plugin controls and ui.json capsules see it.
   late final _nativeHost = _ChatComposerHost(this);
@@ -449,6 +456,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     _mentions.dispose();
     _voice.removeListener(_reportVoice);
     _voice.dispose();
+    _selectionVoice.dispose();
     // The page is gone, and its dictation with it.
     final flag = _voiceFlag;
     scheduleMicrotask(() => flag.set(false));
@@ -748,6 +756,20 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
   /// keeps it all as text (shared text: the chip would cut a long quote);
   /// [restoreMode] false takes a leading header as text too (a description
   /// from a card); [focus] false leaves the keyboard down (dictation).
+  Future<void> _translateSelection(String text) async {
+    final opened = await SelectionTranslate.open(text);
+    if (!opened && mounted) _composerToast(appL10n.chatTranslate);
+  }
+
+  Future<void> _shareSelection(String text) async {
+    await SharePlus.instance.share(ShareParams(text: text));
+  }
+
+  Future<void> _readSelection(String text) async {
+    if (!await _selectionVoice.ready()) return;
+    await _selectionVoice.speak('selection', text, flush: true);
+  }
+
   void _compose(String message, {bool quoteChip = true, bool restoreMode = true, bool focus = true}) {
     var text = message;
     // A valid generation request, where this host can generate: its header
@@ -1673,6 +1695,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
             child: PetStage(
               sessionId: sessionId,
               aside: typing,
+              showPet: false,
               child: CustomMultiChildLayout(
                 delegate: _ChatLayout(_veilHeight),
                 children: [
@@ -1750,6 +1773,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                                   onEditPrompt: _compose,
                                   onResend: _resend,
                                   onQuote: readOnly ? null : (passage) => _quote(sessionId, passage),
+                                  selectionActions: SelectionActions(
+                                    onTranslate: _translateSelection,
+                                    onShare: _shareSelection,
+                                    onRead: _readSelection,
+                                    onAsk: readOnly ? null : (text) => _compose(text, quoteChip: false, focus: true),
+                                  ),
                                   onToast: _composerToast,
                                   onSwitchModel: readOnly ? null : _switchModel,
                                 ),

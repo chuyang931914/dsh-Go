@@ -2715,6 +2715,8 @@
   "chatThinkingActive": "思考中",
   "chatThinking": "思考",
   "chatTranslate": "翻译",
+  "chatReadAloud": "朗读",
+  "chatSelectAll": "全选",
   "chatTranslationUnavailable": "翻译暂不可用",
   "chatViewOriginal": "查看原文",
   "chatViewTranslation": "查看译文",

@@ -7844,6 +7844,18 @@ abstract class L10n {
   /// **'翻译'**
   String get chatTranslate;
 
+  /// No description provided for @chatReadAloud.
+  ///
+  /// In zh, this message translates to:
+  /// **'朗读'**
+  String get chatReadAloud;
+
+  /// No description provided for @chatSelectAll.
+  ///
+  /// In zh, this message translates to:
+  /// **'全选'**
+  String get chatSelectAll;
+
   /// No description provided for @chatTranslationUnavailable.
   ///
   /// In zh, this message translates to:

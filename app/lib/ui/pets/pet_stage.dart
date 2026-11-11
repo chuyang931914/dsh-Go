@@ -80,7 +80,7 @@ abstract final class PetMetrics {
 /// with [PetPerch], panels that should send it away with [PetCover], areas
 /// it keeps out of with [PetAvoid].
 class PetStage extends ConsumerStatefulWidget {
-  const PetStage({super.key, this.sessionId, this.aside = false, required this.child});
+  const PetStage({super.key, this.sessionId, this.aside = false, this.showPet = true, required this.child});
 
   /// The conversation the page shows (null: a new chat). The pet reads what
   /// it is doing from here.
@@ -89,6 +89,11 @@ class PetStage extends ConsumerStatefulWidget {
   /// A phone on its side is typing: the bars fold away, the pet stays on
   /// the composer.
   final bool aside;
+
+  /// False hides the pet on this page (the chat page does; the overlay and
+  /// settings keep their own pet). The perch/registry stay so the page lays
+  /// out exactly as before.
+  final bool showPet;
   final Widget child;
 
   @override
@@ -190,9 +195,10 @@ class _PetStageState extends ConsumerState<PetStage> {
                 sessionId: widget.sessionId,
                 child: KeyedSubtree(key: _content, child: widget.child),
               ),
-              Positioned.fill(
-                child: PetLayer(registry: _registry, aside: widget.aside, scrolling: _scrolling, onReveal: _reveal),
-              ),
+              if (widget.showPet)
+                Positioned.fill(
+                  child: PetLayer(registry: _registry, aside: widget.aside, scrolling: _scrolling, onReveal: _reveal),
+                ),
             ],
           ),
         ),

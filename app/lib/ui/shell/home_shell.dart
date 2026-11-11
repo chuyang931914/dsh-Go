@@ -252,6 +252,9 @@ class _HomeShellState extends ConsumerState<HomeShell> with TickerProviderStateM
         onStart: () => _onDragStart(_drawer),
         onDelta: (dx) => _onDragDelta(_drawer, _drawerWidth(context), dx),
         onEnd: (velocity) => _onDragEnd(_drawer, _drawerWidth(context), velocity),
+        // 默认禁用聊天页中间的横向滑动；只有左边缘 24dp 内才开始跟手。
+        acceptAt: (position) =>
+            _drawer.value > 0 || position.dx <= MediaQuery.paddingOf(context).left + 24,
         debugOwner: this,
       ),
       (_) {},
@@ -268,6 +271,11 @@ class _HomeShellState extends ConsumerState<HomeShell> with TickerProviderStateM
           onStart: () => _onDragStart(_quickPanel),
           onDelta: (dx) => _onDragDelta(_quickPanel, _quickPanelWidth(context), -dx),
           onEnd: (velocity) => _onDragEnd(_quickPanel, _quickPanelWidth(context), -velocity),
+          // 同理：只有右边缘 24dp 内才开始拉快捷面板。
+          acceptAt: (position) =>
+              _quickPanel.value > 0 ||
+              position.dx >=
+                  MediaQuery.sizeOf(context).width - MediaQuery.paddingOf(context).right - 24,
           debugOwner: this,
         ),
         (recognizer) => recognizer.gestureSettings = settings,

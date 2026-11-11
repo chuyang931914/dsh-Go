@@ -4542,6 +4542,12 @@ class L10nEn extends L10n {
   String get chatTranslate => 'Translate';
 
   @override
+  String get chatReadAloud => 'Read aloud';
+
+  @override
+  String get chatSelectAll => 'Select all';
+
+  @override
   String get chatTranslationUnavailable => 'Translation unavailable';
 
   @override

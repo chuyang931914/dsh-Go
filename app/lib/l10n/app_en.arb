@@ -1292,6 +1292,8 @@
   "chatThinkingActive": "Thinking",
   "chatThinking": "Thinking",
   "chatTranslate": "Translate",
+  "chatReadAloud": "Read aloud",
+  "chatSelectAll": "Select all",
   "chatTranslationUnavailable": "Translation unavailable",
   "chatViewOriginal": "View original",
   "chatViewTranslation": "View translation",

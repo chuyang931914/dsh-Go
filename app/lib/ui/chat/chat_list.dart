@@ -41,6 +41,7 @@ import 'trajectory_sheet.dart';
 import 'widgets/approval_card.dart';
 import 'widgets/artifact_card.dart';
 import 'widgets/assistant_message.dart';
+import 'widgets/selection_actions.dart';
 import 'widgets/attachments.dart';
 import 'widgets/background_task_notice.dart';
 import 'widgets/change_card.dart';
@@ -93,6 +94,7 @@ class ChatList extends ConsumerStatefulWidget {
     this.onEditPrompt,
     this.onResend,
     this.onQuote,
+    this.selectionActions,
     this.onToast,
     this.onSwitchModel,
   });
@@ -132,6 +134,9 @@ class ChatList extends ConsumerStatefulWidget {
   /// 「引用」 on a reply (all of it, or a passage picked in 「选择文字」); the
   /// screen puts it above the composer. Null leaves the action out.
   final ValueChanged<String>? onQuote;
+
+  /// 选区工具栏的动作；null 时正文用系统默认菜单（测试/其它入口）。
+  final SelectionActions? selectionActions;
 
   /// A toast clear of the composer (「已在新对话中打开」 with 返回原对话);
   /// null: the plain SnackBar.
@@ -940,6 +945,9 @@ class _ChatListState extends ConsumerState<ChatList> with SingleTickerProviderSt
     // State; only replies that carry one pay for working out whether it can
     // still be answered.
     final s = ref.read(chatProvider(widget.sessionId));
+    final replyWidget = widget.selectionActions == null
+        ? message
+        : SelectionActionsScope(actions: widget.selectionActions!, child: message);
     return DshUiScope(
       sessionId: widget.sessionId,
       messageId: item.id,
@@ -953,7 +961,7 @@ class _ChatListState extends ConsumerState<ChatList> with SingleTickerProviderSt
             ),
       onReply: chat.send,
       onAskResend: chat.send,
-      child: message,
+      child: replyWidget,
     );
   }
 

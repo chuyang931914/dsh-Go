@@ -4260,6 +4260,12 @@ class L10nZh extends L10n {
   String get chatTranslate => '翻译';
 
   @override
+  String get chatReadAloud => '朗读';
+
+  @override
+  String get chatSelectAll => '全选';
+
+  @override
   String get chatTranslationUnavailable => '翻译暂不可用';
 
   @override

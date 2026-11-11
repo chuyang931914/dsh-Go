@@ -345,9 +345,27 @@ void main() {
 
       await tester.longPress(find.textContaining('多发了一次请求', findRichText: true).first);
       await pumpFrames(tester);
-      // 长按正文 = 选字:消息菜单不弹出,系统工具栏带复制。
+      // 长按正文 = 选字:消息菜单不弹出,自定义工具栏只带复制/全选/翻译/⋯。
       expect(find.byType(SettingsTile), findsNothing);
       expect(find.text('复制'), findsWidgets);
+      expect(find.text('全选'), findsOneWidget);
+      expect(find.text('翻译'), findsOneWidget);
+      expect(find.text('⋯'), findsOneWidget);
+      for (final gone in ['AI搜索(推荐)', '爱奇艺搜索', '浏览器搜索', '快速搜索', '搜视频(推荐)', '问问 DeepSeek']) {
+        expect(find.text(gone), findsNothing);
+      }
+
+      await tester.tap(find.text('⋯'));
+      await pumpFrames(tester);
+      expect(find.text('分享'), findsOneWidget);
+      expect(find.text('朗读'), findsOneWidget);
+      expect(find.text('问 AI'), findsOneWidget);
+
+      // 「问AI」把选中的字放进输入框，不发送。
+      await tester.tap(find.text('问 AI'));
+      await pumpFrames(tester);
+      final field = tester.widget<TextField>(find.byType(TextField).first);
+      expect(field.controller?.text.trim(), isNotEmpty);
     });
 
   });
