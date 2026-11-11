@@ -4,7 +4,6 @@
 // 层契约：永不应答的服务器会被按时放弃。
 
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:dsh_app/phone/phone_channel.dart';

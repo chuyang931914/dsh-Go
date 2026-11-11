@@ -71,11 +71,12 @@ void main() {
 
   test('every id the guide or a reply may already use still opens', () {
     // The ids before the settings index (0.9.6): none may stop working.
+    // 魔改：shared-links（分享链接）功能已移除，从清单中剔除。
     const before = {
       'schedules', 'permission', 'agent-presets', 'models', 'subagent-settings', 'agent-loop', //
       'shell-settings', 'web-search', 'plugins', 'plugin-inventory', 'cordis', 'agent-team', 'forum', //
       'community', 'ds-bot', 'notifications', 'workspaces', 'general', 'account', 'remote', 'phone', //
-      'engine', 'diagnostics', 'settings', 'appearance', 'pets', 'shared-links', 'engine-settings', //
+      'engine', 'diagnostics', 'settings', 'appearance', 'pets', 'engine-settings', //
       'all-features', 'background',
     };
     expect(pageLinkIds, containsAll(before));

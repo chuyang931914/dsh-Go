@@ -15,7 +15,6 @@ abstract final class DshGlyphs {
   static const alarm = IconData(0xe0a8, fontFamily: family);
   static const archive = IconData(0xe043, fontFamily: family);
   static const arrowBendUpLeft = IconData(0xe02b, fontFamily: family, matchTextDirection: true);
-  static const arrowCircleUp = IconData(0xe07d, fontFamily: family);
   static const arrowClockwise = IconData(0xe024, fontFamily: family);
   static const arrowCounterClockwise = IconData(0xe039, fontFamily: family);
   static const arrowDown = IconData(0xe00e, fontFamily: family);
@@ -73,7 +72,6 @@ abstract final class DshGlyphs {
   static const clipboard = IconData(0xe038, fontFamily: family);
   static const clipboardText = IconData(0xe0a7, fontFamily: family);
   static const clock = IconData(0xe018, fontFamily: family);
-  static const clockClockwise = IconData(0xe07e, fontFamily: family);
   static const clockCounterClockwise = IconData(0xe0ae, fontFamily: family);
   static const cloud = IconData(0xe078, fontFamily: family);
   static const cloudArrowDown = IconData(0xe04e, fontFamily: family);
@@ -245,7 +243,6 @@ abstract final class DshGlyphs {
     'alarm': alarm,
     'archive': archive,
     'arrowBendUpLeft': arrowBendUpLeft,
-    'arrowCircleUp': arrowCircleUp,
     'arrowClockwise': arrowClockwise,
     'arrowCounterClockwise': arrowCounterClockwise,
     'arrowDown': arrowDown,
@@ -303,7 +300,6 @@ abstract final class DshGlyphs {
     'clipboard': clipboard,
     'clipboardText': clipboardText,
     'clock': clock,
-    'clockClockwise': clockClockwise,
     'clockCounterClockwise': clockCounterClockwise,
     'cloud': cloud,
     'cloudArrowDown': cloudArrowDown,
