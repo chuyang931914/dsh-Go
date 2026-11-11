@@ -1,8 +1,10 @@
 # dsh-Go 魔改版 · 项目交接文档
 
 > 用途：跨设备 / 跨账号 / 跨对话恢复本项目。任何人（或未来的我）拿到这份文档 + 两个仓库地址，就能从零把环境、签名、APK 全部重建出来。
-> 最后更新：2026-11-10
+> 最后更新：2026-11-11
 > 权威副本：本文件同时放在仓库根目录 `HANDOFF.md`（随 Git 推送，跨设备可用）。
+>
+> **接手先做什么**：当前唯一待办是「全量 99 红清账」，方案已确认、**无需再次沟通**，按第七节 **9.3** 接手即办清单执行（五批、每批独立提交），所有红线与验收命令都在 9.3 内；其他方向见第十二节。
 
 ---
 
@@ -316,26 +318,111 @@ DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 
 **验收口径**：改动面验收仍以 `test/settings test/star test/ui_config` = **443 通过 / 30 跳过 / 0 失败**为准；全量 99 红是既有技术债，逐项修复需单独立项（工作量另评），不得作为本次改动未完成的依据，也不得声称"全量绿"。
 
-#### 9.3 全量 99 红处置方案（待实施，需先确认）
+#### 9.3 全量 99 红清账：接手即办（方案已确认 2026-11-11）
 
-目标：把 `flutter test` 拉回「0 失败」的可信基线，避免每次改动都要人工分辨真假红。按「语义类 → 批量类 → 零散类」分五批推进，每批独立提交、独立验证。
+> **状态：方案已确认，接手人无需再次沟通，按下面批次直接执行、独立提交。**
+> 目标：把 `flutter test` 拉回「0 失败」的可信基线，结束「每次改动都要人工分辨真假红」的状态。
 
-| 批次 | 范围 | 处置方式 | 说明 |
-| --- | --- | --- | --- |
-| 1 匿名统计（26） | `usage_stats_test`、`usage_ui_test`、`usage_e2e_test` | 断言改写为魔改后的真实行为：`UsageBuild.active=false` 时不采集、不落盘、不发送；保留 UI 呈现类断言 | 推荐改写而非 skip——默认关断是产品决策，测试应锁住它，防止将来误开 |
-| 2 自动更新（4） | `update_state_test`、`beta_channel_test` | 自动更新已剔除 → 删除对应用例，或改写为「入口不存在」断言 | 删除前确认代码侧无残留引用 |
-| 3 默认模型（8） | `new_chat_defaults_test`、`new_chat_options_test` | 期望值改为「低」档，并补一条「用户手动选择可覆盖」用例 | 默认值口径需与产品确认 |
-| 4 金色图（约 35） | `shell`、`onboarding/parallel_setup`、`local_chat`、`providers`、`chat_golden`、`share_landed`、`drawer`、`wallpaper`、`account` 等 | 确认新 UI 为预期后逐文件 `flutter test --update-goldens <file>` 重建并提交 PNG | 测试机 CJK 为 Light 字重，基线依赖环境，换机/换字体需重跑；禁止手改 PNG |
-| 5 零散（约 26） | `chat_features`、`empty_actions`、`seats_pages`、`page_links`、`app_icons`、`feature_logic`、`phone_floating_bar`、`plugin_view_styles_parity`、`model_sheet` | 逐个定位是 IA/图标/指南 ID 漂移还是真实回归：真回归修代码，漂移则更新测试 | 均已在 `fe029ba` 基线复现，属历史遗留 |
+**0. 每批都要做的固定动作**
 
-执行顺序与验收：
+```bash
+wsl -d Ubuntu24
+cd /root/dsh-Go/app && source ../tooling/env.sh
+```
 
-1. 每批完成后只跑该批文件 + `test/settings test/star test/ui_config`，确认无新增红；
-2. 连续两批无新增红后再进下一批；
-3. 全量归零后，把 9.2 标注为「历史基线」，并写入新的全量数字与日期；
-4. 任何一批都不得为转绿而放宽断言到无意义（如 `expect(true, true)`），也不得用 `skip` 掩盖真实回归。
+- 测试一律重定向日志再轮询：`flutter test test/usage > /tmp/b1.log 2>&1`，另开终端 `tail -20 /tmp/b1.log`。**禁止** `flutter test ... | tail -n`——管道会缓冲到进程结束，看起来像"没有任何输出"（Rule 24）。
+- 任一命令 3 分钟无新输出，立刻同步「在等什么 / 等了多久 / 推进还是卡住 + 证据（CPU 时间、子进程、日志尾行）」（Rule 23，最高优先级）。
+- 每批独立 commit；提交前 `dart analyze --format machine | grep -c '^ERROR'` 必须为 `0`，不要用 `tail` 看结尾。
+- 红线：不得用 `skip` 掩盖真实回归、不得把断言放宽成 `expect(true, true)`、不得手改金色图 PNG、不得顺手改产品代码。
 
-前置确认：批次 1/2/3 会改动测试语义，属改动程序范畴，需你确认后我再动手（Rule 2：先敲定方案再实施）。
+**1. 批次 1：匿名统计（26 条）**
+
+| 文件 | 失败数 | 改法 |
+| --- | --- | --- |
+| `app/test/usage/usage_stats_test.dart` | 14 | 断言改为魔改后的真实行为：`UsageBuild.active=false`（`app/lib/usage/usage_net.dart:36`）时不采集、不落盘、不发送；删除"会发送"类断言 |
+| `app/test/usage/usage_ui_test.dart` | 10 | 保留 UI 呈现类断言（`usageStatsTitle` 仍被引用，**不要删这个键**），只改"上报被执行"相关断言 |
+| `app/test/usage/usage_e2e_test.dart` | 2 | 端到端链路改为"全程无网络请求"，可断言 `usage_stats.dart` 的发送入口未被调用 |
+
+验证：`flutter test test/usage` → 0 失败。写死"默认关断"是产品决策，测试要锁住它，防止将来误开。
+
+**2. 批次 2：自动更新（4 条）**
+
+| 文件 | 失败数 | 改法 |
+| --- | --- | --- |
+| `app/test/update/update_state_test.dart` | 3 | 自动更新已整体剔除（`app/lib/state/update_state.dart`、`app/lib/ui/update/update_launch_check.dart` 中 `autoCheckIfDue()` 恒 `false`）→ 删除"会检查更新"用例，改写为「入口不存在 / 恒 false」断言 |
+| `app/test/update/beta_channel_test.dart` | 1 | 同上，删 beta 触发检查的期望 |
+
+验证：`flutter test test/update` → 0 失败。删用例前先 `grep -rn <符号> app/lib` 确认代码侧无残留引用。
+
+**3. 批次 3：新对话默认模型（8 条）**
+
+| 文件 | 失败数 | 改法 |
+| --- | --- | --- |
+| `app/test/engine_settings/new_chat_defaults_test.dart` | 7 | 期望值改为「低」档（魔改固定），并补一条「用户手动选择可覆盖默认」用例 |
+| `app/test/chat/new_chat_options_test.dart` | 1 | 同上 |
+
+验证：`flutter test test/engine_settings test/chat/new_chat_options_test.dart` → 0 失败。
+
+**4. 批次 4：金色图（约 35 条）**
+
+| 文件 | 失败数 |
+| --- | --- |
+| `app/test/shell/shell_golden_test.dart` | 10 |
+| `app/test/onboarding/parallel_setup_golden_test.dart` | 6 |
+| `app/test/onboarding/local_chat_golden_test.dart` | 4 |
+| `app/test/providers/providers_golden_test.dart` | 4 |
+| `app/test/chat/chat_golden_test.dart` | 3 |
+| `app/test/system_entry/share_landed_golden_test.dart` | 2 |
+| `app/test/drawer/drawer_golden_test.dart` | 2 |
+| `app/test/account/account_golden_test.dart` | 2 |
+| wallpaper 相关（`test/settings/wallpaper_section_test.dart` 或 `test/wallpaper/*`，以日志为准） | 2 |
+
+改法：
+1. 先 `flutter test <file>` 看 diff 是否只来自魔改 UI + 测试机 CJK Light 字重，确认无真实布局回归；
+2. `flutter test --update-goldens <file>` 重建；
+3. `git diff --stat` 确认只改了对应 PNG，再提交。
+
+注意：金色图基线**依赖机器与字体**，换机、换字体、升级 Flutter 都要重跑；禁止手改 PNG。
+
+**5. 批次 5：零散（约 26 条）**
+
+| 文件 | 失败数 | 性质 |
+| --- | --- | --- |
+| `app/test/chat/empty_actions_test.dart` | 6 | IA/入口漂移 |
+| `app/test/chat/chat_features_test.dart` | 5 | 功能开关漂移 |
+| `app/test/plugins/seats/seats_pages_test.dart` | 4 | 页面/文案漂移 |
+| `app/test/chat/model_sheet_test.dart` | 2 | 模型选择器归位后的期望漂移 |
+| `app/test/links/page_links_test.dart` | 1 | 死链清理后的期望 |
+| `app/test/icons/app_icons_test.dart` | 1 | 图标漂移 |
+| `app/test/features/feature_logic_test.dart` | 1 | 上游逻辑漂移 |
+| `app/test/phone/phone_floating_bar_test.dart` | 1 | UI 漂移 |
+| `app/test/plugins/view/plugin_view_styles_parity_test.dart` | 1 | 上游样式漂移 |
+| 其余零散项（约 4 条，以运行日志为准） | — | — |
+
+改法：逐个定位是「IA/图标/指南 ID 漂移」还是「真实回归」——漂移就更新测试或同步 `app/tool/guide_sync.py` 资源；**判定为真实回归时先停手**，把现象写进本文件并同步用户，不要为了转绿改产品代码。以上均已在 `fe029ba` 基线复现，属历史遗留。
+
+**6. 验收与收尾**
+
+```bash
+flutter test test/settings test/star test/ui_config   # 必须 443 通过 / 30 跳过 / 0 失败
+flutter test > /tmp/full_test.log 2>&1                # 全量，目标 0 失败
+```
+
+1. 每批完成后跑该批文件 + 上面第一行回归命令，确认无新增红；
+2. 连续两批无新增红再进下一批；
+3. 全量归零后：把 9.2 标注「历史基线」，写入新数字与日期；更新第十二节第 5 条；
+4. 收尾时同步 `D:\HANDOFF.md` 与飞书云空间（token `OJSGbqo2IofCYQxm8uycjTGAn7d`），并推送 Gitee `main` + GitHub `main:mogai`。
+
+**接手核对清单**
+
+- [ ] 批次 1 `test/usage` 0 失败，已提交
+- [ ] 批次 2 `test/update` 0 失败，已提交
+- [ ] 批次 3 `new_chat_defaults` + `new_chat_options` 0 失败，已提交
+- [ ] 批次 4 九个 golden 文件重建，diff 仅 PNG，已提交
+- [ ] 批次 5 零散项清零，真回归已记录并上报
+- [ ] `test/settings test/star test/ui_config` 443 / 30 / 0
+- [ ] 全量 `flutter test` 0 失败，9.2 已改写为历史基线
+- [ ] HANDOFF 已同步 D 盘 + 飞书，代码已双推
 
 ### 10）关闭「关于 DSH Go」入口（2026-11-11）
 
@@ -500,7 +587,7 @@ git push github HEAD:mogai
 2. 若要继续魔改，优先"禁用 + 去入口"，尽量不删文件，减少上游 rebase 冲突。
 3. 上游升级时：以新版本为基线重新打 4 处补丁（补丁点见第七节），保留本仓库 commit 作为参考。
 4. 重打 APK（本轮 `11110113` 已包含删除关于/隐私/sharedLinks 残留与指南修正）→ 上传飞书云空间覆盖同名文件 → 按第十一节逐条验收。后续 `7cdf795` 只删未使用 l10n 键，无 UI 可见变化，**不需要**为此重打 APK。
-5. 全量 99 红清账：按第 **9.3** 节分五批处置，先把 `flutter test` 拉回 0 失败的可信基线；批次 1/2/3 涉及测试语义改动，动手前需先确认。
+5. 全量 99 红清账（**接手即办，无需再确认**）：按第 **9.3** 节五批顺序执行，把 `flutter test` 拉回 0 失败的可信基线；每批独立提交，验收命令与红线见 9.3。
 
 ---
 
