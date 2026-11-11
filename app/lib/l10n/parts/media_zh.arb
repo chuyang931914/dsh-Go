@@ -27,14 +27,6 @@
   "mediaOpenElsewhere": "在其他应用中打开",
   "mediaShowInFiles": "在文件中显示",
   "mediaGenerating": "生成中",
-  "mediaGeneratingProgress": "生成中 · {progress}",
-  "@mediaGeneratingProgress": {
-    "placeholders": {
-      "progress": {
-        "type": "String"
-      }
-    }
-  },
   "mediaCancelled": "已取消",
   "mediaNotGenerated": "未生成",
   "mediaPartial": "{done} / {total} 张",
@@ -230,7 +222,6 @@
   "mediaSettingsModelMissing": "目录中不存在",
   "mediaSettingsAdvanced": "高级",
   "mediaSettingsBaseUrl": "API 根地址",
-  "mediaSettingsBaseUrlInvalid": "地址要以 https:// 开头",
   "mediaSettingsProvider": "服务商标识",
   "mediaSettingsKeyRef": "凭据名",
   "mediaSettingsKeyRefInvalid": "凭据名只能包含字母、数字和下划线",

@@ -40,7 +40,6 @@
   "voiceModelWaiting": "Available once the engine is running",
   "voiceModelUnsupported": "This engine has no voice model",
   "voiceModelAbsent": "Not downloaded",
-  "voiceModelDownloading": "Downloading",
   "voiceModelPreparing": "Checking and loading",
   "voiceModelReady": "Ready",
   "voiceModelFailed": "Download failed",

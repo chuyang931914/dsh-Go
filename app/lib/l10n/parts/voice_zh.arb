@@ -40,7 +40,6 @@
   "voiceModelWaiting": "引擎启动后可以下载",
   "voiceModelUnsupported": "当前引擎不支持语音模型",
   "voiceModelAbsent": "未下载",
-  "voiceModelDownloading": "下载中",
   "voiceModelPreparing": "正在校验和加载",
   "voiceModelReady": "已就绪",
   "voiceModelFailed": "下载失败",

@@ -328,7 +328,6 @@
   "activityUsageBalance": "DeepSeek 余额",
   "activityUsageContext": "上下文",
   "activityUsageChat": "本对话",
-  "activityUsageAfterMessage": "发送消息后显示",
   "activityUsageWaiting": "等待上下文用量数据",
   "activityUsageProjected": "预计下次请求",
   "activityUsageLastRequest": "上次请求",
@@ -337,22 +336,6 @@
   "activityUsageContextFull": "上下文将满，发送 /compact 可压缩",
   "activitySpanZero": "0 秒",
   "activitySpanTiny": "<0.1 秒",
-  "activityTokensTenThousands": "{value} 万",
-  "@activityTokensTenThousands": {
-    "placeholders": {
-      "value": {
-        "type": "String"
-      }
-    }
-  },
-  "activityTokensHundredMillions": "{value} 亿",
-  "@activityTokensHundredMillions": {
-    "placeholders": {
-      "value": {
-        "type": "String"
-      }
-    }
-  },
   "activityUsageContextSemantics": "上下文已用 {percent}，查看用量",
   "@activityUsageContextSemantics": {
     "placeholders": {

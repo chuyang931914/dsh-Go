@@ -88,14 +88,6 @@
     }
   },
   "plugslotsPanelOffline": "Can't reach the plugin",
-  "plugslotsIssueTooMany": "Up to {max}; the rest are hidden",
-  "@plugslotsIssueTooMany": {
-    "placeholders": {
-      "max": {
-        "type": "int"
-      }
-    }
-  },
   "plugslotsIssueTrimmed": "Over {max} characters; shortened",
   "@plugslotsIssueTrimmed": {
     "placeholders": {
@@ -104,16 +96,7 @@
       }
     }
   },
-  "plugslotsIssueNeedsApp": "Needs DSH Go {version} or later",
-  "@plugslotsIssueNeedsApp": {
-    "placeholders": {
-      "version": {
-        "type": "String"
-      }
-    }
-  },
   "plugslotsIssueNewerProtocol": "Needs a newer app",
-  "plugslotsIssueUnknownIcon": "Unknown icon; using the default",
   "plugslotsIssueUnknownEffect": "Unsupported effect \"{name}\"",
   "@plugslotsIssueUnknownEffect": {
     "placeholders": {
@@ -133,25 +116,8 @@
     }
   },
   "plugslotsIssueThrottled": "Notices too frequent; skipped",
-  "plugslotsIssueInvoke": "Call failed: {message}",
-  "@plugslotsIssueInvoke": {
-    "placeholders": {
-      "message": {
-        "type": "String"
-      }
-    }
-  },
-  "plugslotsIssueStream": "Data failed: {message}",
-  "@plugslotsIssueStream": {
-    "placeholders": {
-      "message": {
-        "type": "String"
-      }
-    }
-  },
   "plugslotsIssueMissing": "Missing a required field",
   "plugslotsIssueDuplicate": "Duplicate id; skipped",
-  "plugslotsIssueNoPlacement": "Nowhere to show it",
   "plugslotsWantsMessage": "{plugin} wants to read this reply",
   "@plugslotsWantsMessage": {
     "placeholders": {

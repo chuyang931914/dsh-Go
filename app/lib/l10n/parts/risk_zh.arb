@@ -12,7 +12,6 @@
   "riskPetOverlayAction": "去设置",
   "askAiTooltip": "问 AI",
   "askAiHelpTitle": "使用帮助",
-  "askAiHelpSubtitle": "不懂的地方，问 AI",
   "askAiAboutApp": "关于 DSH Go App：{question}",
   "@askAiAboutApp": {
     "placeholders": {

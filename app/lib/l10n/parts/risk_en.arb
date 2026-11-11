@@ -12,7 +12,6 @@
   "riskPetOverlayAction": "Open settings",
   "askAiTooltip": "Ask AI",
   "askAiHelpTitle": "Help",
-  "askAiHelpSubtitle": "Ask AI about anything here",
   "askAiAboutApp": "About the DSH Go app: {question}",
   "askAiWithGuide": "About the DSH Go app: {question}\nPlease answer from the attached guide.",
   "askAiNoGuide": "This host doesn’t have the DSH Go guide, so answers may be off",

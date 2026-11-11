@@ -27,14 +27,6 @@
   "mediaOpenElsewhere": "Open in another app",
   "mediaShowInFiles": "Show in files",
   "mediaGenerating": "Generating",
-  "mediaGeneratingProgress": "Generating · {progress}",
-  "@mediaGeneratingProgress": {
-    "placeholders": {
-      "progress": {
-        "type": "String"
-      }
-    }
-  },
   "mediaCancelled": "Cancelled",
   "mediaNotGenerated": "Not created",
   "mediaPartial": "{done} of {total}",
@@ -223,7 +215,6 @@
   "mediaSettingsModelMissing": "Not in the catalogue",
   "mediaSettingsAdvanced": "Advanced",
   "mediaSettingsBaseUrl": "API base URL",
-  "mediaSettingsBaseUrlInvalid": "The address must start with https://",
   "mediaSettingsProvider": "Provider id",
   "mediaSettingsKeyRef": "Credential name",
   "mediaSettingsKeyRefInvalid": "Use letters, digits and underscores only",

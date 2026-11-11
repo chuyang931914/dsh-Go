@@ -170,7 +170,6 @@
   "companionRecallOffFailed": "Automatic recall didn't turn off. Try again.",
   "companionRecallStopped": "Automatic recall stopped (what she remembers changed), so a new conversation began. You can turn it on again from the menu.",
   "companionMenuVoice": "Her voice",
-  "companionMenuVoiceHint": "Reads her words aloud with the phone's own voice",
   "companionVoiceHello": "Hi, this is my voice. Keep it on if you like it.",
   "companionVoiceUnavailable": "This phone has no Chinese voice to use. You can add one under Text-to-speech in system settings.",
   "companionWidgetWaiting": "Waiting for you in the room",

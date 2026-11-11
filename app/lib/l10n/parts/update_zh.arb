@@ -1,37 +1,5 @@
 {
   "updateCheck": "检查更新",
-  "updateAutoCheck": "自动检查更新",
-  "updateAutoCheckDaily": "每天检查一次",
-  "updateTileDownloading": "下载中",
-  "updateTileDownloadingPercent": "下载中 {percent}%",
-  "@updateTileDownloadingPercent": {
-    "placeholders": {
-      "percent": {
-        "type": "int"
-      }
-    }
-  },
-  "updateTileVerifying": "校验中",
-  "updateTileReady": "可以安装",
-  "updateTileInstalling": "安装中",
-  "updateTileSkipped": "已跳过 {version}",
-  "@updateTileSkipped": {
-    "placeholders": {
-      "version": {
-        "type": "String"
-      }
-    }
-  },
-  "updateTileNewVersion": "新版本 {version}",
-  "@updateTileNewVersion": {
-    "placeholders": {
-      "version": {
-        "type": "String"
-      }
-    }
-  },
-  "updateTileUpToDate": "已是最新",
-  "updateTileUnavailable": "暂时检查不了",
   "updateUpToDate": "已是最新版本",
   "updateCheckUnavailable": "暂时检查不了更新，稍后再试",
   "updateDownloadInterrupted": "下载中断了",

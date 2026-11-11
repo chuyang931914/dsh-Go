@@ -1267,9 +1267,6 @@ class L10nZh extends L10n {
   String get activityUsageChat => '本对话';
 
   @override
-  String get activityUsageAfterMessage => '发送消息后显示';
-
-  @override
   String get activityUsageWaiting => '等待上下文用量数据';
 
   @override
@@ -1292,16 +1289,6 @@ class L10nZh extends L10n {
 
   @override
   String get activitySpanTiny => '<0.1 秒';
-
-  @override
-  String activityTokensTenThousands(String value) {
-    return '$value 万';
-  }
-
-  @override
-  String activityTokensHundredMillions(String value) {
-    return '$value 亿';
-  }
 
   @override
   String activityUsageContextSemantics(String percent) {
@@ -2333,26 +2320,7 @@ class L10nZh extends L10n {
   }
 
   @override
-  String get botsUpdateRequired => 'DS Bot 需要更新';
-
-  @override
   String get botsInstall => '安装 DS Bot';
-
-  @override
-  String get botsUpdateForPhone => '新版才能在手机上用';
-
-  @override
-  String get botsInstallDescription => '一组长期在线的 Bot，各有记忆和分工';
-
-  @override
-  String botsInstallOnHost(String host) {
-    return '在$host上装好后就能用';
-  }
-
-  @override
-  String botsRunsOnHost(String host) {
-    return '在$host上运行';
-  }
 
   @override
   String get botsInstalling => '正在安装';
@@ -3265,19 +3233,10 @@ class L10nZh extends L10n {
   String get catalogSchedulesSummary => '定时与周期任务';
 
   @override
-  String get catalogAgentModelsSection => 'Agent 与模型';
-
-  @override
   String get catalogPermission => '权限';
 
   @override
   String get catalogPermissionSummary => '执行前是否确认';
-
-  @override
-  String get catalogAgentPresets => 'Agent 预设';
-
-  @override
-  String get catalogAgentPresetsSummary => '新对话的工作方式';
 
   @override
   String get catalogModels => '模型';
@@ -3286,40 +3245,10 @@ class L10nZh extends L10n {
   String get catalogModelsSummary => '订阅与自定义渠道';
 
   @override
-  String get catalogSubagentSettings => '子代理设置';
-
-  @override
-  String get catalogSubagentSettingsSummary => '层数、并行与模型';
-
-  @override
-  String get catalogAgentLoop => 'Agent 循环';
-
-  @override
-  String get catalogAgentLoopSummary => '工具并行上限';
-
-  @override
-  String get catalogShellSettings => '命令执行';
-
-  @override
-  String get catalogShellSettingsSummary => '超时与输出上限';
-
-  @override
-  String get catalogWebSearch => '联网搜索';
-
-  @override
-  String get catalogWebSearchSummary => '搜索服务与预算';
-
-  @override
   String get catalogPlugins => '插件';
 
   @override
   String get catalogPluginsSummary => '已安装与插件市场';
-
-  @override
-  String get catalogPluginInventory => '插件清单';
-
-  @override
-  String get catalogPluginInventorySummary => '已加载的全部插件';
 
   @override
   String get catalogCordisSummary => '插件创建的动态面板';
@@ -3361,43 +3290,16 @@ class L10nZh extends L10n {
   String get catalogBotSummary => 'Bot 团队与群聊';
 
   @override
-  String get catalogShareProfile => '分享配置';
-
-  @override
-  String get catalogShareProfileSummary => '插件、设置与技能';
-
-  @override
-  String get catalogHostsSettingsSection => '主机与设置';
-
-  @override
   String get catalogSearch => '搜索对话';
 
   @override
   String get catalogSearchSummary => '按标题和正文查找';
 
   @override
-  String get catalogNotifications => '通知';
-
-  @override
-  String get catalogNotificationsSummary => '完成与待确认提醒';
-
-  @override
   String get catalogWorkspaces => '工作区';
 
   @override
   String get catalogWorkspacesSummary => '添加与切换目录';
-
-  @override
-  String get catalogGeneral => '通用设置';
-
-  @override
-  String get catalogGeneralSummary => '显示、发送与日志上传';
-
-  @override
-  String get catalogAccount => '账号与余额';
-
-  @override
-  String get catalogAccountSummary => '登录、余额与充值';
 
   @override
   String get catalogRemoteSummary => '连接电脑或服务器';
@@ -3407,18 +3309,6 @@ class L10nZh extends L10n {
 
   @override
   String get catalogPhoneControlSummary => '看屏幕、帮你点按';
-
-  @override
-  String get catalogEngine => '本机引擎';
-
-  @override
-  String get catalogEngineSummary => '本机引擎状态与日志';
-
-  @override
-  String get catalogDiagnostics => '诊断';
-
-  @override
-  String get catalogDiagnosticsSummary => '导出诊断包';
 
   @override
   String get catalogWebSummary => 'DSH 官方界面';
@@ -3940,28 +3830,10 @@ class L10nZh extends L10n {
   String get chatVoicePermissionNeeded => '需要麦克风权限才能语音输入';
 
   @override
-  String get chatVoiceUnavailable => '这台手机没有可用的语音识别';
-
-  @override
   String get chatVoiceNotHeard => '没有听清，再说一次';
 
   @override
   String get chatVoiceTranscriptionFailed => '没能转写这段语音';
-
-  @override
-  String get chatVoiceNetworkFailed => '网络不太好，没能识别';
-
-  @override
-  String get chatVoiceLanguageUnsupported => '暂不支持这种语言';
-
-  @override
-  String get chatVoiceMicrophoneBusy => '麦克风正被占用';
-
-  @override
-  String get chatVoiceBusy => '语音识别正忙，稍后再试';
-
-  @override
-  String get chatVoiceRecognitionFailed => '语音识别出错了';
 
   @override
   String get chatListening => '正在聆听';
@@ -5292,9 +5164,6 @@ class L10nZh extends L10n {
 
   @override
   String get companionMenuVoice => '她的声音';
-
-  @override
-  String get companionMenuVoiceHint => '用手机自带的语音读出她说的话';
 
   @override
   String get companionVoiceHello => '你好呀，这是我的声音。喜欢的话就留着吧。';
@@ -8248,9 +8117,6 @@ class L10nZh extends L10n {
   String get hubSettingsChat => '对话';
 
   @override
-  String get hubSettingsAutoCommands => '自动执行命令';
-
-  @override
   String get hubSettingsPhoneFiles => '访问手机文件';
 
   @override
@@ -8266,9 +8132,6 @@ class L10nZh extends L10n {
   String get hubSettingsPhoneControl => '手机操控';
 
   @override
-  String get hubSettingsPhoneControlHint => '看屏幕、帮你点按';
-
-  @override
   String get hubSettingsPreferences => '个人偏好';
 
   @override
@@ -8281,16 +8144,7 @@ class L10nZh extends L10n {
   String get hubSettingsCollapseSteps => '完成后收起过程';
 
   @override
-  String get hubSettingsCollapseStepsHint => '思考与工具调用收成一行';
-
-  @override
-  String get hubSettingsWebPhoneLayout => '网页版手机布局';
-
-  @override
   String get hubSettingsWebPhoneLayoutHint => '为手机屏幕重排网页版';
-
-  @override
-  String get hubSettingsEngineExtensions => '引擎与扩展';
 
   @override
   String get hubSettingsEngine => '本机引擎';
@@ -8299,16 +8153,7 @@ class L10nZh extends L10n {
   String get hubSettingsProviders => '模型';
 
   @override
-  String get hubSettingsEngineSettings => '引擎参数';
-
-  @override
-  String get hubSettingsShareConfig => '分享配置';
-
-  @override
   String get hubSettingsAllFeatures => '全部功能';
-
-  @override
-  String get hubSettingsAbout => '关于';
 
   @override
   String get hubSettingsCommunity => '社区';
@@ -8552,12 +8397,6 @@ class L10nZh extends L10n {
   String get hubPersonalizationWorkStyle => '工作方式';
 
   @override
-  String get hubPrivacy => '隐私与分享';
-
-  @override
-  String get hubPrivacySharing => '分享';
-
-  @override
   String get hubInterfaceHome => '首页';
 
   @override
@@ -8609,9 +8448,6 @@ class L10nZh extends L10n {
   String hubValueHosts(int count) {
     return '$count 台';
   }
-
-  @override
-  String get hubValueNoHosts => '未添加';
 
   @override
   String hubValuePlugins(int count) {
@@ -9140,11 +8976,6 @@ class L10nZh extends L10n {
   String get mediaGenerating => '生成中';
 
   @override
-  String mediaGeneratingProgress(String progress) {
-    return '生成中 · $progress';
-  }
-
-  @override
   String get mediaCancelled => '已取消';
 
   @override
@@ -9492,9 +9323,6 @@ class L10nZh extends L10n {
 
   @override
   String get mediaSettingsBaseUrl => 'API 根地址';
-
-  @override
-  String get mediaSettingsBaseUrlInvalid => '地址要以 https:// 开头';
 
   @override
   String get mediaSettingsProvider => '服务商标识';
@@ -12784,9 +12612,6 @@ class L10nZh extends L10n {
   String get pluginsTheme => '主题';
 
   @override
-  String get pluginsAppearance => '外观';
-
-  @override
   String get pluginsColors => '配色';
 
   @override
@@ -12794,9 +12619,6 @@ class L10nZh extends L10n {
 
   @override
   String get pluginsAppIcon => '桌面图标';
-
-  @override
-  String get pluginsPet => '宠物';
 
   @override
   String get pluginsCustomColor => '自定义';
@@ -13502,25 +13324,12 @@ class L10nZh extends L10n {
   String get plugslotsPanelOffline => '连不上插件';
 
   @override
-  String plugslotsIssueTooMany(int max) {
-    return '最多 $max 个，其余不显示';
-  }
-
-  @override
   String plugslotsIssueTrimmed(int max) {
     return '超过 $max 字，已截断';
   }
 
   @override
-  String plugslotsIssueNeedsApp(String version) {
-    return '需要 DSH Go $version 或更新版本';
-  }
-
-  @override
   String get plugslotsIssueNewerProtocol => '需要更新 App';
-
-  @override
-  String get plugslotsIssueUnknownIcon => '不认识的图标，已换成默认图标';
 
   @override
   String plugslotsIssueUnknownEffect(String name) {
@@ -13542,23 +13351,10 @@ class L10nZh extends L10n {
   String get plugslotsIssueThrottled => '提示太频繁，已略过';
 
   @override
-  String plugslotsIssueInvoke(String message) {
-    return '调用失败：$message';
-  }
-
-  @override
-  String plugslotsIssueStream(String message) {
-    return '数据出错：$message';
-  }
-
-  @override
   String get plugslotsIssueMissing => '缺少必填项';
 
   @override
   String get plugslotsIssueDuplicate => 'id 重复，已略过';
-
-  @override
-  String get plugslotsIssueNoPlacement => '没有可放的位置';
 
   @override
   String plugslotsWantsMessage(String plugin) {
@@ -15556,9 +15352,6 @@ class L10nZh extends L10n {
   String get askAiHelpTitle => '使用帮助';
 
   @override
-  String get askAiHelpSubtitle => '不懂的地方，问 AI';
-
-  @override
   String askAiAboutApp(String question) {
     return '关于 DSH Go App：$question';
   }
@@ -15672,9 +15465,6 @@ class L10nZh extends L10n {
   String get searchKwReplyPrefs => '偏好,关于我,自我介绍,回答风格,称呼,AGENTS.md';
 
   @override
-  String get searchKwSharedLinks => '分享链接,链接,公开链接,分享';
-
-  @override
   String get searchKwPhone => '无障碍,操作手机,自动点击,代操作,点按';
 
   @override
@@ -15744,9 +15534,6 @@ class L10nZh extends L10n {
   String get searchKwLanguage => '中文,英文,简体,English';
 
   @override
-  String get searchKwAutoCommands => '别问我,不要确认,自动允许,完全权限,免确认';
-
-  @override
   String get searchKwPhoneFiles => '存储,文件,相册,下载,手机存储';
 
   @override
@@ -15765,19 +15552,10 @@ class L10nZh extends L10n {
   String get searchKwWebPhoneLayout => '网页版手机布局,布局';
 
   @override
-  String get searchKwShareConfig => '分享,导出配置,分享码,配置';
-
-  @override
   String get searchKwOpenWeb => '网页版,网页,浏览器,官方网页版';
 
   @override
   String get searchKwSafeMode => '安全模式,恢复正常模式,排障,插件崩溃';
-
-  @override
-  String get searchKwUpdate => '更新,升级,新版本';
-
-  @override
-  String get searchKwUpdateAuto => '自动更新,检查更新';
 
   @override
   String get searchKwHelp => '帮助,教程,问 AI,怎么用,说明';
@@ -15882,9 +15660,6 @@ class L10nZh extends L10n {
   String get searchKwWebSearchKey => '搜索 Key,联网 Key';
 
   @override
-  String get searchKwChatLogUpload => '隐私,日志,上传日志,对话日志';
-
-  @override
   String get searchKwAddSshHost => 'SSH,添加主机,连接电脑';
 
   @override
@@ -15935,12 +15710,6 @@ class L10nZh extends L10n {
   String get searchKwInterface => '原生,网页,网页模式,网页版,通用设置';
 
   @override
-  String get searchKwPrivacy => '隐私,数据,日志,分享,统计';
-
-  @override
-  String get searchKwAbout => '关于,版本,更新,许可,dsh-go';
-
-  @override
   String get searchKwPhoneConfirmEntry => '确认方式,手机操控,免确认';
 
   @override
@@ -15954,9 +15723,6 @@ class L10nZh extends L10n {
 
   @override
   String get searchKwPluginsMarket => '插件市场,安装插件,市场,获取插件';
-
-  @override
-  String get searchKwUsageStats => '统计,使用统计,匿名,隐私,数据,改进,遥测,分析';
 
   @override
   String get searchKwQuickPanel => '左滑,快捷入口,手势,滑动,目录,自定义目录,快捷,常用入口';
@@ -18332,45 +18098,6 @@ class L10nZh extends L10n {
   String get updateCheck => '检查更新';
 
   @override
-  String get updateAutoCheck => '自动检查更新';
-
-  @override
-  String get updateAutoCheckDaily => '每天检查一次';
-
-  @override
-  String get updateTileDownloading => '下载中';
-
-  @override
-  String updateTileDownloadingPercent(int percent) {
-    return '下载中 $percent%';
-  }
-
-  @override
-  String get updateTileVerifying => '校验中';
-
-  @override
-  String get updateTileReady => '可以安装';
-
-  @override
-  String get updateTileInstalling => '安装中';
-
-  @override
-  String updateTileSkipped(String version) {
-    return '已跳过 $version';
-  }
-
-  @override
-  String updateTileNewVersion(String version) {
-    return '新版本 $version';
-  }
-
-  @override
-  String get updateTileUpToDate => '已是最新';
-
-  @override
-  String get updateTileUnavailable => '暂时检查不了';
-
-  @override
   String get updateUpToDate => '已是最新版本';
 
   @override
@@ -18587,12 +18314,6 @@ class L10nZh extends L10n {
 
   @override
   String get usageStatsTitle => '发送匿名使用统计';
-
-  @override
-  String get usageStatsSection => '改进 DSH Go';
-
-  @override
-  String get usageStatsFooter => '这个开关只控制 dsh-go 自身的使用次数、版本、手机品牌和型号、系统版本统计，不含对话、文件和账号；它不控制 Google ML Kit SDK 的统计。';
 
   @override
   String get usageNoticeBody => '不含对话和个人信息，可随时关闭';
@@ -20137,9 +19858,6 @@ class L10nZh extends L10n {
 
   @override
   String get voiceModelAbsent => '未下载';
-
-  @override
-  String get voiceModelDownloading => '下载中';
 
   @override
   String get voiceModelPreparing => '正在校验和加载';

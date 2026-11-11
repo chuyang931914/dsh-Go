@@ -300,6 +300,22 @@ DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 
 `guide_sync.py` 同时暴露 4 条死链（`dshgo://open/shared-links`、`dshgo://open/usage-stats`，zh/en 各一），已在同轮改成分享面板路径 / 「本版本不发送统计」文案。
 
+#### 9.2 全量 `flutter test` 基线（2026-11-11，99 红均为既有问题）
+
+全量结果：**+10661 通过 / ~387 跳过 / -99 失败**，分布在 26 个文件。已在改动前的 `fe029ba` 建 worktree 做 A/B：`app_icons`、`page_links`、`integration/wiring`、`features/feature_logic` 四个可疑文件在基线同样失败 → 与本次 l10n 清理无关。
+
+失败归类（按文件）：
+
+| 类别 | 文件（失败数） | 原因 |
+| --- | --- | --- |
+| 匿名统计 | `usage_stats_test`(14)、`usage_ui_test`(10)、`usage_e2e_test`(2) | 魔改 `UsageBuild.active=false`，上报逻辑不执行，测试仍按"会发送"断言 |
+| 自动更新 | `update_state_test`(3)、`beta_channel_test`(1) | 自动更新已整体剔除 |
+| 金色图 | `shell`(10)、`onboarding/parallel_setup`(6)、`local_chat`(4)、`providers`(4)、`chat_golden`(3)、`share_landed`(2)、`drawer`(2)、`wallpaper`(2)、`account`(2) 等 | 魔改 UI 与测试机 CJK 字重（Light）差异，需按文件 `--update-goldens` 重建基线才能绿 |
+| 默认模型 | `new_chat_defaults_test`(7)、`new_chat_options_test`(1) | 魔改「新对话默认低」未同步测试期望 |
+| 其他 | `chat_features`(5)、`empty_actions`(6)、`seats_pages`(4)、`page_links`(1)、`app_icons`(1)、`feature_logic`(1)、`phone_floating_bar`(1)、`plugin_view_styles_parity`(1)、`model_sheet`(2) | 上游 IA/图标/指南 ID 漂移，基线同样红 |
+
+**验收口径**：改动面验收仍以 `test/settings test/star test/ui_config` = **443 通过 / 30 跳过 / 0 失败**为准；全量 99 红是既有技术债，逐项修复需单独立项（工作量另评），不得作为本次改动未完成的依据，也不得声称"全量绿"。
+
 
 ### 10）关闭「关于 DSH Go」入口（2026-11-11）
 
@@ -351,7 +367,9 @@ DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 - `flutter test test/settings test/star test/ui_config`：443 passed / 30 skipped / 0 failed
 - `python3 app/tool/guide_sync.py`：26 files checked and built，无错误
 
-残留（非本轮范围）：`docs/design/settings-ia.md` 的 S4/S7 与 `docs/design/star-prompt.md` 实现表仍按历史记录提到 `about_page.dart`；`hubSettingsAbout` / `hubPrivacy` / `hubPrivacySharing` / `usageStatsTitle` 等魔改遗留 l10n 键尚未清理，后续做「未使用 l10n 扫描」时一并处理。
+残留（非本轮范围）：`docs/design/settings-ia.md` 的 S4/S7 与 `docs/design/star-prompt.md` 实现表仍按历史记录提到 `about_page.dart`（历史设计稿，不改）。
+
+**l10n 遗留键已于 2026-11-11 清理**：全仓扫描确认 **86 个键**无任何代码/文档引用，已从 `lib/l10n/parts/*_{en,zh}.arb`（30 个文件）删除，`l10n_merge` + `gen-l10n` 后 6201→6115 键。主要构成：`catalog*` 26（整组未接线）、`update*` 11（自动更新魔改残留）、`searchKw*` 9（已删页面的搜索词）、`chatVoice*` 6、`plugslotsIssue*` 6、`bots*` 5、`activity*` 3、`hubPrivacy`/`hubPrivacySharing`/`hubSettingsAbout` 等。**`commonMonthDay` 一度被误删**（扫描排除了整个 `lib/l10n`，漏掉手写 `l10n.dart` 的调用），已恢复并重新生成；教训见 Rules 24/25。注意 `usageStatsTitle` 仍被 `test/usage/usage_ui_test.dart` 使用，**未删**；匿名统计 UI/测试仍在，仅构建期 `UsageBuild.active=false` 关闭发送，彻底移除需另行评估。
 
 
 
@@ -425,6 +443,9 @@ git push github HEAD:mogai
 20. **【重要】用户以「重要：」开头的指令，必须同步写入文档**：既写本文件（HANDOFF，随 commit 推送并覆盖上传飞书），也写长期记忆 `project_memory.md`；不能只停留在对话里。
 21. **指南里的设置路径必须能在索引里找到**：`guide_nav_test` 会把 `<!-- nav: commonSettings,... -->` 路径与 `SettingsIndex.trail` 对照；页面内的行若没有对应 Spot（如「手机操控 › Android Shell」），指南不要写成三级路径，改成二级页路径 + 正文点名该行。改完 `docs/guide/**` 必须跑 `python3 app/tool/guide_sync.py`（会校验死链并重新生成 `app/assets/skills/dsh-go-guide/`），否则技能资源与文档不一致。
 22. **删除页面的连带清单**：页面文件、`SettingsPageId` 枚举、`settings_pages.dart` 的 `case`/import、`_pages` meta、`_rows` 里的 Spot、相关 l10n 键（`parts/*.arb` 改完跑 `l10n_merge.py` + `gen-l10n`）、测试文件/用例、金色图、指南路径。漏任何一项都会在 `test/settings` 或 `guide_sync.py` 里报出来。
+23. **【最高优先级】停滞三分钟必须主动同步**：任何命令/构建/测试超过 **3 分钟没有新的有效输出**，立刻向用户同步三件事：当前在等什么、已等多久、判断是在推进还是卡住（附证据，如 CPU 时间、进程数、日志尾行）。禁止连续长时间静默等待，也不允许只说"还在跑"。判定标准：`ps` 里 CPU 时间不再增长、没有子进程、日志无新增行 → 视为停滞，立即切换排查思路（用户 Rule 4/5）。
+24. **`flutter test` 挂死优先查编译错误，不要盲等**：症状是主进程 CPU 时间几乎不涨、没有 `flutter_tester` 子进程、`frontend_server` 反复重启。直接跑单个测试文件 `timeout 240 flutter test <file>`，`loading ...` 失败会打印真实编译错误。全量测试必须重定向日志（`> /tmp/full_test.log 2>&1`）再轮询 `tail`，否则 `| tail -n` 会缓冲到进程结束，看起来像"没有任何输出"。
+25. **未使用 l10n 键扫描的排除范围**：只能排除 `lib/l10n/gen/` 与 `lib/l10n/parts/`，**不能排除整个 `lib/l10n`**——手写的 `lib/l10n/l10n.dart` 里有 `commonMonthDay` 这类调用（`monthDay()` 扩展）。2026-11-11 因排除整个目录误删 `commonMonthDay`，全量测试编译失败并挂死 55 分钟。删除后必须用 `dart analyze --format machine | grep '^ERROR'` 计数为 0 来确认，**不能用 `tail -3` 看结尾**（错误会排在 24 条 info 之前被截掉）。
 
 ---
 

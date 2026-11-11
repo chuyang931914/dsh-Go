@@ -88,14 +88,6 @@
     }
   },
   "plugslotsPanelOffline": "连不上插件",
-  "plugslotsIssueTooMany": "最多 {max} 个，其余不显示",
-  "@plugslotsIssueTooMany": {
-    "placeholders": {
-      "max": {
-        "type": "int"
-      }
-    }
-  },
   "plugslotsIssueTrimmed": "超过 {max} 字，已截断",
   "@plugslotsIssueTrimmed": {
     "placeholders": {
@@ -104,16 +96,7 @@
       }
     }
   },
-  "plugslotsIssueNeedsApp": "需要 DSH Go {version} 或更新版本",
-  "@plugslotsIssueNeedsApp": {
-    "placeholders": {
-      "version": {
-        "type": "String"
-      }
-    }
-  },
   "plugslotsIssueNewerProtocol": "需要更新 App",
-  "plugslotsIssueUnknownIcon": "不认识的图标，已换成默认图标",
   "plugslotsIssueUnknownEffect": "不支持的效果「{name}」",
   "@plugslotsIssueUnknownEffect": {
     "placeholders": {
@@ -133,25 +116,8 @@
     }
   },
   "plugslotsIssueThrottled": "提示太频繁，已略过",
-  "plugslotsIssueInvoke": "调用失败：{message}",
-  "@plugslotsIssueInvoke": {
-    "placeholders": {
-      "message": {
-        "type": "String"
-      }
-    }
-  },
-  "plugslotsIssueStream": "数据出错：{message}",
-  "@plugslotsIssueStream": {
-    "placeholders": {
-      "message": {
-        "type": "String"
-      }
-    }
-  },
   "plugslotsIssueMissing": "缺少必填项",
   "plugslotsIssueDuplicate": "id 重复，已略过",
-  "plugslotsIssueNoPlacement": "没有可放的位置",
   "plugslotsWantsMessage": "「{plugin}」要读取这条回复",
   "@plugslotsWantsMessage": {
     "placeholders": {

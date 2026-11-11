@@ -463,26 +463,7 @@
       }
     }
   },
-  "botsUpdateRequired": "DS Bot 需要更新",
   "botsInstall": "安装 DS Bot",
-  "botsUpdateForPhone": "新版才能在手机上用",
-  "botsInstallDescription": "一组长期在线的 Bot，各有记忆和分工",
-  "botsInstallOnHost": "在{host}上装好后就能用",
-  "@botsInstallOnHost": {
-    "placeholders": {
-      "host": {
-        "type": "String"
-      }
-    }
-  },
-  "botsRunsOnHost": "在{host}上运行",
-  "@botsRunsOnHost": {
-    "placeholders": {
-      "host": {
-        "type": "String"
-      }
-    }
-  },
   "botsInstalling": "正在安装",
   "botsMemory": "记忆",
   "botsEditMemory": "编辑记忆",
