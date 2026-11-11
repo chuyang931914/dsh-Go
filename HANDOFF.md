@@ -4,7 +4,7 @@
 > 最后更新：2026-11-11
 > 权威副本：本文件同时放在仓库根目录 `HANDOFF.md`（随 Git 推送，跨设备可用）。
 >
-> **接手先做什么**：当前唯一待办是「全量 99 红清账」，方案已确认、**无需再次沟通**，按第七节 **9.3** 接手即办清单执行（五批、每批独立提交），所有红线与验收命令都在 9.3 内；其他方向见第十二节。
+> **当前状态（2026-11-11）**：「全量 99 红清账」已完成并双推（Gitee `main` / GitHub `mogai` 均为 `d746042`）；剩余收尾只有 `D:\HANDOFF.md` 覆盖与飞书云空间覆盖上传（token `OJSGbqo2IofCYQxm8uycjTGAn7d`，电脑侧执行）；装机后验收见第十一节；其他方向见第十二节。
 
 ---
 
@@ -89,7 +89,7 @@ export PATH="/root/dev/jdk-17/bin:/root/dev/flutter/bin:/root/dev/android-sdk/cm
 - 布局：`/root/dsh-Go`（工作分支 `phone`，见 8.3）、`/root/dev/flutter`（3.47.7，linux-arm64；官方无 arm64 预编译包，用 Gitee 镜像 `gitee.com/mirrors/Flutter` 按 tag `3.47.7` 浅克隆自举）、`/root/dev/dsh-env.sh`（测试环境变量）、`/root/dev/dsh-push.sh`（双推脚本）。
 - 使用：`source /root/dev/dsh-env.sh` 后 `cd /root/dsh-Go/app` 即可 analyze/test。env 内 `DSH_TEST_FONT_DIR=/usr/share/fonts/opentype/noto`（noble 的 `fonts-noto-cjk` 装在 opentype 下；Light 字重要另装 `fonts-noto-cjk-extra`，两个包都要）。
 - 凭据：`~/.git-credentials`（chmod 600，`credential.helper=store`）已存 Gitee 与 GitHub 令牌，双推可用。
-- 基线（2026-11-11）：电脑侧五批清账后，回归面 `test/settings test/star test/ui_config` = 473 通过 / 0 跳过 / 0 失败，全量 `flutter test` = 10845 通过 / ~288 跳过 / 0 失败；`dart analyze` = 0 error / 0 warning / 23 info。手机端复跑时金色图会因字体渲染不同而像素漂移（见 Rule 31），只验收 analyze 与非金色图结果。
+- 基线（2026-11-11）：电脑侧五批清账后，回归面 `test/settings test/star test/ui_config` = 473 通过 / 0 跳过 / 0 失败，全量 `flutter test` = 10845 通过 / ~288 跳过 / 0 失败；`dart analyze` = 0 error / 0 warning / 23 info。手机端复跑时金色图会因字体渲染不同而像素漂移（见 Rule 31），只验收 analyze 与非金色图结果。手机端交叉验证（`d746042`）：电脑侧改动过的 12 个测试文件 = 381 通过 / 39 金色图漂移 / 0 真实失败。
 
 ---
 
@@ -432,7 +432,8 @@ flutter test > /tmp/full_test.log 2>&1                # 全量，目标 0 失败
 - [x] 批次 5 零散项清零，真回归已记录并上报（`886e699`）
 - [x] `test/settings test/star test/ui_config` 473 / 0 / 0（原 443/30/0，check_mjs_parity 30 用例从 skip 变 pass）
 - [x] 全量 `flutter test` 0 失败（10845 passed / 288 skipped / 0 failed），9.2 已改写为历史基线
-- [ ] HANDOFF 已同步 D 盘 + 飞书，代码已双推
+- [x] 代码已双推：Gitee `main` / GitHub `mogai` 均为 `d746042`（GitHub `mogai` 由手机端补推：`0344644 → e0cfea7 → d746042`）
+- [ ] `D:\HANDOFF.md` 覆盖 + 飞书云空间覆盖上传（token `OJSGbqo2IofCYQxm8uycjTGAn7d`，电脑侧执行）
 
 ### 10）关闭「关于 DSH Go」入口（2026-11-11）
 
