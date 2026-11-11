@@ -88,13 +88,13 @@ Future<void> _swipe(WidgetTester tester, Offset from, Offset by, {int steps = 40
 const _chatMiddle = Offset(195, 420);
 
 Offset _rightEdge(WidgetTester tester) {
-  final size = tester.getSize(find.byType(HomeShell));
-  return Offset(size.width - 1, size.height / 2);
+  final media = MediaQuery.of(tester.element(find.byType(HomeShell)));
+  return Offset(media.size.width - media.padding.right - 20, media.size.height / 2);
 }
 
 Offset _leftEdge(WidgetTester tester) {
-  final size = tester.getSize(find.byType(HomeShell));
-  return Offset(1, size.height / 2);
+  final media = MediaQuery.of(tester.element(find.byType(HomeShell)));
+  return Offset(media.padding.left + 20, media.size.height / 2);
 }
 
 Future<void> _swipeOpen(WidgetTester tester) => _swipe(tester, _rightEdge(tester), const Offset(-6, 0));
@@ -467,7 +467,7 @@ void main() {
       mockClipboard(tester);
       await tester.pumpWidget(homeApp());
       await pumpFrames(tester, 8);
-      await _swipe(tester, const Offset(739, 200), const Offset(-8, 0));
+      await _swipe(tester, _rightEdge(tester), const Offset(-8, 0));
       expect(tester.getSize(_panel).width, QuickPanel.conversationWidth + 40);
       expect(tester.getTopRight(_panel).dx, 780);
       expect(tester.getTopRight(_row(DrawerDestination.plugins)).dx, lessThanOrEqualTo(740));
@@ -565,7 +565,7 @@ void main() {
     Future<void> leftAndRight(WidgetTester tester) async {
       await _swipe(tester, _chatMiddle, const Offset(-6, 0));
       expect(_panel, findsNothing);
-      await _swipe(tester, const Offset(1, 420), const Offset(6, 0));
+      await _swipe(tester, _leftEdge(tester), const Offset(6, 0));
       expect(_drawer, findsOneWidget, reason: 'the drawer\'s swipe is no different');
     }
 
