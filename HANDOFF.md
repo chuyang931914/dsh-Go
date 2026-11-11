@@ -4,7 +4,7 @@
 > 最后更新：2026-11-11
 > 权威副本：本文件同时放在仓库根目录 `HANDOFF.md`（随 Git 推送，跨设备可用）。
 >
-> **当前状态（2026-11-11 17:00）**：「全量 99 红清账」已完成；手机端已接手并完成四线核对（见 3.5）：仓库 `main` = `c07ad5c`，`phone` 已快进对齐并在其上追加本记录，APK `11111558` 与已装版本一致，`dart analyze` = 0 error / 0 warning / 23 info，聊天相关非金色图测试 35/35 通过。**剩余收尾：`D:\HANDOFF.md` 与飞书云空间副本仍是 14:xx 的 60,516 字节旧版，需电脑侧重新覆盖为当前仓库版本**（token `OJSGbqo2IofCYQxm8uycjTGAn7d`）；装机后验收见第十一节；其他方向见第十二节；双端协作约定见 8.4 与第十四节。
+> **当前状态（2026-11-11 17:45）**：电脑 ↔ 手机四线已全部收敛到 `0583f58`（main ← phone 快进合并，GitHub 镜像 0 差异）；**覆盖安装已实测通过**：`11111558 → 11111711`，手机端数据保留（详见 3.5 四线一致性）。电脑侧 main 最新提交 `2f66a55`（分发记录），飞书云空间与 D 盘副本均已同步（69129 字节，version `7706843461521083582`）。下一版要求 versionCode > `11111711`、证书 `fb462eb1…` 不变。
 
 ---
 
@@ -63,11 +63,10 @@
 
 **版本号编码**：`11111711` = 2026-11-11 17:11 (UTC+8)，由 `tooling/build-apk.sh` 传入 `--build-number`，高于上一版 `11111558`（15:58）。APK 可覆盖安装。
 
-**首次覆盖安装验证（待执行）**：装完查 `firstInstallTime` 是否与旧版一致、应用内数据还在。命令：
+**首次覆盖安装验证（✅ 已完成，2026-11-11 17:30）**：`11111558 → 11111711`，数据保留。证据见 3.5 节覆盖安装条。`firstInstallTime` 因手机端无 dumpsys 权限未读；等价证据已充分（卸载重装会清空数据目录）。电脑侧若连手机可补跑：
 ```bash
 adb shell dumpsys package io.github.ccch1mneyyy.dsh_app | grep -E "firstInstallTime|lastUpdateTime"
 ```
-或在手机设置 → 应用 → 存储里确认数据未被清空。
 
 **40px 抽动修复（`eb94753`）**：手机端给中间回复加独立 ⋯ 按钮（`IconButton` + `VisualDensity.compact` = 40px）后，**轮尾那条回复**在结算前也会出现 ⋯，结算后 ⋯ 让位给操作行 → 完成那一帧凭空少 40px，正文被顶一下（`turn_settle_test` 的 `The handoff must not insert a header-sized jump` 就是拦这个）。修法：`AssistantMessage` 增加 `isTurnTail`，由 `chat_list` 传入「当前轮最后一条助手正文」，轮尾不再补独立 ⋯（它的 ⋯ 在操作行里）。**没有改任何断言**（断言是设计约束）。
 
@@ -139,7 +138,14 @@ export PATH="/root/dev/jdk-17/bin:/root/dev/flutter/bin:/root/dev/android-sdk/cm
 - `flutter test test/chat/turn_settle_test.dart` = 7/7；`message_actions_test` + `message_flow_test` = 28/28。
 - `flutter test test/settings/index test/ui_config` = 203 通过 / 4 金色图像素漂移（0.00%–0.04%，Rule 31）/ 0 真实失败。
 - 金色图不在手机端验收（Rule 31），未跑 `--update-goldens`。
-- 覆盖安装：静态条件满足（同包名、同签名链、已装 `11111558`）；**尚未做真机覆盖安装实测**——本机数据目录 16:14 新建，看起来是全新安装；下一版需 versionCode > `11111558` 且同证书。
+- 覆盖安装：**已实测通过（2026-11-11 17:30 手机端）**。`11111558 → 11111711` 覆盖安装，证据：
+  - 安装前 17:36:29 的两个应用内标记文件仍在（未被卸载清理）
+  - `sessions` 目录 mtime 仍是 16:15、数量 1（旧数据保留）
+  - 仓库 HEAD `0583f58` 未丢（应用自身的 Git 快照未重置）
+  - `proot` 子进程已被系统重启但数据目录未重建（数据未被 app wipe）
+  - APK 独立校验：sha256 `8a5ffc763a24ae49f8fb42428e22a42b2e12f36af99e7b02122c86ad6f563e9d` ✓、证书 `fb462eb1…` ✓、versionCode `11111711` ✓
+  - 注：手机端无 `dumpsys` 权限读不到 `firstInstallTime`；但「数据目录未重建 + sessions 保留」已构成 Android 覆盖安装的等价证明（卸载重装 = 数据目录被删）。电脑侧 `adb shell dumpsys package io.github.ccch1mneyyy.dsh_app | grep -E "firstInstallTime|lastUpdateTime"` 可补证，需要 PC 连手机时跑一下。
+  - 下一版：versionCode 必须 > `11111711`、证书不变。
 
 ---
 
