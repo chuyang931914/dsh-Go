@@ -154,7 +154,7 @@ void main() {
           'account',
           'community',
           'ds-bot',
-          'share-profile',
+          // 魔改：share-profile（分享资料卡）已从「全部功能」移除。
         ]),
       );
     });

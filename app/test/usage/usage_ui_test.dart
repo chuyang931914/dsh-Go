@@ -1,19 +1,14 @@
-// Where the person is told and can say no: first run's welcome page (over
-// 「开始」) and 设置 › 隐私与分享 › 改进 DSH Go. Measured, not eyeballed: the
-// welcome row's text starts 16 in from the button's left edge and the switch
-// track ends 16 in from its right, both centred on the row, the row as far
-// from either screen edge; at 320 dp with large text in both languages
-// nothing overflows or is cut. Seeing either one is what starts the
-// counting; the switch turns it all off.
+// 魔改基线：匿名使用统计已剔除，首屏 welcome 页不再有「发送匿名使用统计」
+// 告知行（UsageNoticeRow 已删除），也没有任何开关可打开它。这组测试锁住
+// 这个决定：zh/en 都没有该行、窄屏大字体不溢出、看完首屏不落下任何
+// usage 存储。welcome 页其余布局仍由金色基准守住：
 //
 //   flutter test --update-goldens test/usage/usage_ui_test.dart
 
 import 'package:dsh_app/l10n/l10n.dart';
 import 'package:dsh_app/ui/onboarding/welcome_page.dart';
-import 'package:dsh_app/usage/usage_stats.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -44,9 +39,6 @@ Future<void> _pumpWelcome(
   await tester.pump(const Duration(milliseconds: 600));
 }
 
-ProviderContainer _container(WidgetTester tester) =>
-    ProviderScope.containerOf(tester.element(find.byType(MaterialApp)));
-
 Future<Map<String, Object?>> _stored() async {
   final prefs = await SharedPreferences.getInstance();
   return {for (final k in prefs.getKeys()) k: prefs.get(k)};
@@ -61,30 +53,21 @@ void main() {
     await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/en_welcome_light.png'));
   });
 
-  group('the welcome row', () {
+  group('the welcome page has no usage row', () {
     for (final english in [false, true]) {
-      testWidgets('lines up with the button, centred, mirrored (${english ? 'en' : 'zh'})', (tester) async {
+      testWidgets('no notice row, no switch, nothing stored (${english ? 'en' : 'zh'})', (tester) async {
         await tester.runAsync(loadGoldenFonts);
         await _pumpWelcome(tester, english: english);
-        final button = tester.getRect(find.byType(FilledButton));
-        final row = tester.getRect(find.byKey(_row));
-        final sw = tester.getRect(find.byKey(_switch));
-        final title = tester.getRect(find.text(appL10n.usageStatsTitle));
-        final body = tester.getRect(find.text(appL10n.usageNoticeBody));
-        // As wide as the button, as far from either screen edge.
-        expect(row.left, moreOrLessEquals(button.left, epsilon: 0.01));
-        expect(row.right, moreOrLessEquals(button.right, epsilon: 0.01));
-        expect(row.left, moreOrLessEquals(390 - row.right, epsilon: 0.01));
-        // Text 16 in on the left; the M3 track (4 inside the switch box) 16 in on the right.
-        expect(title.left - button.left, moreOrLessEquals(16, epsilon: 0.01));
-        expect(body.left, moreOrLessEquals(title.left, epsilon: 0.01));
-        expect(button.right - (sw.right - 4), moreOrLessEquals(16, epsilon: 0.01));
-        // The switch and the two lines centred on the row.
-        expect(sw.center.dy, moreOrLessEquals(row.center.dy, epsilon: 0.01));
-        expect((title.top + body.bottom) / 2, moreOrLessEquals(row.center.dy, epsilon: 0.6));
-        // Over the button, clear of it.
-        expect(button.top - row.bottom, moreOrLessEquals(20, epsilon: 0.01));
+        expect(find.byKey(_row), findsNothing);
+        expect(find.byKey(_switch), findsNothing);
+        // 文案键仍在（防误删），但不得出现在首屏。
+        expect(find.text(appL10n.usageStatsTitle), findsNothing);
+        expect(find.text(appL10n.usageNoticeBody), findsNothing);
         expect(tester.takeException(), isNull);
+        // 首屏之后：不落下任何 usage 存储（provider 从未被触发计数）。
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
+        await tester.pump();
+        expect((await tester.runAsync(_stored))!.keys.where((k) => k.startsWith('usage_stats')), isEmpty);
       });
     }
 
@@ -96,44 +79,14 @@ void main() {
         for (final paragraph in tester.allRenderObjects.whereType<RenderParagraph>()) {
           expect(paragraph.didExceedMaxLines, isFalse, reason: paragraph.text.toPlainText());
         }
-        // The button is still reachable, with the row over it.
-        final row = tester.getRect(find.byKey(_row));
-        expect(row.bottom, lessThanOrEqualTo(tester.getRect(find.byType(FilledButton)).top));
       });
     }
 
-    testWidgets('seeing it starts the counting; on by default', (tester) async {
-      await _pumpWelcome(tester);
-      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
-      await tester.pump();
-      final state = _container(tester).read(usageStatsProvider);
-      expect(state.enabled, isTrue);
-      expect(state.noticed, isTrue);
-      expect(tester.widget<Switch>(find.byKey(_switch)).value, isTrue);
-      expect((await tester.runAsync(_stored))![UsageStatsController.noticedKey], isTrue);
-    });
-
-    testWidgets('one tap anywhere on the row turns it off, and back on', (tester) async {
-      await _pumpWelcome(tester);
-      await tester.tap(find.text(appL10n.usageNoticeBody));
-      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
-      await tester.pump();
-      expect(_container(tester).read(usageStatsProvider).enabled, isFalse);
-      expect(tester.widget<Switch>(find.byKey(_switch)).value, isFalse);
-      expect((await tester.runAsync(_stored))![UsageStatsController.enabledKey], isFalse);
-
-      await tester.tap(find.byKey(_switch));
-      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
-      await tester.pump();
-      expect(_container(tester).read(usageStatsProvider).enabled, isTrue);
-    });
-
-    testWidgets('reads as one switch to a screen reader', (tester) async {
+    testWidgets('no switch for a screen reader either', (tester) async {
       final semantics = tester.ensureSemantics();
       await _pumpWelcome(tester);
-      final node = tester.getSemantics(find.byKey(_switch));
-      expect(node.label, contains(appL10n.usageStatsTitle));
-      expect(node.label, contains(appL10n.usageNoticeBody));
+      expect(find.bySemanticsLabel(appL10n.usageStatsTitle), findsNothing);
+      expect(find.bySemanticsLabel(appL10n.usageNoticeBody), findsNothing);
       semantics.dispose();
     });
   });

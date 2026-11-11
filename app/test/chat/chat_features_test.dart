@@ -389,8 +389,8 @@ void main() {
         catalog: ModelCatalog.fromJson(const {'groups': <Object?>[]}),
       );
       await pumpChat(tester, harness);
-      // The new chat's header chip (and the composer's, once typing) asks for one.
-      expect(find.descendant(of: find.byType(ModelChip), matching: find.text('选择模型')), findsOneWidget);
+      // 魔改：窄屏顶栏 ModelChip 已归位到输入框底部，顶栏不再显示。
+      expect(find.byType(ModelChip), findsNothing);
       await tester.tap(find.byType(TextField));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));

@@ -77,8 +77,12 @@ void main() {
   group('changes', () {
     testWidgets('the slider moves in 5 % steps down to 30 %, each step sent at once', (tester) async {
       final h = await pumpPhone(tester, const PhoneControlScreen(), native: FakePhoneNative(status: phoneStatus()));
-      await _reveal(tester);
       final slider = find.byType(Slider);
+      // _reveal slams 完成后返回 DSH Go to the top of the viewport (ensureVisible's
+      // explicit alignment), which buries the slider above it under the app bar;
+      // centre the slider instead so the drag actually lands on it.
+      await Scrollable.ensureVisible(tester.element(slider), alignment: 0.5);
+      await settlePhone(tester);
       await tester.drag(slider, const Offset(-600, 0));
       await settlePhone(tester);
       expect(find.text('30%'), findsOneWidget);

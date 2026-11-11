@@ -123,30 +123,25 @@ void main() {
       expect(state.loaded, isTrue);
       expect(state.current.toString(), '1.1.0+5');
       expect(state.flavor, ApkFlavor.x64);
-      expect(state.autoCheck, isTrue);
+      expect(state.autoCheck, isFalse, reason: '魔改：自动更新已剔除，恒为 false');
     });
 
-    test('daily auto check: offers once, then waits a day; remembers the endpoint that answered', () async {
+    test('auto check is excised: never due, no request, whatever the prefs say', () async {
+      // 魔改：autoCheckIfDue() 恒 false（update_state.dart），启动时零检查。
       const m1 = 'https://mirror-one.example/$_manifest';
       http.routes[m1] = (_, _) => textResponse(jsonEncode(_release()));
       final c = container();
       final controller = await ready(c);
 
-      expect(await controller.autoCheckIfDue(), isTrue);
-      final state = c.read(appUpdateProvider);
-      expect(state.check, UpdateCheckPhase.available);
-      expect(state.latest!.version.name, '1.2.0');
-      expect(state.asset!.name, 'dsh-go-1.2.0-arm64.apk');
-      expect(http.urls, [_manifest, m1]);
-
-      now = now.add(const Duration(hours: 5));
+      expect(c.read(appUpdateProvider).autoCheck, isFalse);
       expect(await controller.autoCheckIfDue(), isFalse);
-      expect(http.requests, hasLength(2), reason: 'throttled');
+      expect(c.read(appUpdateProvider).check, UpdateCheckPhase.idle, reason: '没有 offer，也没有检查痕迹');
+      expect(http.requests, isEmpty, reason: '自动检查不得发出任何请求');
 
-      now = now.add(const Duration(hours: 20));
-      http.requests.clear();
-      expect(await controller.autoCheckIfDue(), isTrue);
-      expect(http.urls, [m1], reason: 'starts where it worked last time');
+      now = now.add(const Duration(days: 3));
+      expect(await controller.autoCheckIfDue(), isFalse);
+      expect(http.requests, isEmpty);
+      expect(await controller.autoCheckIfDue(), isFalse, reason: '调用多少次都不检查');
     });
 
     test('switched off: no automatic check', () async {
@@ -159,10 +154,13 @@ void main() {
     });
 
     test('a skipped version is not offered again, a newer one is; a manual check still shows it', () async {
+      // 魔改：自动检查已剔除，这里的「提醒」全部走手动 check()（无产品入口，
+      // 仅验证 skip 状态机本身仍自洽）。
       http.routes[_api] = (_, _) => textResponse(fixture('github_release.json'));
       final c = container();
       final controller = await ready(c);
-      expect(await controller.autoCheckIfDue(), isTrue);
+      expect(await controller.autoCheckIfDue(), isFalse, reason: '自动检查恒为 false');
+      expect(await controller.check(), UpdateCheckPhase.available);
       await controller.skipLatest();
       expect(c.read(appUpdateProvider).isSkipped, isTrue);
 
@@ -172,7 +170,7 @@ void main() {
 
       http.routes[_api] = (_, _) => textResponse(fixture('github_release.json').replaceAll('1.2.0', '1.2.1'));
       now = now.add(const Duration(days: 1));
-      expect(await controller.autoCheckIfDue(), isTrue);
+      expect(await controller.check(), UpdateCheckPhase.available);
       expect(c.read(appUpdateProvider).latest!.version.name, '1.2.1');
       expect(c.read(appUpdateProvider).isSkipped, isFalse);
     });

@@ -237,7 +237,9 @@ void main() {
       final c = container();
       final controller = c.read(appUpdateProvider.notifier);
       await controller.ready;
-      expect(await controller.autoCheckIfDue(), isTrue);
+      // 魔改：自动检查已剔除，改走手动 check()（beta 通道契约本身不变）。
+      expect(await controller.autoCheckIfDue(), isFalse);
+      expect(await controller.check(), UpdateCheckPhase.available);
       expect(c.read(appUpdateProvider).latest!.version.name, '1.2.0');
       await controller.startDownload();
       expect(c.read(appUpdateProvider).task, UpdateTaskPhase.ready);
