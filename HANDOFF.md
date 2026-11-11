@@ -541,6 +541,15 @@ git push github HEAD:mogai
 - 电脑侧接手机端成果：`git fetch origin phone && git merge origin/phone`（phone 基于 main，一般可快进）或 cherry-pick 需要的提交；合并后按 8.2 正常双推。
 - `/root/dev/dsh-push.sh` 双推规则：`main` 分支 → Gitee `main` + GitHub `HEAD:mogai`；其他分支 → 同名推两边。
 
+### 8.4 双端协作约定（手机端 + 电脑 WSL，2026-11-11）
+
+- **分工**：电脑侧 = WSL 构建 / 全量测试 / APK 构建分发 / `D:\HANDOFF.md` 与飞书同步；手机端 = `dart analyze` / 非金色图测试 / 交叉复跑 / 文档维护 / 装机校验（见 3.4、Rule 30）。
+- **动手前先拉最新**：任何一方改代码/文档前先 `git fetch origin && git pull`，禁止在旧提交上开工。
+- **分支纪律**：手机端新改动一律走 `phone`（8.3）；电脑侧产出合并进 `main` 后，由**合并者**负责推完 Gitee `main` + GitHub `mogai`，别留半截。
+- **HANDOFF.md 是双方信使**：谁改谁立即 commit + 推送，防双写冲突；合并时规则编号、清单勾选以最新事实为准，发现文档与代码不一致先修文档。
+- **GitHub 波动**：手机端推 GitHub 偶发超时（Rule 32），重试几次不通就交给电脑侧推，不阻塞主线。
+- **进度同步**：电脑侧每批完成即推 Gitee；手机侧复跑结论写回 3.4 / 9.2 的基线行。两边都不在对方未推送的工作上开工。
+
 ---
 
 ## 九、已知坑 / Rules（踩过的雷，别再踩）
