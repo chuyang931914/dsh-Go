@@ -432,7 +432,7 @@ flutter test > /tmp/full_test.log 2>&1                # 全量，目标 0 失败
 - [x] 批次 5 零散项清零，真回归已记录并上报（`886e699`）
 - [x] `test/settings test/star test/ui_config` 473 / 0 / 0（原 443/30/0，check_mjs_parity 30 用例从 skip 变 pass）
 - [x] 全量 `flutter test` 0 失败（10845 passed / 288 skipped / 0 failed），9.2 已改写为历史基线
-- [x] 代码已双推：Gitee `main` / GitHub `mogai` 均为 `d746042`（GitHub `mogai` 由手机端补推：`0344644 → e0cfea7 → d746042`）
+- [x] 代码已推 Gitee `main`；GitHub 自 2026-11-11 起由 Gitee Push 镜像自动同步（默认分支 `main`，`mogai` 冻结）
 - [ ] `D:\HANDOFF.md` 覆盖 + 飞书云空间覆盖上传（token `OJSGbqo2IofCYQxm8uycjTGAn7d`，电脑侧执行）
 
 ### 10）关闭「关于 DSH Go」入口（2026-11-11）
@@ -513,43 +513,39 @@ git config user.email # 200414988+chuyang931914@users.noreply.github.com
   git pull   # 首次输入用户名 + PAT，之后自动记住
   ```
 
-### 8.2 同步命令（每次改完都推两边）
+### 8.2 同步命令（2026-11-11 更新：Gitee 为唯一事实源，GitHub 全自动镜像）
 
 ```bash
 cd /root/dsh-Go
 git add -A
-git commit -m "feat(mod): 去匿名统计/锁新对话默认低/去隐私分享/去自动更新"
+git commit -m "feat(mod): ..."
 
-# Gitee：直接推 main
-git push gitee main
-
-# GitHub：推到 mogai 分支（不要强推 main，会覆盖上游历史）
-git push github HEAD:mogai
+# 只推 Gitee；GitHub 由 Gitee 仓库的 Push 镜像自动同步（同名分支）
+git push origin main
+git push origin phone   # 手机工作分支
 ```
 
 **关键差异（务必记住）**：
-- GitHub 仓库 `chuyang931914/dsh-Go` 的 `main` 是**上游项目历史**（镜像/fork），本地仓库与它**历史无关**；直接 `git push github main` 会因 non-fast-forward 被拒，强推会毁掉上游历史。所以魔改只能推 `mogai` 分支。
-- Gitee 仓库 `dsh-go-mogai` 是纯魔改仓库，`main` 可以直接推。
-
-- `.git` 约 356MB（含 runtime 等二进制），**首次推送慢是正常的**
-- GitHub 直连不稳时可改用镜像域名或开启代理；Gitee 一般直连
-- Gitee 仓库名是 `dsh-go-mogai`，**不是** `dsh-Go`，别写错
-- **推送策略（2026-11-11 更新）：Gitee 为主、GitHub 为辅**。任务完成标志 = 已推 Gitee `main`；GitHub `mogai` 推不上**不算未完成**。GitHub 当次最多重试 **3 次**，仍失败则记入待补推，**下次任何推送时必须先补上**（手机端 `dsh-push.sh` 已自动实现：欠账记录在 `/root/dev/github_backlog`，下次运行先补推再推本次，直到 GitHub 与 Gitee 一致才清零）。长期方案：在 Gitee 仓库设置里配置「仓库镜像」指向 GitHub 仓库，Gitee 每次 push 后自动同步，两端都不用手动管 GitHub（**已于 2026-11-11 配置 Push 镜像**；镜像生效后手机端只需推 Gitee，脚本里的 GitHub 推送属双保险）。
-- **GitHub 待补推状态**：无（2026-11-11 已同步至最新）。
+- Gitee 仓库 `dsh-go-mogai` 是**唯一事实源**，`main` 直接推。
+- GitHub 仓库 `chuyang931914/dsh-Go` 已配置 Gitee **Push 镜像**（2026-11-11）：Gitee 每次 push 后约 5 分钟内按**同名分支**自动同步到 GitHub（`main→main`、`phone→phone`），**不再手动推 GitHub**。
+- 镜像带来的变化（2026-11-11，用户已确认不再依赖上游更新）：① GitHub 原 `main`（上游历史镜像）已被镜像覆盖为魔改历史；② GitHub 默认分支已切换为 `main`（自动镜像分支）；③ `mogai` 分支**冻结**为历史，不再更新；④ GitHub Actions 已禁用（避免镜像推送反复触发失败邮件）。
+- `.git` 约 356MB（含 runtime 等二进制），首次推送慢是正常的；Gitee 一般直连。
+- Gitee 仓库名是 `dsh-go-mogai`，**不是** `dsh-Go`，别写错。
+- **镜像失效时的兜底**：手动 `git push github HEAD:main`（其他分支同名推），然后回到正常节奏。
 
 ### 8.3 手机端分支约定（2026-11-11）
 
-- 手机端工作分支 **`phone`**（基于 `0344644` 创建），提交只推 Gitee `phone` + GitHub `phone`，**不碰 `main`/`mogai`**。
-- 电脑侧接手机端成果：`git fetch origin phone && git merge origin/phone`（phone 基于 main，一般可快进）或 cherry-pick 需要的提交；合并后按 8.2 正常双推。
-- `/root/dev/dsh-push.sh` 双推规则：`main` 分支 → Gitee `main` + GitHub `HEAD:mogai`；其他分支 → 同名推两边。
+- 手机端工作分支 **`phone`**（基于 `0344644` 创建），提交只推 Gitee `phone`（GitHub `phone` 由镜像自动同步），**不碰 `main`/`mogai`**。
+- 电脑侧接手机端成果：`git fetch origin phone && git merge origin/phone`（phone 基于 main，一般可快进）或 cherry-pick 需要的提交；合并后按 8.2 推 Gitee。
+- `/root/dev/dsh-push.sh`：只推 Gitee（`main`→`main`、其他分支同名），GitHub 交给镜像。
 
 ### 8.4 双端协作约定（手机端 + 电脑 WSL，2026-11-11）
 
 - **分工**：电脑侧 = WSL 构建 / 全量测试 / APK 构建分发 / `D:\HANDOFF.md` 与飞书同步；手机端 = `dart analyze` / 非金色图测试 / 交叉复跑 / 文档维护 / 装机校验（见 3.4、Rule 30）。
 - **动手前先拉最新**：任何一方改代码/文档前先 `git fetch origin && git pull`，禁止在旧提交上开工。
-- **分支纪律**：手机端新改动一律走 `phone`（8.3）；电脑侧产出合并进 `main` 后，由**合并者**负责推完 Gitee `main` + GitHub `mogai`，别留半截。
+- **分支纪律**：手机端新改动一律走 `phone`（8.3）；电脑侧产出合并进 `main` 后，由**合并者**负责推完 Gitee `main`，别留半截；GitHub 交给镜像。
 - **HANDOFF.md 是双方信使**：谁改谁立即 commit + 推送，防双写冲突；合并时规则编号、清单勾选以最新事实为准，发现文档与代码不一致先修文档。
-- **GitHub 波动**：手机端推 GitHub 偶发超时（Rule 32），重试几次不通就交给电脑侧推，不阻塞主线。
+- **GitHub 无需手动推**：由 Gitee Push 镜像自动同步；镜像失效时才手动兜底（Rule 32）。
 - **进度同步**：电脑侧每批完成即推 Gitee；手机侧复跑结论写回 3.4 / 9.2 的基线行。两边都不在对方未推送的工作上开工。
 
 ---
@@ -588,7 +584,7 @@ git push github HEAD:mogai
 
 30. **手机端（proot aarch64）不能构建 APK，也不要尝试**：① 引擎不发布 linux-arm64 的 Android 宿主构建工具（gen_snapshot 等只有 linux-x64/darwin/windows，release 构建必失败）；② Google 官方无 linux-arm64 版 NDK（项目 `ndkVersion = flutter.ndkVersion` 需要 NDK）；③ `runtime/out` 不随 git 仓库分发，手机克隆里没有（重建风险高，见 Rule 2）；④ keystore 只在电脑 `D:\Android\keystore`。APK 构建与分发继续走电脑 WSL + 飞书；手机端最多做装机后的校验（sha256 / apksigner 指纹 / aapt 权限检查）。
 31. **手机端金色图与本机基线必然漂移，禁止在手机端 `--update-goldens` 并提交 PNG**：字体渲染跨机器有差异（同 Rule 18 的问题），手机端验收只看非金色图测试结果 + `dart analyze` 口径；金色图重建只允许在电脑侧批次 4 做。
-32. **手机端 GitHub 直连时通时断**：偶发 `Failed to connect to github.com port 443`（60 秒+超时）。推送失败就重试几次；备用代理 `https://gitclone.com/github.com/...`、`https://gh-proxy.com/https://github.com/...` 实测可达（2026-11-11）。按 8.2「Gitee 为主」策略：手机端完成标志 = 推 Gitee；GitHub 当次最多 3 次，仍失败记入 `/root/dev/github_backlog`，**下次推送自动补上**，直到 GitHub 与 Gitee 一致才算清零；也可由 Gitee 仓库镜像或电脑侧补推。
+32. **GitHub 网络与镜像（2026-11-11 起）**：Gitee 为唯一事实源，GitHub 由 Gitee Push 镜像自动同步同名分支（`main`/`phone`），镜像最短间隔约 5 分钟；GitHub 默认分支已切到 `main`，`mogai` 冻结，Actions 已禁用。**手机端/电脑端只需推 Gitee**。镜像万一失效：手动兜底 `git push github HEAD:main`（GitHub 直连不稳时备用代理 `https://gitclone.com/github.com/...`、`https://gh-proxy.com/https://github.com/...` 实测可达）。
 
 ---
 
