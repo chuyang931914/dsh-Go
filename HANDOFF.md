@@ -83,6 +83,14 @@ export FLUTTER_STORAGE_BASE_URL="https://storage.flutter-io.cn"
 export PATH="/root/dev/jdk-17/bin:/root/dev/flutter/bin:/root/dev/android-sdk/cmdline-tools/latest/bin:/root/dev/android-sdk/platform-tools:/root/dev/android-sdk/emulator:$PATH"
 ```
 
+### 3.4 手机端辅助环境（2026-11-11，Android 手机 proot Ubuntu 24.04，aarch64）
+
+- **分工**：9.3 五批清账在电脑（WSL）侧执行；手机端只做 `dart analyze` / `flutter test`（非金色图判定）/ 文档维护 / 独立分支提交。**手机端不构建、不分发 APK**（四个硬阻断见 Rule 26）。
+- 布局：`/root/dsh-Go`（工作分支 `phone`，见 8.3）、`/root/dev/flutter`（3.47.7，linux-arm64；官方无 arm64 预编译包，用 Gitee 镜像 `gitee.com/mirrors/Flutter` 按 tag `3.47.7` 浅克隆自举）、`/root/dev/dsh-env.sh`（测试环境变量）、`/root/dev/dsh-push.sh`（双推脚本）。
+- 使用：`source /root/dev/dsh-env.sh` 后 `cd /root/dsh-Go/app` 即可 analyze/test。env 内 `DSH_TEST_FONT_DIR=/usr/share/fonts/opentype/noto`（noble 的 `fonts-noto-cjk` 装在 opentype 下；Light 字重要另装 `fonts-noto-cjk-extra`，两个包都要）。
+- 凭据：`~/.git-credentials`（chmod 600，`credential.helper=store`）已存 Gitee 与 GitHub 令牌，双推可用。
+- 基线（2026-11-11 验证）：`dart analyze` = 0 error / 0 warning / 23 info；`flutter test test/settings test/star test/ui_config` = 418 通过 / 55 失败（失败全为金色图像素漂移，见 Rule 27）。
+
 ---
 
 ## 四、从零重建（换新电脑时照做）
@@ -524,6 +532,12 @@ git push github HEAD:mogai
 - GitHub 直连不稳时可改用镜像域名或开启代理；Gitee 一般直连
 - Gitee 仓库名是 `dsh-go-mogai`，**不是** `dsh-Go`，别写错
 
+### 8.3 手机端分支约定（2026-11-11）
+
+- 手机端工作分支 **`phone`**（基于 `0344644` 创建），提交只推 Gitee `phone` + GitHub `phone`，**不碰 `main`/`mogai`**。
+- 电脑侧接手机端成果：`git fetch origin phone && git merge origin/phone`（phone 基于 main，一般可快进）或 cherry-pick 需要的提交；合并后按 8.2 正常双推。
+- `/root/dev/dsh-push.sh` 双推规则：`main` 分支 → Gitee `main` + GitHub `HEAD:mogai`；其他分支 → 同名推两边。
+
 ---
 
 ## 九、已知坑 / Rules（踩过的雷，别再踩）
@@ -553,6 +567,10 @@ git push github HEAD:mogai
 23. **【最高优先级】停滞三分钟必须主动同步**：任何命令/构建/测试超过 **3 分钟没有新的有效输出**，立刻向用户同步三件事：当前在等什么、已等多久、判断是在推进还是卡住（附证据，如 CPU 时间、进程数、日志尾行）。禁止连续长时间静默等待，也不允许只说"还在跑"。判定标准：`ps` 里 CPU 时间不再增长、没有子进程、日志无新增行 → 视为停滞，立即切换排查思路（用户 Rule 4/5）。
 24. **`flutter test` 挂死优先查编译错误，不要盲等**：症状是主进程 CPU 时间几乎不涨、没有 `flutter_tester` 子进程、`frontend_server` 反复重启。直接跑单个测试文件 `timeout 240 flutter test <file>`，`loading ...` 失败会打印真实编译错误。全量测试必须重定向日志（`> /tmp/full_test.log 2>&1`）再轮询 `tail`，否则 `| tail -n` 会缓冲到进程结束，看起来像"没有任何输出"。
 25. **未使用 l10n 键扫描的排除范围**：只能排除 `lib/l10n/gen/` 与 `lib/l10n/parts/`，**不能排除整个 `lib/l10n`**——手写的 `lib/l10n/l10n.dart` 里有 `commonMonthDay` 这类调用（`monthDay()` 扩展）。2026-11-11 因排除整个目录误删 `commonMonthDay`，全量测试编译失败并挂死 55 分钟。删除后必须用 `dart analyze --format machine | grep '^ERROR'` 计数为 0 来确认，**不能用 `tail -3` 看结尾**（错误会排在 24 条 info 之前被截掉）。
+
+26. **手机端（proot aarch64）不能构建 APK，也不要尝试**：① 引擎不发布 linux-arm64 的 Android 宿主构建工具（gen_snapshot 等只有 linux-x64/darwin/windows，release 构建必失败）；② Google 官方无 linux-arm64 版 NDK（项目 `ndkVersion = flutter.ndkVersion` 需要 NDK）；③ `runtime/out` 不随 git 仓库分发，手机克隆里没有（重建风险高，见 Rule 2）；④ keystore 只在电脑 `D:\Android\keystore`。APK 构建与分发继续走电脑 WSL + 飞书；手机端最多做装机后的校验（sha256 / apksigner 指纹 / aapt 权限检查）。
+27. **手机端金色图与本机基线必然漂移，禁止在手机端 `--update-goldens` 并提交 PNG**：字体渲染跨机器有差异（同 Rule 18 的问题），手机端验收只看非金色图测试结果 + `dart analyze` 口径；金色图重建只允许在电脑侧批次 4 做。
+28. **手机端 GitHub 直连时通时断**：偶发 `Failed to connect to github.com port 443`（60 秒+超时）。推送失败就重试几次；备用代理 `https://gitclone.com/github.com/...`、`https://gh-proxy.com/https://github.com/...` 实测可达（2026-11-11）。
 
 ---
 
