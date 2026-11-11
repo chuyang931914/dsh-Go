@@ -4,7 +4,7 @@
 > 最后更新：2026-11-11
 > 权威副本：本文件同时放在仓库根目录 `HANDOFF.md`（随 Git 推送，跨设备可用）。
 >
-> **当前状态（2026-11-11 21:20）**：`main` = `phone` = `5d7729d`；实机已覆盖安装 `1.0.17+11111915`，数据保留。真机验收发现两处问题：翻译跳到 vivo 浏览器、朗读语速偏快；已修并发起 `1.0.18`（翻译优先 `com.vivo.translator`，朗读 0.8× 正常音高）。其余三项（菜单裁剪/问AI/宠物关闭/边缘手势）真机未报问题。
+> **当前状态（2026-11-11 21:47）**：`main` ← phone `92f683a`（快进，1.0.18 修复）。电脑侧已出包 `dsh-go-1.0.18-11112142-mogai-arm64.apk`（206.2MB，证书 `fb462eb1…`，sha256 `52f0cdc0…b770`），Gradle `assembleArm64Release` 通过；`classes.dex` 已含 `com.vivo.translator` 字面量（证明新翻译优先级已打包）。`dart analyze` 0 error；`test/chat + test/companion` 2295 全通过。**1.0.17 真机覆盖安装通过、数据保留，五项中三项通过；只剩翻译目标与朗读语速待本版复验。**
 
 ---
 
@@ -125,11 +125,11 @@ export PATH="/root/dev/jdk-17/bin:/root/dev/flutter/bin:/root/dev/android-sdk/cm
 
 | 线 | 事实 | 状态 |
 | --- | --- | --- |
-| 仓库 | `main` = `92a0283`（← phone 快进）＋ `bdee58a`（金色图手势修复）；`phone` 未含 `bdee58a` | ✅ |
-| 代码 | HEAD `bdee58a`；构建提交 `92a0283`（SelectionPlugin 等 1.0.17 功能） | ✅ |
-| APK | `11111915`（1.0.17），206.2 MB，sha256 `3246493b…fd97`，证书 `fb462eb1…3c2f` | ✅ |
-| 实机 | 当前装的是 `1.0.15+11111711`；`11111915` 待装机真机验收（覆盖安装基线 `11111711`） | ⏳ 待验证 |
-| 文档 | 本文件为权威；D 盘/飞书需随本次 `11111915` 结果覆盖 | ⚠️ 本轮同步中 |
+| 仓库 | `main` = `phone` = `92f683a`（1.0.18 修复） | ✅ |
+| 代码 | HEAD `92f683a`；构建提交同 HEAD | ✅ |
+| APK | `11112142`（1.0.18），206.2 MB，sha256 `52f0cdc0…b770`，证书 `fb462eb1…3c2f` | ✅ |
+| 实机 | 已装 `1.0.17+11111915`（覆盖安装通过、数据保留）；`11112142` 待装机，只复验翻译与朗读 | ⏳ 待验证 |
+| 文档 | 本文件为权威；D 盘/飞书随本次 `11112142` 结果覆盖 | ⚠️ 本轮同步中 |
 
 手机端环境与验证（本机）：
 - 仓库 `/root/workspace/dsh-Go`（`/root/dsh-Go` 软链）；Flutter 3.47.7 linux-arm64（`/root/dev/flutter`）；Dart 3.13.5。
@@ -575,6 +575,7 @@ flutter test > /tmp/full_test.log 2>&1                # 全量，目标 0 失败
 - 版本：`app/pubspec.yaml` = `1.0.17+1`；指南同步 1.0.17。
 - **真机反馈（2026-11-11 21:xx，已装 11111915）**：① 翻译跳到了 vivo 浏览器（`com.vivo.browser/.TranslateActivity`），不是 vivo 翻译本体；② 朗读语速太快；③ 菜单裁剪/问AI/宠物关闭/边缘手势未报问题。
 - **1.0.18 修复**：`SelectionPlugin.kt` 按包名优先 `com.vivo.translator`，其次任意 translator 包，最后才认名称带 translate 的非浏览器处理器；朗读改为 `rate: 0.8, pitch: 1.0`（`CompanionVoice.speak` 支持按次覆盖）；版本 `1.0.18+1`。
+- **1.0.18 构建（2026-11-11 21:42）**：APK `dsh-go-1.0.18-11112142-mogai-arm64.apk`，`versionCode 11112142`（> `11111915`）、`versionName 1.0.18`，证书 `fb462eb1…3c2f`，sha256 `52f0cdc0fe9f99635b2c4608dde663a0809892845bc8735bb81f1314b997b770`；`classes.dex` 含 `com.vivo.translator`，`dsh/selection` 通道仍在。`dart analyze` 0 error；`test/chat + test/companion` 2295 通过 0 失败。**待真机只复验翻译与朗读两项。**
 - **电脑侧构建（2026-11-11 19:15）**：`main` ← phone `92a0283` 快进合并；`flutter build apk` / Gradle `assembleArm64Release` 成功 → `SelectionPlugin.kt` 与 `MainActivity.kt` 注册均编译通过；APK `dsh-go-1.0.17-11111915-mogai-arm64.apk`，206.2MB，`versionCode 11111915`（> `11111751`）、`versionName 1.0.17`，证书 `fb462eb1…3c2f`，无 `REQUEST_INSTALL_PACKAGES`，sha256 `3246493b4e54058a35a92e7552613562d3e7d5e892420156388b034d7782fd97`；`classes.dex` 内含 `dsh/selection` 通道字符串（证明插件已打包）。
 - **测试**：`test/chat` 2152 通过（0 失败）；`test/shell` 仅 `quick_panel_golden_test` 6 张红——原测试从屏幕中间（`width*0.75`）起手，被新 `acceptAt` 边缘限制拦下，面板没打开；改 `_pullPanel` 从右边缘 `width-1` 起手后 10/10 通过，**未改任何 PNG、未改产品代码**（`bdee58a`）。
 - **待真机**：vivo 翻译能否被 `ACTION_PROCESS_TEXT` 直接命中（找不到会落系统选择器）；长按菜单是否只剩 复制/全选/翻译/⋯；问AI 填入不发送；聊天页宠物消失；中间横滑无反应、边缘 24dp 可拉。
@@ -695,8 +696,8 @@ git push origin phone   # 手机工作分支
 | 1.0.15 | 11111558 | 正文长按选字 + 40px 修复 |
 | 1.0.15 | 11111711 | 首次覆盖安装验证（代码同 11111558） |
 | 1.0.16 | 11111751 | 版本号冒烟包（功能同 11111711，未装机） |
-| 1.0.17 | 11111915 | 选区菜单裁剪 + 问AI + 聊天页宠物关闭 + 边缘手势（待真机验收） |
-| 1.0.18 | 待构建 | 修翻译目标（vivo 翻译本体）+ 朗读 0.8× 正常音高 |
+| 1.0.17 | 11111915 | 选区菜单裁剪 + 问AI + 聊天页宠物关闭 + 边缘手势（真机 3/5 通过，翻译/朗读由 1.0.18 修） |
+| 1.0.18 | 11112142 | 修翻译目标（vivo 翻译本体）+ 朗读 0.8× 正常音高（待复验） |
 
 ---
 
