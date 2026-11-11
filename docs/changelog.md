@@ -1,5 +1,17 @@
 # 更新日志 · Changelog
 
+## 1.0.18 · 2026-11-11
+
+### 中文
+
+- **修「翻译」跳到浏览器。** 长按选字点翻译时，优先打开 vivo 翻译本体（`com.vivo.translator`），不再命中浏览器里的网页翻译；没有翻译本体才回落到系统选择器。
+- **调慢「朗读」语速。** 选中文字朗读改为 0.8 倍速、正常音高，不再用桌宠的偏快声音。
+
+### English
+
+- **Fixed Translate opening the browser.** Translating selected text now opens vivo Translator itself (`com.vivo.translator`) instead of the browser's page-translate activity; it only falls back to the system chooser when no translator app handles it.
+- **Slower Read aloud.** Reading a selection now uses 0.8× speed at normal pitch, not the pet's faster voice.
+
 ## 1.0.17 · 2026-11-11
 
 ### 中文

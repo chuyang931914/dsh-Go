@@ -767,7 +767,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
 
   Future<void> _readSelection(String text) async {
     if (!await _selectionVoice.ready()) return;
-    await _selectionVoice.speak('selection', text, flush: true);
+    await _selectionVoice.speak('selection', text, flush: true, rate: 0.8, pitch: 1.0);
   }
 
   void _compose(String message, {bool quoteChip = true, bool restoreMode = true, bool focus = true}) {

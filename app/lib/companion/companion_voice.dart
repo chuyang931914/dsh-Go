@@ -80,14 +80,17 @@ class CompanionVoice {
   }
 
   /// Queues [text] under [id] in the phone's voice, or replaces what it is saying with [flush].
-  Future<bool> speak(String id, String text, {bool flush = false}) async {
+  ///
+  /// [rate] / [pitch] override her own voice for this call: reading a selected
+  /// passage uses a slower, normal-pitch voice.
+  Future<bool> speak(String id, String text, {bool flush = false, double? rate, double? pitch}) async {
     try {
       return await _channel.invokeMethod<bool>('speak', {
             'id': id,
             'text': text,
             'flush': flush,
-            'pitch': pitch,
-            'rate': rate,
+            'pitch': pitch ?? CompanionVoice.pitch,
+            'rate': rate ?? CompanionVoice.rate,
           }) ??
           false;
     } on Object {

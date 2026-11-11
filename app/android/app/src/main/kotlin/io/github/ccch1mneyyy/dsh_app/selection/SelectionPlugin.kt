@@ -41,9 +41,17 @@ class SelectionPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
                         putExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, true)
                     }
                     val candidates = context.packageManager.queryIntentActivities(intent, 0)
+                    // 先认 vivo 翻译本体，再认任何 translator 包；浏览器里的
+                    // TranslateActivity 名字也带 translate，必须排除，否则会
+                    // 跳到浏览器网页翻译。
                     val translator = candidates.firstOrNull {
-                        it.activityInfo.packageName.contains("translat", ignoreCase = true) ||
-                            it.activityInfo.name.contains("translate", ignoreCase = true)
+                        it.activityInfo.packageName == "com.vivo.translator"
+                    } ?: candidates.firstOrNull {
+                        it.activityInfo.packageName.contains("translator", ignoreCase = true)
+                    } ?: candidates.firstOrNull {
+                        (it.activityInfo.packageName.contains("translate", ignoreCase = true) ||
+                            it.activityInfo.name.contains("translate", ignoreCase = true)) &&
+                            !it.activityInfo.packageName.contains("browser", ignoreCase = true)
                     }
                     val target = if (translator != null) {
                         Intent(intent).setComponent(
