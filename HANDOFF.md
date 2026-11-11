@@ -6,6 +6,8 @@
 >
 > **当前状态（2026-11-11 21:20）**：`main` = `phone` = `5d7729d`；实机已覆盖安装 `1.0.17+11111915`，数据保留。真机验收发现两处问题：翻译跳到 vivo 浏览器、朗读语速偏快；已修并发起 `1.0.18`（翻译优先 `com.vivo.translator`，朗读 0.8× 正常音高）。其余三项（菜单裁剪/问AI/宠物关闭/边缘手势）真机未报问题。
 
+> **新对话记忆**：`/root/workspace/AGENTS.md` 是指向 [`PROJECT_STATE.md`](PROJECT_STATE.md) 的软链，新对话会自动加载；换机/重装后运行 `bash tooling/install-workspace-memory.sh`。
+
 ---
 
 ## 一、项目是什么

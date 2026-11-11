@@ -1,5 +1,7 @@
 # AGENTS.md
 
+> **项目记忆（新对话先读）**：当前状态、双端分工、待办与关键决策见 [`PROJECT_STATE.md`](PROJECT_STATE.md)；实现细节见 [`HANDOFF.md`](HANDOFF.md)；长期用户指令见 [`project_memory.md`](project_memory.md)。工作区 `/root/workspace/AGENTS.md` 已软链到 `PROJECT_STATE.md`，新对话会自动加载；换机/重装后运行 `bash tooling/install-workspace-memory.sh`。
+
 dsh-Go 是 DeepSeek Harness 的 Android 手机应用：Flutter 原生界面 + 纯 Dart 客户端 + 打过补丁的 DSH 引擎运行时（在 PRoot 里运行 `dsh web`）。改动前先读 [CONTRIBUTING.md](CONTRIBUTING.md)（贡献与验证契约）与 [docs/architecture.md](docs/architecture.md)。
 
 ## 仓库布局

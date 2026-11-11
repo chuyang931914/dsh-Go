@@ -10,6 +10,7 @@
 4. Gitee 是唯一事实源；GitHub 由 Gitee Push 镜像按同名分支自动同步，**不再手动推 GitHub**（8.2 / Rule 32）。
 5. 不再依赖上游更新：GitHub 原 `main`（上游历史镜像）已覆盖弃用，`mogai` 分支已删除，GitHub 默认分支切到 `main`，Actions 已禁用。
 6. 双端长期协作约定见 HANDOFF 第十四节；日常纪律见 8.4。
+7. 新对话记忆：工作区 `AGENTS.md` 指向仓库里的 `PROJECT_STATE.md`；每次发版/装机反馈/重要决策后更新它，并与 HANDOFF 同一次提交推送。
 
 ## 关键决策记录
 
