@@ -4,7 +4,7 @@
 > 最后更新：2026-11-11
 > 权威副本：本文件同时放在仓库根目录 `HANDOFF.md`（随 Git 推送，跨设备可用）。
 >
-> **当前状态（2026-11-11 17:00）**：「全量 99 红清账」已完成；手机端已接手并完成四线核对（见 3.5）：仓库 `main`/`phone` 同为 `c07ad5c`，APK `11111558` 与已装版本一致，`dart analyze` = 0 error / 0 warning / 23 info，聊天相关非金色图测试 35/35 通过。**剩余收尾：`D:\HANDOFF.md` 与飞书云空间副本仍是 14:xx 的 60,516 字节旧版，需电脑侧重新覆盖为当前仓库版本**（token `OJSGbqo2IofCYQxm8uycjTGAn7d`）；装机后验收见第十一节；其他方向见第十二节；双端协作约定见 8.4 与第十四节。
+> **当前状态（2026-11-11 17:00）**：「全量 99 红清账」已完成；手机端已接手并完成四线核对（见 3.5）：仓库 `main` = `c07ad5c`，`phone` 已快进对齐并在其上追加本记录，APK `11111558` 与已装版本一致，`dart analyze` = 0 error / 0 warning / 23 info，聊天相关非金色图测试 35/35 通过。**剩余收尾：`D:\HANDOFF.md` 与飞书云空间副本仍是 14:xx 的 60,516 字节旧版，需电脑侧重新覆盖为当前仓库版本**（token `OJSGbqo2IofCYQxm8uycjTGAn7d`）；装机后验收见第十一节；其他方向见第十二节；双端协作约定见 8.4 与第十四节。
 
 ---
 
@@ -106,7 +106,7 @@ export PATH="/root/dev/jdk-17/bin:/root/dev/flutter/bin:/root/dev/android-sdk/cm
 
 | 线 | 事实 | 状态 |
 | --- | --- | --- |
-| 仓库 | Gitee `main` = `c07ad5c`；`phone` 已于 16:47 快进到 `c07ad5c`（FF，无重写） | ✅ |
+| 仓库 | Gitee `main` = `c07ad5c`；`phone` 于 16:47 快进到 `c07ad5c` 后追加本记录（FF，无重写） | ✅ |
 | 代码 | HEAD `c07ad5c`；构建提交 `eb94753`；之后只有 2 个 docs 提交 | ✅ |
 | APK | `11111558`，206.2 MB，sha256 `8951fdd9…d7b1`，证书 `fb462eb1…3c2f` | ✅ |
 | 实机 | 已装 `1.0.15+11111558`；`cmd package list --show-versioncode` = `11111558` | ✅ |
