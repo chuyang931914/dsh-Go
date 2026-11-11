@@ -4,7 +4,7 @@
 > 最后更新：2026-11-11
 > 权威副本：本文件同时放在仓库根目录 `HANDOFF.md`（随 Git 推送，跨设备可用）。
 >
-> **当前状态（2026-11-11）**：「全量 99 红清账」已完成并双推（Gitee `main` / GitHub `mogai` 已同步）；剩余收尾只有 `D:\HANDOFF.md` 覆盖与飞书云空间覆盖上传（token `OJSGbqo2IofCYQxm8uycjTGAn7d`，电脑侧执行）；装机后验收见第十一节；其他方向见第十二节；双端协作约定见 8.4 与第十四节。
+> **当前状态（2026-11-11）**：「全量 99 红清账」已完成并推 Gitee `main`（GitHub 由镜像自动同步）；剩余收尾只有 `D:\HANDOFF.md` 覆盖与飞书云空间覆盖上传（token `OJSGbqo2IofCYQxm8uycjTGAn7d`，电脑侧执行）；装机后验收见第十一节；其他方向见第十二节；双端协作约定见 8.4 与第十四节。
 
 ---
 
@@ -15,10 +15,10 @@
 | 上游项目 | dsh-Go（DeepSeek Harness 的 Android 客户端，Flutter 编写） |
 | 上游版本 | 1.0.15（基线提交 `40c73ab`，未改动） |
 | 本项目性质 | **个人魔改版**（去统计 / 锁默认模型档位 / 去隐私分享 / 去自动更新 / 关闭关于页入口），自签名，不跟随官方更新 |
-| 主仓库（GitHub） | https://github.com/chuyang931914/dsh-Go.git （**默认分支已设为 `mogai`**；原 `main` 保留上游历史镜像） |
+| 主仓库（GitHub） | https://github.com/chuyang931914/dsh-Go.git （默认分支 `main`，由 Gitee Push 镜像自动同步；原上游历史镜像已弃用，见 8.2） |
 | 镜像仓库（Gitee） | https://gitee.com/chuyang931914/dsh-go-mogai.git （`main` = 魔改版，含本交接文档） |
 | Git 身份 | `chuyang` / `200414988+chuyang931914@users.noreply.github.com` |
-| 分支 | Gitee `main`；GitHub 默认分支 `mogai` |
+| 分支 | Gitee `main`（唯一事实源）；GitHub `main`/`phone`（镜像自动同步，`mogai` 已删除） |
 | 包名 / 版本 | `io.github.ccch1mneyyy.dsh_app`，versionName `1.0.15`，versionCode 由构建脚本按 `MMDDHHmm` 生成（如 11101923） |
 
 **重要：魔改版用自建签名，与官方签名不同 → 官方 APK 覆盖安装会失败，官方"应用内更新"天然装不上（双保险，即使忘了关更新也装不进去）。**
@@ -86,9 +86,9 @@ export PATH="/root/dev/jdk-17/bin:/root/dev/flutter/bin:/root/dev/android-sdk/cm
 ### 3.4 手机端辅助环境（2026-11-11，Android 手机 proot Ubuntu 24.04，aarch64）
 
 - **分工**：9.3 五批清账已于 2026-11-11 由电脑（WSL）侧完成（新基线见 9.2）；手机端只做 `dart analyze` / `flutter test`（非金色图判定）/ 文档维护 / 独立分支提交。**手机端不构建、不分发 APK**（四个硬阻断见 Rule 30）。
-- 布局：`/root/dsh-Go`（工作分支 `phone`，见 8.3）、`/root/dev/flutter`（3.47.7，linux-arm64；官方无 arm64 预编译包，用 Gitee 镜像 `gitee.com/mirrors/Flutter` 按 tag `3.47.7` 浅克隆自举）、`/root/dev/dsh-env.sh`（测试环境变量）、`/root/dev/dsh-push.sh`（双推脚本）。
+- 布局：`/root/dsh-Go`（工作分支 `phone`，见 8.3）、`/root/dev/flutter`（3.47.7，linux-arm64；官方无 arm64 预编译包，用 Gitee 镜像 `gitee.com/mirrors/Flutter` 按 tag `3.47.7` 浅克隆自举）、`/root/dev/dsh-env.sh`（测试环境变量）、`/root/dev/dsh-push.sh`（推送脚本，只推 Gitee）。
 - 使用：`source /root/dev/dsh-env.sh` 后 `cd /root/dsh-Go/app` 即可 analyze/test。env 内 `DSH_TEST_FONT_DIR=/usr/share/fonts/opentype/noto`（noble 的 `fonts-noto-cjk` 装在 opentype 下；Light 字重要另装 `fonts-noto-cjk-extra`，两个包都要）。
-- 凭据：`~/.git-credentials`（chmod 600，`credential.helper=store`）已存 Gitee 与 GitHub 令牌，双推可用。
+- 凭据：`~/.git-credentials`（chmod 600，`credential.helper=store`）已存 Gitee 与 GitHub 令牌，推送可用。
 - 基线（2026-11-11）：电脑侧五批清账后，回归面 `test/settings test/star test/ui_config` = 473 通过 / 0 跳过 / 0 失败，全量 `flutter test` = 10845 通过 / ~288 跳过 / 0 失败；`dart analyze` = 0 error / 0 warning / 23 info。手机端复跑时金色图会因字体渲染不同而像素漂移（见 Rule 31），只验收 analyze 与非金色图结果。手机端交叉验证（`d746042`）：电脑侧改动过的 12 个测试文件 = 381 通过 / 39 金色图漂移 / 0 真实失败。
 
 ---
@@ -421,7 +421,7 @@ flutter test > /tmp/full_test.log 2>&1                # 全量，目标 0 失败
 1. 每批完成后跑该批文件 + 上面第一行回归命令，确认无新增红；
 2. 连续两批无新增红再进下一批；
 3. 全量归零后：把 9.2 标注「历史基线」，写入新数字与日期；更新第十二节第 5 条；
-4. 收尾时同步 `D:\HANDOFF.md` 与飞书云空间（token `OJSGbqo2IofCYQxm8uycjTGAn7d`），并推送 Gitee `main` + GitHub `main:mogai`。
+4. 收尾时同步 `D:\HANDOFF.md` 与飞书云空间（token `OJSGbqo2IofCYQxm8uycjTGAn7d`），并推送 Gitee `main`（GitHub 由镜像自动同步，见 8.2）。
 
 **接手核对清单**
 
@@ -535,7 +535,7 @@ git push origin phone   # 手机工作分支
 
 ### 8.3 手机端分支约定（2026-11-11）
 
-- 手机端工作分支 **`phone`**（基于 `0344644` 创建），提交只推 Gitee `phone`（GitHub `phone` 由镜像自动同步），**不碰 `main`/`mogai`**。
+- 手机端工作分支 **`phone`**（基于 `0344644` 创建），提交只推 Gitee `phone`（GitHub `phone` 由镜像自动同步），**不碰 `main`**（手机端新改动走 phone，经合并才进 main）。
 - 电脑侧接手机端成果：`git fetch origin phone && git merge origin/phone`（phone 基于 main，一般可快进）或 cherry-pick 需要的提交；合并后按 8.2 推 Gitee。
 - `/root/dev/dsh-push.sh`：只推 Gitee（`main`→`main`、其他分支同名），GitHub 交给镜像。
 
@@ -689,7 +689,7 @@ ZIP 内容：`summary.json`（版本/设备/Android/runtime manifest/引擎状�
 - 仓库是唯一事实源；HANDOFF.md 随代码提交，是双方共同语言（Rule 14）。
 - 一个原子任务一次 commit + push；禁止在未推送的工作上继续开工。
 - 手机端产出走 `phone`（8.3）；电脑侧开工前先 `git fetch origin && git pull`，需要时 `git merge origin/phone`。
-- 谁把改动合并进 `main`，谁负责推 Gitee `main`（完成标志）；GitHub `mogai` 允许滞后补推或交给 Gitee 仓库镜像自动同步（见 8.2）。
+- 谁把改动合并进 `main`，谁负责推 Gitee `main`（完成标志）；GitHub 由 Gitee 仓库镜像自动同步，无需手动推（见 8.2）。
 
 ### 14.3 冲突与分歧裁决
 
