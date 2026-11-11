@@ -4,7 +4,7 @@
 > 最后更新：2026-11-11
 > 权威副本：本文件同时放在仓库根目录 `HANDOFF.md`（随 Git 推送，跨设备可用）。
 >
-> **当前状态（2026-11-11）**：「全量 99 红清账」已完成并推 Gitee `main`（GitHub 由镜像自动同步）；剩余收尾只有 `D:\HANDOFF.md` 覆盖与飞书云空间覆盖上传（token `OJSGbqo2IofCYQxm8uycjTGAn7d`，电脑侧执行）；装机后验收见第十一节；其他方向见第十二节；双端协作约定见 8.4 与第十四节。
+> **当前状态（2026-11-11 17:00）**：「全量 99 红清账」已完成；手机端已接手并完成四线核对（见 3.5）：仓库 `main`/`phone` 同为 `c07ad5c`，APK `11111558` 与已装版本一致，`dart analyze` = 0 error / 0 warning / 23 info，聊天相关非金色图测试 35/35 通过。**剩余收尾：`D:\HANDOFF.md` 与飞书云空间副本仍是 14:xx 的 60,516 字节旧版，需电脑侧重新覆盖为当前仓库版本**（token `OJSGbqo2IofCYQxm8uycjTGAn7d`）；装机后验收见第十一节；其他方向见第十二节；双端协作约定见 8.4 与第十四节。
 
 ---
 
@@ -97,10 +97,29 @@ export PATH="/root/dev/jdk-17/bin:/root/dev/flutter/bin:/root/dev/android-sdk/cm
 ### 3.4 手机端辅助环境（2026-11-11，Android 手机 proot Ubuntu 24.04，aarch64）
 
 - **分工**：9.3 五批清账已于 2026-11-11 由电脑（WSL）侧完成（新基线见 9.2）；手机端只做 `dart analyze` / `flutter test`（非金色图判定）/ 文档维护 / 独立分支提交。**手机端不构建、不分发 APK**（四个硬阻断见 Rule 30）。
-- 布局：`/root/dsh-Go`（工作分支 `phone`，见 8.3）、`/root/dev/flutter`（3.47.7，linux-arm64；官方无 arm64 预编译包，用 Gitee 镜像 `gitee.com/mirrors/Flutter` 按 tag `3.47.7` 浅克隆自举）、`/root/dev/dsh-env.sh`（测试环境变量）、`/root/dev/dsh-push.sh`（推送脚本，只推 Gitee）。
+- 布局：`/root/workspace/dsh-Go`（DSH 工作区实际仓库；`/root/dsh-Go` 是指向它的兼容软链）、`/root/dev/flutter`（3.47.7，linux-arm64；官方无 arm64 预编译包，用 Gitee 镜像 `gitee.com/mirrors/Flutter` 按 tag `3.47.7` 浅克隆自举）、`/root/dev/dsh-env.sh`（测试环境变量，含 PATH / PUB / FLUTTER_STORAGE / DSH_TEST_FONT_DIR）、`/root/dev/dsh-push.sh`（推送脚本，只推 Gitee）。
 - 使用：`source /root/dev/dsh-env.sh` 后 `cd /root/dsh-Go/app` 即可 analyze/test。env 内 `DSH_TEST_FONT_DIR=/usr/share/fonts/opentype/noto`（noble 的 `fonts-noto-cjk` 装在 opentype 下；Light 字重要另装 `fonts-noto-cjk-extra`，两个包都要）。
 - 凭据：`~/.git-credentials`（chmod 600，`credential.helper=store`）已存 Gitee 与 GitHub 令牌，推送可用。
 - 基线（2026-11-11）：电脑侧五批清账后，回归面 `test/settings test/star test/ui_config` = 473 通过 / 0 跳过 / 0 失败，全量 `flutter test` = 10845 通过 / ~288 跳过 / 0 失败；`dart analyze` = 0 error / 0 warning / 23 info。手机端复跑时金色图会因字体渲染不同而像素漂移（见 Rule 31），只验收 analyze 与非金色图结果。手机端交叉验证（`d746042`）：电脑侧改动过的 12 个测试文件 = 381 通过 / 39 金色图漂移 / 0 真实失败。
+
+### 3.5 四线一致性（2026-11-11 17:00，手机端接手）
+
+| 线 | 事实 | 状态 |
+| --- | --- | --- |
+| 仓库 | Gitee `main` = `c07ad5c`；`phone` 已于 16:47 快进到 `c07ad5c`（FF，无重写） | ✅ |
+| 代码 | HEAD `c07ad5c`；构建提交 `eb94753`；之后只有 2 个 docs 提交 | ✅ |
+| APK | `11111558`，206.2 MB，sha256 `8951fdd9…d7b1`，证书 `fb462eb1…3c2f` | ✅ |
+| 实机 | 已装 `1.0.15+11111558`；`cmd package list --show-versioncode` = `11111558` | ✅ |
+| 文档 | 本文件为权威；`D:\HANDOFF.md` 与飞书副本仍是 14:xx 的 60,516 字节旧版 | ⚠️ 电脑待同步 |
+
+手机端环境与验证（本机）：
+- 仓库 `/root/workspace/dsh-Go`（`/root/dsh-Go` 软链）；Flutter 3.47.7 linux-arm64（`/root/dev/flutter`）；Dart 3.13.5。
+- `source /root/dev/dsh-env.sh` → `cd /root/dsh-Go/app`。
+- `flutter pub get` 成功；`dart analyze --format machine` = 0 error / 0 warning / 23 info。
+- `flutter test test/chat/turn_settle_test.dart` = 7/7；`message_actions_test` + `message_flow_test` = 28/28。
+- `flutter test test/settings/index test/ui_config` = 203 通过 / 4 金色图像素漂移（0.00%–0.04%，Rule 31）/ 0 真实失败。
+- 金色图不在手机端验收（Rule 31），未跑 `--update-goldens`。
+- 覆盖安装：静态条件满足（同包名、同签名链、已装 `11111558`）；**尚未做真机覆盖安装实测**——本机数据目录 16:14 新建，看起来是全新安装；下一版需 versionCode > `11111558` 且同证书。
 
 ---
 
@@ -444,7 +463,7 @@ flutter test > /tmp/full_test.log 2>&1                # 全量，目标 0 失败
 - [x] `test/settings test/star test/ui_config` 473 / 0 / 0（原 443/30/0，check_mjs_parity 30 用例从 skip 变 pass）
 - [x] 全量 `flutter test` 0 失败（10845 passed / 288 skipped / 0 failed），9.2 已改写为历史基线
 - [x] 代码已推 Gitee `main`；GitHub 自 2026-11-11 起由 Gitee Push 镜像自动同步（默认分支 `main`，`mogai` 已删除）
-- [x] `D:\HANDOFF.md` 覆盖 + 飞书云空间覆盖上传（token `OJSGbqo2IofCYQxm8uycjTGAn7d`，电脑侧执行，2026-11-11 完成：D盘 60516 字节一致，飞书 version 7706799604033768711）
+- [ ] `D:\HANDOFF.md` 覆盖 + 飞书云空间覆盖上传（token `OJSGbqo2IofCYQxm8uycjTGAn7d`，电脑侧执行）。2026-11-11 14:xx 曾完成 60,516 字节版（飞书 version `7706799604033768711`）；16:04/16:12 文档又更新，**当前仓库版本已大于该字节数，需重做**
 
 ### 10）关闭「关于 DSH Go」入口（2026-11-11）
 
@@ -562,7 +581,7 @@ git push origin phone   # 手机工作分支
 
 ### 8.3 手机端分支约定（2026-11-11）
 
-- 手机端工作分支 **`phone`**（基于 `0344644` 创建），提交只推 Gitee `phone`（GitHub `phone` 由镜像自动同步），**不碰 `main`**（手机端新改动走 phone，经合并才进 main）。
+- 手机端工作分支 **`phone`**（2026-11-11 16:47 已快进到 `main` `c07ad5c`，不再基于旧 `0344644`），提交只推 Gitee `phone`（GitHub `phone` 由镜像自动同步），**不碰 `main`**（手机端新改动走 phone，经合并才进 main）。
 - 电脑侧接手机端成果：`git fetch origin phone && git merge origin/phone`（phone 基于 main，一般可快进）或 cherry-pick 需要的提交；合并后按 8.2 推 Gitee。
 - `/root/dev/dsh-push.sh`：只推 Gitee（`main`→`main`、其他分支同名），GitHub 交给镜像。
 
