@@ -1,10 +1,10 @@
 # dsh-Go 魔改版 · 项目交接文档
 
 > 用途：跨设备 / 跨账号 / 跨对话恢复本项目。任何人（或未来的我）拿到这份文档 + 两个仓库地址，就能从零把环境、签名、APK 全部重建出来。
-> 最后更新：2026-11-11
+> 最后更新：2026-11-12
 > 权威副本：本文件同时放在仓库根目录 `HANDOFF.md`（随 Git 推送，跨设备可用）。
 >
-> **当前状态（2026-11-12 00:20）**：1.0.18 已收口；**1.0.19 代码完成**（消息时间戳 + 边缘手势 8–40dp），待电脑重建受影响 golden、出包（versionCode > `11112142`，证书 `fb462eb1…`）。实机仍是 `1.0.18+11112142`；1.0.19 装后验时间戳与边缘手感。
+> **当前状态（2026-11-12 01:15）**：`main` 已合并 `phone 3bf2914`；电脑侧金色图/测试适配为 `81bcd98`。APK **`1.0.19+11120055`** 已构建并核验（证书 `fb462eb1…3c2f`，sha256 `0db5bb9a…ba4c`），位于 `D:\Android\apk\dsh-go-1.0.19-11120055-mogai-arm64.apk`。`dart analyze` 0 error / 0 warning；`test/chat + test/shell` 2184 全通过。实机仍是 `1.0.18+11112142`，待装 1.0.19 验时间戳/全局切换与 8–40dp 手感。**飞书用户令牌过期，本次 APK 与文档尚未覆盖飞书。**
 
 > **新对话记忆**：`/root/workspace/AGENTS.md` 是指向 [`PROJECT_STATE.md`](PROJECT_STATE.md) 的软链，新对话会自动加载；换机/重装后运行 `bash tooling/install-workspace-memory.sh`。
 
@@ -127,11 +127,11 @@ export PATH="/root/dev/jdk-17/bin:/root/dev/flutter/bin:/root/dev/android-sdk/cm
 
 | 线 | 事实 | 状态 |
 | --- | --- | --- |
-| 仓库 | `main` = `phone` = `f088aa9`（1.0.18 收口 + 开机记忆） | ✅ |
-| 代码 | HEAD `f088aa9`；APK 构建提交 `92f683a`（`11112142`） | ✅ |
-| APK | `11112142`（1.0.18），206.2 MB，sha256 `52f0cdc0…b770`，证书 `fb462eb1…3c2f` | ✅ |
-| 实机 | 已装 `1.0.18+11112142`；覆盖安装数据保留，翻译/朗读两项复验通过 | ✅ |
-| 文档 | 本文件为权威；D 盘/飞书已随 `f088aa9` 覆盖 | ✅ |
+| 仓库 | `main` 含 `3bf2914` + `81bcd98`；`phone` = `3bf2914`（main 多金色图/测试与本次文档） | ✅ |
+| 代码 | 产品代码 `3bf2914`；金色图/测试适配 `81bcd98` | ✅ |
+| APK | `11120055`（1.0.19），206.2 MB，sha256 `0db5bb9a…ba4c`，证书 `fb462eb1…3c2f` | ✅ |
+| 实机 | 已装 `1.0.18+11112142`；`11120055` 待装机验时间戳与边缘手感 | ⏳ 待验证 |
+| 文档 | 本文件为权威；D 盘已同步，飞书待用户令牌恢复后覆盖 | ⚠️ 飞书待同步 |
 
 手机端环境与验证（本机）：
 - 仓库 `/root/workspace/dsh-Go`（`/root/dsh-Go` 软链）；Flutter 3.47.7 linux-arm64（`/root/dev/flutter`）；Dart 3.13.5。
@@ -583,14 +583,17 @@ flutter test > /tmp/full_test.log 2>&1                # 全量，目标 0 失败
 - **待真机**：vivo 翻译能否被 `ACTION_PROCESS_TEXT` 直接命中（找不到会落系统选择器）；长按菜单是否只剩 复制/全选/翻译/⋯；问AI 填入不发送；聊天页宠物消失；中间横滑无反应、边缘 24dp 可拉。
 - **1.0.18 真机验收（2026-11-11 23:1x）**：`11111915 → 11112142` 覆盖安装成功，数据保留；翻译直接进 **vivo 翻译**（不再跳浏览器），朗读 0.8× 正常；菜单/问AI/宠物/边缘手势维持通过。**1.0.18 收口。**
 
-### 14）1.0.19：消息时间戳 + 边缘手势（2026-11-12，代码完成，待出包）
+### 14）1.0.19：消息时间戳 + 边缘手势（2026-11-12，已出包，待真机）
 
 - **时间戳**：每条用户/助手消息气泡外侧下方一行小灰字；默认精简：今天 `HH:mm`、昨天 `昨天 HH:mm`、更早 `11月9日 HH:mm`；日期只在每天第一条出现。
 - **完整格式**：点任意一条时间，整个当前聊天统一切换（周几 + 秒），再点收回；示例 `昨天 周一 23:42:53`、`11月9日 周一 23:42:53`，跨年带年份。
 - **实现**：`widgets/message_time.dart`（格式化 + 点击组件）；`ChatList` 持有 `_timestampsExpanded`，按天计算 `showDate`；`UserBubble`/`AssistantMessage` 增加时间参数；待发送消息用 `PendingPrompt.time`，助手流式期间不显示。
 - **边缘手势**：`home_shell.dart` 从 24dp 改为 **8–40dp**，0–8dp 留给系统返回手势；中间仍不响应；快捷面板测试起点同步改为 8–40dp 内。
-- **验证**：`dart analyze` 0 error / 0 warning / 23 info；`message_time_test` 5/5；`message_actions + message_time + turn_settle + quick_panel` 62/62。`message_flow` 的 4 张聊天 golden（last reply row / quoted question，dark+light）因时间戳多一行需要电脑重建；手机端不改 golden。
-- **待电脑**：`git merge phone` → 重建受影响的 golden（尤其 `test/chat/message_flow` 及可能受影响的 chat/shell 金色图）→ 跑全量 `test/chat` + 回归 → 构建 1.0.19（versionCode > `11112142`）→ 装机并真机验证时间戳/边缘手感。
+- **手机验证**：`dart analyze` 0 error / 0 warning / 23 info；`message_time_test` 5/5；`message_actions + message_time + turn_settle + quick_panel` 62/62。
+- **电脑合并与金色图**：`main` 快进至 `3bf2914`；重建 44 张 chat/shell PNG。`quick_panel_golden_test` 起手从外侧 1dp 修正到有效带内 20dp；`run_info_golden_test` 删除“展开后仍读取回复屏幕坐标”的过期断言（内容增高后回复可离屏，保留展开方向与折叠回原位校验）。提交 `81bcd98`，**未改产品代码**。
+- **电脑回归**：`dart analyze` 0 error / 0 warning / 24 info（新增一条为 `message_time.dart` 冗余 import，按本轮“不改产品代码”保留）；`test/chat + test/shell` **2184 通过 / 0 失败**。
+- **构建**：`dsh-go-1.0.19-11120055-mogai-arm64.apk`，206,211,210 字节，versionCode `11120055` > `11112142`，证书 `fb462eb1…3c2f`，sha256 `0db5bb9a3c1f5f1da6a9de59350b795ac76981fcb633693f8bce82f25144ba4c`；已复制到 `D:\Android\apk\`。
+- **分发/待真机**：飞书上传遇用户令牌过期（`99991677`），宿主授权超时且 strict mode 禁止 bot 上传，旧链接暂未更新。授权恢复后覆盖既有 APK 与 HANDOFF 文件。装机验：时间戳显示、点任意时间全聊天切换、8–40dp 边缘手感（0–8dp 留给系统返回）。
 
 ---
 
@@ -710,7 +713,7 @@ git push origin phone   # 手机工作分支
 | 1.0.16 | 11111751 | 版本号冒烟包（功能同 11111711，未装机） |
 | 1.0.17 | 11111915 | 选区菜单裁剪 + 问AI + 聊天页宠物关闭 + 边缘手势（真机 3/5 通过，翻译/朗读由 1.0.18 修） |
 | 1.0.18 | 11112142 | 修翻译目标（vivo 翻译本体）+ 朗读 0.8×；真机复验通过 |
-| 1.0.19 | 待构建 | 每条消息时间戳（精简/完整全局切换）+ 边缘手势 8–40dp |
+| 1.0.19 | 11120055 | 每条消息时间戳（精简/完整全局切换）+ 边缘手势 8–40dp（待真机） |
 
 ---
 
@@ -738,7 +741,7 @@ git push origin phone   # 手机工作分支
 3. 上游升级时：以新版本为基线重新打 4 处补丁（补丁点见第七节），保留本仓库 commit 作为参考。
 4. 重打 APK（本轮 `11110113` 已包含删除关于/隐私/sharedLinks 残留与指南修正）→ 上传飞书云空间覆盖同名文件 → 按第十一节逐条验收。后续 `7cdf795` 只删未使用 l10n 键，无 UI 可见变化，**不需要**为此重打 APK。
 5. ~~全量 99 红清账~~ **✅ 已完成（2026-11-11）**：按第 9.3 节五批顺序全部清零，commit 序列 `a2889e5` → `886e699`（批次1-5）。全量 `flutter test` = 10845 passed / ~288 skipped / 0 failed；回归面 = 473 passed / 0 skipped / 0 failed。新基线已写回 9.2。
-6. **1.0.19 代码完成（2026-11-12）**：消息时间戳 + 边缘手势 8–40dp，详见第 7 节第 14 小节；待电脑重建 golden、出包、真机验证。其他问题继续追加到 [`BACKLOG.md`](BACKLOG.md)。
+6. **1.0.19 已出包（2026-11-12）**：APK `11120055` 在 `D:\Android\apk\`，全量 chat/shell 2184 通过；待真机验时间戳/全局切换与 8–40dp 手感。飞书待授权恢复后覆盖。其他问题继续追加到 [`BACKLOG.md`](BACKLOG.md)。
 
 ---
 
