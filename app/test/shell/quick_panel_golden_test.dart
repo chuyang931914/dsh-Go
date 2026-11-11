@@ -52,9 +52,10 @@ Future<void> _pumpHome(
   await pumpFrames(tester, 8);
 }
 
-/// The panel pulled all the way over, by a real swipe.
+/// The panel pulled all the way over, by a real swipe: from the right edge,
+/// the only place a swipe starts it (the middle belongs to the content).
 Future<void> _pullPanel(WidgetTester tester, Size size) async {
-  final finger = await tester.startGesture(Offset(size.width * 0.75, size.height / 2));
+  final finger = await tester.startGesture(Offset(size.width - 1, size.height / 2));
   for (var i = 0; i < 40; i++) {
     await finger.moveBy(const Offset(-8, 0));
     await tester.pump(const Duration(milliseconds: 16));
