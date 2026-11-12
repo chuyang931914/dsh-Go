@@ -1,6 +1,6 @@
 # dsh-Go 项目记忆（新对话先读这一页）
 
-> 最后更新：2026-11-12 17:15（Asia/Shanghai）
+> 最后更新：2026-11-12 17:40（Asia/Shanghai）
 >
 > 这一页是给每个新对话的“开机记忆”：项目是什么、当前状态、双端分工、必须遵守的规则、正在做的事和下一步。
 > 详细实现与历史看 [`HANDOFF.md`](HANDOFF.md)；长期用户指令与决策看 [`project_memory.md`](project_memory.md)。
@@ -15,10 +15,10 @@
 
 ## 2. 当前状态（以仓库当前提交为准）
 
-- 仓库：`main` = `c11de16`；`phone` 含 1.0.23 顶部边界修复（以 `git log -1` 为准）。
-- 实机：已装 **`1.0.21+11121309`**；1.0.22 已出包未装；1.0.23 修顶部边界待出包。
-- 1.0.22 APK：`11121454`，206,211,242 字节，sha256 `9d850a42…8deb3`，证书 `fb462eb1…3c2f`；飞书 APK token 已覆盖。
-- 电脑侧验证：`dart analyze` 0 error / 0 warning / 24 info；`test/chat` **1967 通过 / 1 失败**（唯一红 `chat_top_boundary_test`：短历史顶边少算 17.04px，待 phone 修）；39 张 golden 已按新 UI 重建。
+- 仓库：`main` = `phone` = `58fbe22`（1.0.23 顶部 17px 修复 + 抽屉顺序 + 直选/引用/翻译折叠 + 桌面侧自动加载 PROJECT_STATE）。
+- 实机：已装 **`1.0.21+11121309`**；**直接覆盖装 1.0.23+11121734**，跳过 1.0.22。
+- 1.0.23 APK：`11121734`，206,211,017 字节，sha256 `9580eb73…4e1`，证书 `fb462eb1…3c2f`；飞书 APK token 待覆盖。
+- 电脑侧验证：`dart analyze` 0 error / 0 warning / 24 info；`test/chat` **1968 通过 / 0 失败**（`chat_top_boundary_test` 全绿，31 张 golden 按新 user_bubble 重建）。
 - 1.0.17 已交付：长按菜单裁剪（复制/全选/翻译 + ⋯ 分享/朗读/问AI）、问AI填入输入框、聊天页宠物关闭、左右滑只保留边缘 24dp、系统翻译。
 - 1.0.17 真机反馈两个问题：翻译跳到了 vivo **浏览器**、朗读语速太快；菜单/问AI/宠物/滑动手势三项未报问题。
 - 1.0.18 已收口：`SelectionPlugin.kt` 优先 `com.vivo.translator`、排除浏览器；朗读 `rate: 0.8, pitch: 1.0`；真机两项复验通过。
@@ -59,7 +59,7 @@
 
 ## 6. 当前待办（按顺序）
 
-1. **1.0.23 待出包**：1.0.22 功能 + 短历史顶部 17px 修复；装后验直选/引用/抽屉顺序/顶部边界。
+1. **1.0.23 待真机覆盖**：装 `1.0.23+11121734`，验直选/引用/抽屉顺序/顶部边界（17px 修复）；跳过 1.0.22。
 2. **AI 费用插件**：`local-ai-cost` 已在用，DeepSeek 余额 + 火山本月账单；凭据在插件 `secrets.json` 600，不入库。
 3. **Live2D 聊天页宠物**：用户在确认素材/绑定能否做完；能做完做实时交互，做不完再议，未排期（见 `BACKLOG.md`）。
 4. 安全项（令牌与 keystore 密码复用）用户已决定暂缓，不主动提。
@@ -95,7 +95,7 @@ DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 - 进度日志：`PROGRESS.md`
 - 长期记忆：`project_memory.md`
 - 安装/覆盖验证：`/sdcard/Download/DSH-Go/` 下的反馈与标记文件
-- APK 下载（飞书）：`https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR`（当前 `1.0.22+11121454`）
+- APK 下载（飞书）：`https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR`（当前 `1.0.23+11121734`）
 
 ## 9. 维护这一页
 
