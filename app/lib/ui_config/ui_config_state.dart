@@ -373,6 +373,13 @@ final uiDrawerSortProvider = Provider<UiValue<DrawerSort>>((ref) {
   return UiValue(DrawerSort.values.byName(sort.name), ref.watch(uiSettingEntryProvider(UiSettingKey.drawerSort)));
 });
 
+/// The drawer's section order: ui.json's `drawer.groups` over the default.
+final uiDrawerGroupsProvider = Provider<UiValue<List<UiDrawerGroup>>>((ref) {
+  final groups = ref.watch(uiOverridesProvider.select((o) => o.config.drawerGroups));
+  if (groups == null) return UiValue(UiDrawerGroup.values);
+  return UiValue(groups, ref.watch(uiSettingEntryProvider(UiSettingKey.drawerGroups)));
+});
+
 /// The filter the drawer opens with (the drawer's own filter is per run).
 final uiDrawerFilterProvider = Provider<UiValue<DrawerFilter>>((ref) {
   final filter = ref.watch(uiOverridesProvider.select((o) => o.config.drawerFilter));

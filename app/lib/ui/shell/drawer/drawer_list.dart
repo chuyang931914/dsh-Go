@@ -13,6 +13,8 @@ import '../../../state/session_attention_state.dart';
 import '../../../state/session_created_state.dart';
 import '../../../state/sessions_state.dart';
 import '../../../state/workspaces_state.dart';
+import '../../../ui_config/ui_config_model.dart';
+import '../../../ui_config/ui_config_state.dart';
 import '../../common/empty_view.dart';
 import '../../theme/app_icons.dart';
 import '../../theme/motion.dart';
@@ -20,6 +22,31 @@ import '../sessions_drawer.dart' show sessionTitle;
 import 'drawer_actions.dart';
 import 'folder_header.dart';
 import 'session_tile.dart';
+
+/// Reorders the drawer's blocks to match ui.json's `drawer.groups`; file and
+/// selection order stay stable inside a group. A status filter is flat and
+/// is left alone.
+List<DrawerBlock> _orderedBlocks(List<DrawerBlock> blocks, List<UiDrawerGroup> groups) {
+  if (blocks.any((b) => b is FilteredBlock)) return blocks;
+  final rank = <UiDrawerGroup, int>{for (var i = 0; i < groups.length; i++) groups[i]: i};
+  UiDrawerGroup groupOf(DrawerBlock block) => switch (block) {
+    PinnedBlock() => UiDrawerGroup.pinned,
+    FolderBlock() => UiDrawerGroup.folders,
+    DayBlock(:final day) => switch (day) {
+      SessionDay.today => UiDrawerGroup.today,
+      SessionDay.yesterday => UiDrawerGroup.yesterday,
+      SessionDay.thisWeek => UiDrawerGroup.thisWeek,
+      SessionDay.earlier => UiDrawerGroup.earlier,
+    },
+    FilteredBlock() => UiDrawerGroup.earlier,
+  };
+  final indexed = blocks.indexed.toList()
+    ..sort((a, b) {
+      final byGroup = (rank[groupOf(a.$2)] ?? 99).compareTo(rank[groupOf(b.$2)] ?? 99);
+      return byGroup != 0 ? byGroup : a.$1.compareTo(b.$1);
+    });
+  return [for (final pair in indexed) pair.$2];
+}
 
 class DrawerConversationList extends ConsumerWidget {
   const DrawerConversationList({
@@ -54,8 +81,9 @@ class DrawerConversationList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final blocks = watchDrawerBlocks(ref, now: now);
-    if (blocks == null) return const SizedBox.shrink();
+    final building = watchDrawerBlocks(ref, now: now);
+    if (building == null) return const SizedBox.shrink();
+    final blocks = _orderedBlocks(building, ref.watch(uiDrawerGroupsProvider).value);
     final selection = ref.watch(drawerSelectionProvider);
     final selecting = !readOnly && selection != null;
     final filter = ref.watch(drawerFilterProvider);

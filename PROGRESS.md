@@ -10,6 +10,12 @@
 - 电脑侧 `dart analyze` 0/0/24；`test/chat` 1967 通过 / 0 失败；4 张 menu golden 全通过（手机端红为字体漂移，未重建）。
 - 待真机覆盖安装后，长按自己消息 → 选择文字复验。
 
+## 2026-11-12 14:40 · 抽屉分组顺序修复
+
+- 发现 `drawer_list.dart` 写死置顶在前，`drawer.groups` 解析但未使用；新增 `uiDrawerGroupsProvider` 按配置排序。
+- analyze 0/0/23；drawer_calendar + drawer_list_lazy 16/16。
+- 配置 `folders→pinned→today…`；需 1.0.22 APK 才能生效，重启引擎不够。
+
 ## 2026-11-12 14:33 · 抽屉文件夹/置顶换序
 
 - `config/ui.json` 的 `drawer.groups` 改为 folders 在 pinned 前；本机 `ui.json` 软链到仓库配置。

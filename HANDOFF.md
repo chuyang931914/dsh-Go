@@ -630,6 +630,7 @@ flutter test > /tmp/full_test.log 2>&1                # 全量，目标 0 失败
 - **选字工具栏**：顶层复制 / 全选 / 引用 / ⋯；翻译移进 ⋯，与分享/朗读/问AI 同列；双方正文共用。
 - **引用**：`SelectionActions.onQuote` 接 `ChatScreen._quote`，选中段落放进输入框上方引用；用户消息的「引用」引用整条。
 - **验证**：`dart analyze` 0 error / 0 warning / 23 info；`message_actions` 12/12；`message_menu` 6 个非金色通过，4 张旧菜单 golden 为手机字体漂移（电脑侧 1.0.21 已全通过，待 1.0.22 复核）。
+- **抽屉顺序修复**：`drawer_list.dart` 原先把 PinnedBlock 写死在 FolderBlock 前，`ui.json` 的 `drawer.groups` 解析了但没用；1.0.22 新增 `uiDrawerGroupsProvider`，按配置重排块（组内保持原顺序）。当前配置 `folders → pinned → today…`。
 - **待电脑**：合并 phone → 跑 test/chat（确认 4 张 golden）→ 构建 1.0.22（versionCode > `11121309`）→ 装机验长按直选、引用、编辑后重发。
 
 ---
