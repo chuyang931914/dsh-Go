@@ -615,6 +615,7 @@ flutter test > /tmp/full_test.log 2>&1                # 全量，目标 0 失败
 ### 16）AI 费用插件 local-ai-cost（2026-11-12，已安装并运行）
 
 - **位置**：`$DSH_HOME/dsh-go/plugins/local-ai-cost`；`dsh plugin --profile web add` 安装；原生插件，不需要改 App/出包。
+- **源码入库**：2026-11-12 起源码在仓库 `plugins/local-ai-cost/`（含 package.json/lock、lib、README、secrets.example）；`secrets.json` 和 `node_modules/` 由 `.gitignore` 排除。界面配置在 `config/ui.json`。
 - **界面**：输入框上方 `composer.strip` 一行（火山本月 + DeepSeek 余额），点开 `panels` 的「AI 费用」；每 30 分钟自动刷新，面板可手动刷新。
 - **入口**：`ui.json` 加 `hide: ["pluginCapsule"]`，隐藏聊天页 App 自带的「插件」聚合入口（红线那个）；插件费用条/面板仍在，面板可从费用条或「全部功能」进入。
 - **DeepSeek**：`GET https://api.deepseek.com/user/balance`，显示可用余额；Key 由插件独立配置，不读 App 里的 Key。
