@@ -1778,6 +1778,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                                     onShare: _shareSelection,
                                     onRead: _readSelection,
                                     onAsk: readOnly ? null : (text) => _compose(text, quoteChip: false, focus: true),
+                                    onQuote: readOnly ? null : (text) => _quote(sessionId, text),
                                   ),
                                   onToast: _composerToast,
                                   onSwitchModel: readOnly ? null : _switchModel,
