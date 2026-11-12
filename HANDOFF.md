@@ -4,7 +4,7 @@
 > 最后更新：2026-11-12
 > 权威副本：本文件同时放在仓库根目录 `HANDOFF.md`（随 Git 推送，跨设备可用）。
 >
-> **当前状态（2026-11-12 08:05）**：1.0.19 已构建、分发并安装（`1.0.19+11120055`）；时间戳待确认，**边缘 8–40dp 实测不灵敏**。1.0.20 已把边缘手势改为 **0–80dp**（代码完成，待出包）；versionCode 必须 > `11120055`，证书 `fb462eb1…` 不变。
+> **当前状态（2026-11-12 08:19）**：1.0.19 已构建、分发并安装（`1.0.19+11120055`）；时间戳待确认，**边缘 8–40dp 实测不灵敏**。1.0.20 已把边缘手势改为 **0–80dp**，已构建并覆盖飞书原链接（`1.0.20+11120812`，versionCode > `11120055`，证书 `fb462eb1…` 不变）。装后只验：0–80dp 起手能否稳定拉抽屉/快捷面板，聊天页中间是否仍不响应。
 
 > **新对话记忆**：`/root/workspace/AGENTS.md` 是指向 [`PROJECT_STATE.md`](PROJECT_STATE.md) 的软链，新对话会自动加载；换机/重装后运行 `bash tooling/install-workspace-memory.sh`。
 
@@ -32,7 +32,7 @@
 | 产物 | 路径 |
 | --- | --- |
 | 魔改版 APK（本地） | `D:\Android\apk\dsh-go-1.0.15-mogai-arm64.apk` |
-| **APK 下载（飞书云空间，优先）** | https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR （`dsh-go-1.0.19-11120055-mogai-arm64.apk`，当前 11120055；点开 → 右上角「...」→ 下载；飞书内直接下载，不走 GitHub/Gitee） |
+| **APK 下载（飞书云空间，优先）** | https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR （`dsh-go-1.0.20-11120812-mogai-arm64.apk`，当前 11120812；点开 → 右上角「...」→ 下载；飞书内直接下载，不走 GitHub/Gitee） |
 | **源码包（飞书云空间）** | https://my.feishu.cn/file/IEqgbC77zoOqWmxo277cr8Wdnue （`dsh-go-1.0.15-mogai-src.zip`，500MB；已排除 `.git`、`app/build`、`.dart_tool`、`runtime/.work`、`runtime/.cache`，保留 `runtime/out` 可直接重建 APK） |
 | APK 备份（GitHub Release） | https://github.com/chuyang931914/dsh-Go/releases/download/v1.0.15-mogai/dsh-go-1.0.15-mogai-arm64.apk |
 | 构建脚本原始输出 | WSL 内 `/root/dsh-Go/app/build/app/outputs/flutter-apk/app-arm64-release.apk` |
@@ -44,6 +44,8 @@
 | 构建源（唯一有效副本） | WSL `Ubuntu24` 内 `/root/dsh-Go` |
 | Windows 访问构建源的 UNC 路径 | `\\wsl.localhost\Ubuntu24\root\dsh-Go\`（可直接用编辑器读写） |
 | 交接文档（飞书云空间） | https://my.feishu.cn/file/OJSGbqo2IofCYQxm8uycjTGAn7d （`HANDOFF-dsh-Go.md`，每次更新后覆盖上传） |
+
+**分发 `11120812`（2026-11-12 08:18）**：APK `1.0.20+11120812` 已覆盖飞书原 file token（云端版本 `7707072743111445690`），并发送到「城南」单聊 `oc_ef1b285c3aa75900a8d4221654d58b20`（message_id `om_x100b6064131680a0de3549dac57d65b`）。
 
 **分发 `11120055`（2026-11-12 07:46）**：APK `1.0.19+11120055` 已覆盖飞书原链接，并以 user 身份发到「城南」当前单聊 `oc_ef1b285c3aa75900a8d4221654d58b20`（message_id `om_x100b607baa11c4a4c0ebfee8b0c0f2a`），附时间戳/全局切换与 8–40dp 边缘手势复验清单。
 
@@ -129,10 +131,10 @@ export PATH="/root/dev/jdk-17/bin:/root/dev/flutter/bin:/root/dev/android-sdk/cm
 
 | 线 | 事实 | 状态 |
 | --- | --- | --- |
-| 仓库 | `main` 含 `3bf2914` + `81bcd98`；`phone` = `3bf2914`（main 多金色图/测试与本次文档） | ✅ |
-| 代码 | 产品代码 `3bf2914`；金色图/测试适配 `81bcd98` | ✅ |
-| APK | `11120055`（1.0.19），206.2 MB，sha256 `0db5bb9a…ba4c`，证书 `fb462eb1…3c2f` | ✅ |
-| 实机 | 已装 `1.0.18+11112142`；`11120055` 待装机验时间戳与边缘手感 | ⏳ 待验证 |
+| 仓库 | `main` = `phone` = `b29a4e5`（1.0.20 手势 + 文档） | ✅ |
+| 代码 | 1.0.20 产品代码 `b29a4e5`（仅 `home_shell.dart` 手势 + `pubspec`） | ✅ |
+| APK | `11120812`（1.0.20），206,211,199 字节，sha256 `817a3008…7d99`，证书 `fb462eb1…3c2f` | ✅ |
+| 实机 | 已装 `1.0.19+11120055`；`11120812` 已发飞书，待装机验 0–80dp 边缘与中间不响应 | ⏳ 待验证 |
 | 文档 | 本文件为权威；D 盘/飞书已同步 | ✅ |
 
 手机端环境与验证（本机）：
@@ -596,7 +598,7 @@ flutter test > /tmp/full_test.log 2>&1                # 全量，目标 0 失败
 - **电脑回归**：`dart analyze` 0 error / 0 warning / 24 info（新增一条为 `message_time.dart` 冗余 import，按本轮“不改产品代码”保留）；`test/chat + test/shell` **2184 通过 / 0 失败**。
 - **构建**：`dsh-go-1.0.19-11120055-mogai-arm64.apk`，206,211,210 字节，versionCode `11120055` > `11112142`，证书 `fb462eb1…3c2f`，sha256 `0db5bb9a3c1f5f1da6a9de59350b795ac76981fcb633693f8bce82f25144ba4c`；已复制到 `D:\Android\apk\`。
 - **分发/待真机**：2026-11-12 07:33 飞书授权恢复，APK 已覆盖原 file token（版本 `7707061086150757632`），HANDOFF 同步覆盖；链接不变。1.0.19 已装，时间戳待确认；8–40dp 边缘实测不灵敏。
-- **1.0.20 待出包**：边缘触发带改为 **0–80dp**（`home_shell.dart`）；快捷面板测试 39/39，`dart analyze` 0 error；待构建 versionCode > `11120055`，装后复验手势。
+- **1.0.20 已出包并分发**：边缘触发带改为 **0–80dp**（`home_shell.dart`），中间仍不响应；`pubspec 1.0.20`。电脑侧 `dart analyze` 0 error / 0 warning / 24 info，`test/shell` **217 全通过**（无需重建金色图）。APK `dsh-go-1.0.20-11120812-mogai-arm64.apk`，206,211,199 字节，versionCode `11120812` > `11120055`，证书 `fb462eb1…3c2f`，sha256 `817a30088e2c03083cbd6b7066d365a44727964f6667c750bfa8ed5fb6567d99`；已覆盖飞书原链接并发送私聊。装后只验 0–80dp 边缘起手与中间不响应。
 
 ---
 
@@ -719,7 +721,7 @@ git push origin phone   # 手机工作分支
 | 1.0.17 | 11111915 | 选区菜单裁剪 + 问AI + 聊天页宠物关闭 + 边缘手势（真机 3/5 通过，翻译/朗读由 1.0.18 修） |
 | 1.0.18 | 11112142 | 修翻译目标（vivo 翻译本体）+ 朗读 0.8×；真机复验通过 |
 | 1.0.19 | 11120055 | 时间戳 + 边缘手势 8–40dp（已装；时间戳待确认，8–40 不灵敏） |
-| 1.0.20 | 待构建 | 边缘手势放宽到 0–80dp |
+| 1.0.20 | 11120812 | 边缘手势放宽到 0–80dp（已分发，待真机） |
 
 ---
 
@@ -747,7 +749,7 @@ git push origin phone   # 手机工作分支
 3. 上游升级时：以新版本为基线重新打 4 处补丁（补丁点见第七节），保留本仓库 commit 作为参考。
 4. 重打 APK（本轮 `11110113` 已包含删除关于/隐私/sharedLinks 残留与指南修正）→ 上传飞书云空间覆盖同名文件 → 按第十一节逐条验收。后续 `7cdf795` 只删未使用 l10n 键，无 UI 可见变化，**不需要**为此重打 APK。
 5. ~~全量 99 红清账~~ **✅ 已完成（2026-11-11）**：按第 9.3 节五批顺序全部清零，commit 序列 `a2889e5` → `886e699`（批次1-5）。全量 `flutter test` = 10845 passed / ~288 skipped / 0 failed；回归面 = 473 passed / 0 skipped / 0 failed。新基线已写回 9.2。
-6. **1.0.20 边缘手势（2026-11-12）**：8–40dp 实测不灵敏，改为 0–80dp；待出包真机验。时间戳在 1.0.19 已装，待确认。其他问题继续追加到 [`BACKLOG.md`](BACKLOG.md)。
+6. **1.0.20 已出包并分发（2026-11-12）**：边缘手势 8–40dp → 0–80dp，APK `11120812` 已覆盖飞书原链接；装后验 0–80dp 起手是否稳定拉抽屉/快捷面板、中间是否仍不响应。1.0.19 的时间戳仍待确认。其他问题继续追加到 [`BACKLOG.md`](BACKLOG.md)。
 
 ---
 

@@ -9,6 +9,13 @@
 - 快捷面板测试 39/39；`dart analyze` 0/0/23。
 - 待电脑出 1.0.20（versionCode > 11120055），装后验手势；时间戳在 1.0.19 已装待确认。
 
+## 2026-11-12 08:19 · 1.0.20 出包并分发
+
+- `main` 快进至 `phone b29a4e5`：边缘触发带 8–40dp → **0–80dp**，中间仍不响应；`pubspec 1.0.20+1`。
+- 电脑侧 `dart analyze` 0 error / 0 warning / 24 info；`test/shell` **217 全通过**；未重建金色图。
+- APK `dsh-go-1.0.20-11120812-mogai-arm64.apk`，206,211,199 字节，versionCode `11120812` > `11120055`，证书 `fb462eb1…3c2f`，sha256 `817a3008…7d99`；已存 `D:\Android\apk\`。
+- 已覆盖飞书原 file token `RzcFbpFCyokpPqxVIq5cUI1QnuR`（云端版本 `7707072743111445690`），并发送至「城南」单聊（message_id `om_x100b6064131680a0de3549dac57d65b`）。装后只验 0–80dp 边缘起手与中间不响应。
+
 ## 2026-11-12 07:46 · 1.0.19 私聊通知完成
 
 - 以 user 身份发至「城南」当前单聊 `oc_ef1b285c3aa75900a8d4221654d58b20`，message_id `om_x100b607baa11c4a4c0ebfee8b0c0f2a`；附原 APK 链接与时间戳/全局切换、8–40dp 边缘手势复验清单。
