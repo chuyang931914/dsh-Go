@@ -104,3 +104,11 @@ DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 - 每次发版、装机反馈、重要决策后，更新第 2、6、7 节；与 `HANDOFF.md` 同一次提交推送。
 - 换机/重装后，克隆仓库并运行 `bash tooling/install-workspace-memory.sh`，重建 `/root/workspace/AGENTS.md` 软链。
 - 这一页控制在 6KB 以内：它是“开机记忆”，不是详细文档。
+
+## 10. 每轮固定动作（防漂移）
+
+1. 手机改：`dart analyze` + 受影响非金色测试 → commit → push `phone`；插件源码、`config/ui.json`、文档同一轮入库。
+2. 电脑：`git fetch` → `git merge --ff-only origin/phone` → 测试通过才构建；构建后更新 HANDOFF 并同步 D 盘/飞书。
+3. 手机装：先记 baseline → 覆盖安装 → `bash tooling/check-device.sh` → 按本轮清单验 → 结果写 PROGRESS/PROJECT_STATE。
+4. 新对话先 `git pull` + `bash tooling/check-device.sh`，读第 2、6 节；不从旧聊天猜版本/配置。
+5. 一轮只收一个主题；版本号只在构建时 +1；未验证不写“收口”。
