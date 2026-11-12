@@ -1,5 +1,15 @@
 # 更新日志 · Changelog
 
+## 1.0.23 · 2026-11-12
+
+### 中文
+
+- **修短历史顶部边界。** 用户消息新增的「⋯」按钮原用 28dp 最小点击区，比时间行高 17px，短历史拖到顶时首行会贴到顶栏；收紧为 20×16、shrinkWrap 后，首行回到正常顶部间距。
+
+### English
+
+- **Fix the short-history top edge.** The new “⋯” button on your messages kept a 28dp tap target, 17px taller than the timestamp row, so the first row could sit against the top bar; a 20×16 shrink-wrap target restores the normal top spacing.
+
 ## 1.0.22 · 2026-11-12
 
 ### 中文
