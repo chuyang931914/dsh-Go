@@ -4,7 +4,7 @@
 > 最后更新：2026-11-12
 > 权威副本：本文件同时放在仓库根目录 `HANDOFF.md`（随 Git 推送，跨设备可用）。
 >
-> **当前状态（2026-11-12 13:20）**：**1.0.21 已构建并验签**（`11121309`，206,211,961 字节，sha256 `e67678f3…401d`，证书 `fb462eb1…3c2f`）；自己消息「选择文字」已改用 `SelectionToolbar`，与助手正文一致，旧「引用」插入项移除。电脑侧 `test/chat` **1967 通过 / 0 失败**（含 4 张 message/image menu golden），手机端 4 张 golden 红为字体像素漂移（Rule 31），**未重建**。待真机覆盖安装后长按自己消息 → 选择文字复验。AI 费用插件 `local-ai-cost` 已安装并实测（DeepSeek 余额 + 火山本月账单），入口已隐藏（`hide: ["pluginCapsule"]`）；密钥只在本地 600 文件，不入库。
+> **当前状态（2026-11-12 13:50）**：1.0.21 已装机并真机通过（`1.0.21+11121309`，数据保留）；自己消息「选择文字」已用 `SelectionToolbar`，无「引用」。AI 费用插件 `local-ai-cost` 已安装运行（DeepSeek 余额 + 火山本月账单），入口已隐藏；1.0.21 收口。
 
 > **新对话记忆**：`/root/workspace/AGENTS.md` 是指向 [`PROJECT_STATE.md`](PROJECT_STATE.md) 的软链，新对话会自动加载；换机/重装后运行 `bash tooling/install-workspace-memory.sh`。
 
@@ -610,9 +610,9 @@ flutter test > /tmp/full_test.log 2>&1                # 全量，目标 0 失败
 - **问题**：长按自己的消息 → 选择文字，弹出的 `_SelectTextSheet` 仍然用 `region.contextMenuButtonItems`，会带出 OEM/系统搜索、翻译等旧菜单；助手正文早已换新。
 - **修法**：`showSelectTextSheet` 增加 `SelectionActions?`；`_SelectTextSheet` 改用 `SelectionToolbar`（复制/全选/翻译/⋯），并删掉旧的「引用」插入项；`UserBubble` 从 `ChatList` 拿到选区动作后传入。
 - **验证**：`dart analyze` 0 error / 0 warning / 23 info；`message_actions + message_time + message_menu` 22 非金色用例通过；`message_menu` 4 张旧菜单 golden 变红是手机字重/菜单布局，待电脑确认/重建。
-- **待电脑**：合并 phone → 跑 `test/chat`/确认 4 张 golden → 构建 1.0.21（versionCode > `11120812`）→ 装机后长按自己消息→选择文字复验。
+- **真机验收（2026-11-12 13:4x）**：安装 `1.0.21+11121309` 成功、数据保留；长按自己消息→选择文字只剩复制/全选/翻译/⋯，无「引用」；「编辑后重发」仍在消息菜单。**1.0.21 收口。**
 
-### 16）AI 费用插件 local-ai-cost（2026-11-12，已安装并实测，待重启加载）
+### 16）AI 费用插件 local-ai-cost（2026-11-12，已安装并运行）
 
 - **位置**：`$DSH_HOME/dsh-go/plugins/local-ai-cost`；`dsh plugin --profile web add` 安装；原生插件，不需要改 App/出包。
 - **界面**：输入框上方 `composer.strip` 一行（火山本月 + DeepSeek 余额），点开 `panels` 的「AI 费用」；每 30 分钟自动刷新，面板可手动刷新。
@@ -621,7 +621,7 @@ flutter test > /tmp/full_test.log 2>&1                # 全量，目标 0 失败
 - **火山**：官方 `@volcengine/openapi` 的 `billing.ListBillOverviewByProd`，查当前自然月账单（`BillPeriod` 走 query，不走 body）；需要子账号 **账单只读** AK/SK，不能用 Ark API Key。
 - **凭据**：`$DSH_HOME/dsh-go/plugins/local-ai-cost/secrets.json`，权限 600；没有写进代码、清单、视图、聊天或仓库。临时导入文件已删除。
 - **验证**：插件检查器 0 错误；用真实凭据跑通数据函数，DeepSeek 余额与火山本月账单均返回；界面待引擎重启后显示。
-- **待办**：用户在 App 设置 → 引擎 → 重启；重启后看输入框上方/面板。若火山权限报错，补账单只读策略。
+- **状态**：费用条/面板已在使用；密钥 600，临时文件已删除。账本里的每日上限/预留未调整（用户决定不动）。
 
 ---
 
