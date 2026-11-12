@@ -3,6 +3,13 @@
 > 追加式流水账：每次构建、装机、真机反馈、重要决策后加一条（最新在上）。
 > 这里记“发生了什么”；当前状态看 [`PROJECT_STATE.md`](PROJECT_STATE.md)，完整实现看 [`HANDOFF.md`](HANDOFF.md)。
 
+## 2026-11-12 12:45 · AI 费用插件完成
+
+- 插件 `local-ai-cost`：输入框上方摘要 + 「AI 费用」面板。
+- DeepSeek `/user/balance` 与火山 `billing.ListBillOverviewByProd` 均用真实凭据跑通；检查器通过。
+- 凭据写入插件 `secrets.json` 600，临时文件已删；待重启引擎加载界面。
+- 1.0.21 仍待电脑出包；phone 197368c，main f5306f9。
+
 ## 2026-11-12 10:55 · 1.0.21 自己消息选字修复
 
 - 用户反馈：长按自己消息→选择文字仍是旧 OEM 菜单。
