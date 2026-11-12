@@ -104,7 +104,7 @@ void main() {
   testWidgets('编辑后重发: measured after the text went into the composer', (tester) async {
     const prompt = '第一行：重试的间隔\n第二行：超时的设置\n第三行：日志里看到的';
     await _pump(tester, prompt: prompt);
-    await tester.longPress(find.textContaining('第一行'));
+    await tester.tap(find.byKey(const ValueKey('user-more')));
     await pumpFrames(tester);
     await tester.tap(find.widgetWithText(SettingsTile, '编辑后重发'));
     await pumpFrames(tester);

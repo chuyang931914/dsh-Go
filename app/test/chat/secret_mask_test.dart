@@ -276,7 +276,7 @@ void main() {
         return null;
       });
       await pump(tester, UserBubble(text: text));
-      await tester.longPress(find.byType(SecretText));
+      await tester.tap(find.byKey(const ValueKey('user-more')));
       await tester.pumpAndSettle();
       expect(find.text(maskSecrets(text, mark: '•')), findsOneWidget);
       await tester.tap(find.text('复制'));

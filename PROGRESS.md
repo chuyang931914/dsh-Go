@@ -3,6 +3,13 @@
 > 追加式流水账：每次构建、装机、真机反馈、重要决策后加一条（最新在上）。
 > 这里记“发生了什么”；当前状态看 [`PROJECT_STATE.md`](PROJECT_STATE.md)，完整实现看 [`HANDOFF.md`](HANDOFF.md)。
 
+## 2026-11-12 15:00 · 1.0.22 出包
+
+- `main` ← `phone` 快进到 `705f46b`（直选/引用/翻译折叠 + 抽屉分组顺序）。
+- APK `1.0.22+11121454`，206,211,242 字节，sha256 `9d850a42…8deb3`，证书 `fb462eb1…3c2f`。
+- `dart analyze` 0/0/24；`test/chat` 1967 通过 / 1 失败；39 张 golden 按新 UI 重建；`message_flow`/`fork_toast`/`secret_mask` 改用 `user-more`/`reply-action-more` 进菜单。
+- 遗留：`chat_top_boundary_test` 短历史顶部边界少 17.04px，待 phone 修。
+
 ## 2026-11-12 13:20 · 1.0.21 出包
 
 - `main` ← `phone` 快进到 `c3bf654`（选字修复 `197368c` + 插件文档）。

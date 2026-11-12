@@ -4,7 +4,7 @@
 > 最后更新：2026-11-12
 > 权威副本：本文件同时放在仓库根目录 `HANDOFF.md`（随 Git 推送，跨设备可用）。
 >
-> **当前状态（2026-11-12 14:03）**：1.0.21 已收口；**1.0.22 代码完成**（自己消息长按直选；双方选字加「引用」；助手翻译收进⋯），待出包（versionCode > `11121309`，证书 `fb462eb1…` 不变）。
+> **当前状态（2026-11-12 15:00）**：1.0.21 已收口；**1.0.22 已出包并验签**（`11121454`，206,211,242 字节，sha256 `9d850a42…8deb3`，证书 `fb462eb1…3c2f`）。含：自己消息长按直选；双方选字加「引用」；助手翻译收进⋯；抽屉分组顺序修复。电脑侧 `dart analyze` 0/0/24，`test/chat` **1967 通过 / 1 失败**——唯一红为 `chat_top_boundary_test`：用户气泡新增「⋯」后短历史顶部边界少算 17.04px（首行可上移贴顶栏），**待 phone 修**。39 张 chat golden 已按新 UI 重建并提交。
 
 > **新对话记忆**：`/root/workspace/AGENTS.md` 是指向 [`PROJECT_STATE.md`](PROJECT_STATE.md) 的软链，新对话会自动加载；换机/重装后运行 `bash tooling/install-workspace-memory.sh`。
 
@@ -32,7 +32,7 @@
 | 产物 | 路径 |
 | --- | --- |
 | 魔改版 APK（本地） | `D:\Android\apk\dsh-go-1.0.15-mogai-arm64.apk` |
-| **APK 下载（飞书云空间，优先）** | https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR （`dsh-go-1.0.21-11121309-mogai-arm64.apk`，当前 11121309；点开 → 右上角「...」→ 下载；飞书内直接下载，不走 GitHub/Gitee） |
+| **APK 下载（飞书云空间，优先）** | https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR （`dsh-go-1.0.22-11121454-mogai-arm64.apk`，当前 11121454；点开 → 右上角「...」→ 下载；飞书内直接下载，不走 GitHub/Gitee） |
 | **源码包（飞书云空间）** | https://my.feishu.cn/file/IEqgbC77zoOqWmxo277cr8Wdnue （`dsh-go-1.0.15-mogai-src.zip`，500MB；已排除 `.git`、`app/build`、`.dart_tool`、`runtime/.work`、`runtime/.cache`，保留 `runtime/out` 可直接重建 APK） |
 | APK 备份（GitHub Release） | https://github.com/chuyang931914/dsh-Go/releases/download/v1.0.15-mogai/dsh-go-1.0.15-mogai-arm64.apk |
 | 构建脚本原始输出 | WSL 内 `/root/dsh-Go/app/build/app/outputs/flutter-apk/app-arm64-release.apk` |
@@ -46,6 +46,8 @@
 | 交接文档（飞书云空间） | https://my.feishu.cn/file/OJSGbqo2IofCYQxm8uycjTGAn7d （`HANDOFF-dsh-Go.md`，每次更新后覆盖上传） |
 
 **构建 `11121309`（2026-11-12 13:09，1.0.21）**：`main` ← `phone` 快进（`f5306f9..c3bf654`，含 `197368c` 选字修复）；APK 206,211,961 字节，sha256 `e67678f34658c9bcf8cbc779203973b2967208d7ba5ab4a61788d66a9c75401d`，证书 `fb462eb1…3c2f`，versionCode `11121309` > `11120812`。电脑侧 `dart analyze` = 0 error / 0 warning / 24 info；`flutter test test/chat` = **1967 通过 / 0 失败**（含 message/image menu 4 张 golden 全通过）。手机端报告的 4 张 golden 红为字体像素漂移（Rule 31），**未重建金色基准**。APK 已存 `D:\Android\apk\dsh-go-1.0.21-11121309-mogai-arm64.apk`。
+
+**构建 `11121454`（2026-11-12 14:54，1.0.22）**：`main` ← `phone` 快进到 `705f46b`（直选/引用/翻译折叠 + 抽屉分组顺序）。APK 206,211,242 字节，sha256 `9d850a4299459332fc5edfd80af6a1804d4b789f19b859c1868589514428deb3`，证书 `fb462eb1…3c2f`，versionCode `11121454` > `11121309`。电脑侧 `dart analyze` 0/0/24；`test/chat` **1967 通过 / 1 失败**。为匹配新交互：`message_flow`/`fork_toast`/`secret_mask` 改用 `user-more`/`reply-action-more` 键进入菜单（不再长按/按 tooltip 找“更多”），39 张 chat golden 按新 UI 重建；唯一红 `chat_top_boundary_test` 为短历史顶部边界少算 17.04px（`min=424`，实际需 `441.04`，首行 `14.96` vs `32.0`），**待 phone 修**。APK 已存 `D:\Android\apk\dsh-go-1.0.22-11121454-mogai-arm64.apk`。
 
 **分发 `11121309`（2026-11-12 13:28）**：APK `1.0.21+11121309` 已覆盖飞书原 file token（云端版本 `7707152225507806485`，206,211,961 字节），并发送到「城南」单聊 `oc_ef1b285c3aa75900a8d4221654d58b20`（message_id `om_x100b6060a811f0acdfc0fe9e49b0b72`），附「长按自己消息 → 选择文字」复验清单；HANDOFF 已覆盖飞书与 `D:\HANDOFF.md`。
 
@@ -131,15 +133,16 @@ export PATH="/root/dev/jdk-17/bin:/root/dev/flutter/bin:/root/dev/android-sdk/cm
 - 凭据：`~/.git-credentials`（chmod 600，`credential.helper=store`）已存 Gitee 与 GitHub 令牌，推送可用。
 - 基线（2026-11-11）：电脑侧五批清账后，回归面 `test/settings test/star test/ui_config` = 473 通过 / 0 跳过 / 0 失败，全量 `flutter test` = 10845 通过 / ~288 跳过 / 0 失败；`dart analyze` = 0 error / 0 warning / 23 info。手机端复跑时金色图会因字体渲染不同而像素漂移（见 Rule 31），只验收 analyze 与非金色图结果。手机端交叉验证（`d746042`）：电脑侧改动过的 12 个测试文件 = 381 通过 / 39 金色图漂移 / 0 真实失败。
 
-### 3.5 四线一致性（2026-11-12 13:20，1.0.21 已构建待真机复验）
+### 3.5 四线一致性（2026-11-12 15:00，1.0.22 已构建待真机复验）
 
 | 线 | 事实 | 状态 |
 | --- | --- | --- |
-| 仓库 | `main` = `phone`（`c3bf654`，1.0.21 选字修复 + 插件文档） | ✅ |
-| 代码 | 1.0.21：`message_menu.dart`/`user_bubble.dart`/`chat_list.dart` 改用 `SelectionToolbar`；`pubspec 1.0.21` | ✅ |
-| APK | `11121309`（1.0.21），206,211,961 字节，sha256 `e67678f3…401d`，证书 `fb462eb1…3c2f` | ✅ |
-| 实机 | 待覆盖安装 `1.0.21+11121309`，长按自己消息 → 选择文字复验 | ⏳ 待装 |
-| 文档 | 本文件为权威；D 盘/飞书已随 1.0.21 收口覆盖 | ✅ |
+| 仓库 | `main` = `phone`（`705f46b`，1.0.22 + 抽屉顺序） | ✅ |
+| 代码 | 1.0.22：用户气泡直选 + 「⋯」菜单（复制/选字/引用/编辑）；选字工具栏加引用；翻译收进⋯；抽屉按 `ui.json` 分组排序 | ✅ |
+| APK | `11121454`（1.0.22），206,211,242 字节，sha256 `9d850a42…8deb3`，证书 `fb462eb1…3c2f` | ✅ |
+| 实机 | 待覆盖安装 `1.0.22+11121454`；复验直选、引用、翻译折叠、抽屉顺序 | ⏳ 待装 |
+| 测试 | `test/chat` 1967/1；唯一红 `chat_top_boundary_test`（短历史顶边少 17.04px，待 phone 修） | ⚠️ |
+| 文档 | 本文件为权威；D 盘/飞书随 1.0.22 覆盖 | ✅ |
 
 手机端环境与验证（本机）：
 - 仓库 `/root/workspace/dsh-Go`（`/root/dsh-Go` 软链）；Flutter 3.47.7 linux-arm64（`/root/dev/flutter`）；Dart 3.13.5。

@@ -164,7 +164,7 @@ void main() {
 
     testWidgets('also in the ⋯ menu, with the same result', (tester) async {
       final harness = await _pump(tester);
-      await tester.tap(find.byTooltip('更多'));
+      await tester.tap(find.byKey(const ValueKey('reply-action-more')));
       await pumpFrames(tester);
       await tester.tap(find.widgetWithText(SettingsTile, '重新回答'));
       await pumpFrames(tester);
@@ -174,7 +174,7 @@ void main() {
 
   testWidgets('⋯ opens the message menu', (tester) async {
     await _pump(tester);
-    await tester.tap(find.byTooltip('更多'));
+    await tester.tap(find.byKey(const ValueKey('reply-action-more')));
     await pumpFrames(tester);
     for (final label in ['复制', '引用', '分享', '重新回答', '从这里分叉']) {
       expect(find.widgetWithText(SettingsTile, label), findsOneWidget);
@@ -185,7 +185,7 @@ void main() {
   group('引用', () {
     testWidgets('quote a reply, ask, and it goes as a blockquote', (tester) async {
       final harness = await _pump(tester);
-      await tester.tap(find.byTooltip('更多'));
+      await tester.tap(find.byKey(const ValueKey('reply-action-more')));
       await pumpFrames(tester);
       await tester.tap(find.widgetWithText(SettingsTile, '引用'));
       await pumpFrames(tester);
@@ -201,7 +201,7 @@ void main() {
 
     testWidgets('✕ drops the quote; a quote alone does not send', (tester) async {
       final harness = await _pump(tester);
-      await tester.tap(find.byTooltip('更多'));
+      await tester.tap(find.byKey(const ValueKey('reply-action-more')));
       await pumpFrames(tester);
       await tester.tap(find.widgetWithText(SettingsTile, '引用'));
       await pumpFrames(tester);
@@ -216,7 +216,7 @@ void main() {
     testWidgets('a failed send gives the quote back as the chip', (tester) async {
       final harness = await _pump(tester);
       harness.controllers['s1']!.sendResult = Future.value(false);
-      await tester.tap(find.byTooltip('更多'));
+      await tester.tap(find.byKey(const ValueKey('reply-action-more')));
       await pumpFrames(tester);
       await tester.tap(find.widgetWithText(SettingsTile, '引用'));
       await pumpFrames(tester);
@@ -236,7 +236,7 @@ void main() {
       expect(find.text('第一次在 30 秒时超时'), findsOneWidget);
       expect(find.text('那为什么会重试？'), findsOneWidget);
 
-      await tester.longPress(find.text('那为什么会重试？'));
+      await tester.tap(find.byKey(const ValueKey('user-more')));
       await pumpFrames(tester);
       await tester.tap(find.widgetWithText(SettingsTile, '编辑后重发'));
       await pumpFrames(tester);
