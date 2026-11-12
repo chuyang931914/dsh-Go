@@ -10,6 +10,13 @@
 - 电脑侧 `dart analyze` 0/0/24；`test/chat` 1967 通过 / 0 失败；4 张 menu golden 全通过（手机端红为字体漂移，未重建）。
 - 待真机覆盖安装后，长按自己消息 → 选择文字复验。
 
+## 2026-11-12 14:03 · 1.0.22 直选与引用
+
+- 自己消息改为长按直选；右下⋯菜单四项：复制/选择文字/引用/编辑后重发。
+- 双方选字工具栏：复制/全选/引用/⋯；翻译移进⋯。
+- `dart analyze` 0/0/23；message_actions 12/12；message_menu 6 非金色通过，4 张 golden 待电脑复核。
+- 待出 1.0.22（versionCode > 11121309）。
+
 ## 2026-11-12 13:55 · 插件/界面配置入库
 
 - 仓库新增长期源：`plugins/local-ai-cost/`（不含 secrets/node_modules）与 `config/ui.json`。

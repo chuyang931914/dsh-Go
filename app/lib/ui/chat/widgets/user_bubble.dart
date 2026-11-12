@@ -23,7 +23,7 @@ import 'quote_chip.dart';
 /// 禁配:气泡底上只用主文字 / 次级文字;三级文字(4.32)与主色(4.22)
 /// 不过 AA。
 ///
-/// 长按气泡:复制 / 选择文字 / 编辑后重发([onEdit]),和回复同一个菜单。
+/// 已发送气泡:长按直接选字；右下「⋯」菜单:复制 / 选择文字 / 引用 / 编辑后重发([onEdit])。
 ///
 /// 以引用块开头的消息(引用追问),引文画在气泡顶部([BubbleQuote]),
 /// 下面是正文;复制、选择文字、编辑拿到的仍是发出去的原文。
@@ -83,7 +83,12 @@ class UserBubble extends StatelessWidget {
       // 菜单顶部的预览也是显示,同样遮挡;预览会把 `**` 当粗体删掉,
       // 所以这里用 •。
       text: maskSecrets(_shown, mark: '•'),
-      actions: [MessageAction.copy, MessageAction.selectText, if (onEdit != null) MessageAction.edit],
+      actions: [
+        MessageAction.copy,
+        MessageAction.selectText,
+        if (selectionActions?.onQuote != null) MessageAction.quote,
+        if (onEdit != null) MessageAction.edit,
+      ],
     );
     if (!context.mounted || action == null) return;
     switch (action) {
@@ -91,9 +96,11 @@ class UserBubble extends StatelessWidget {
         await copyMessage(context, _shown);
       case MessageAction.selectText:
         await showSelectTextSheet(context, _shown, selectionActions: selectionActions);
+      case MessageAction.quote:
+        selectionActions?.onQuote?.call(_shown);
       case MessageAction.edit:
         onEdit?.call();
-      case MessageAction.quote || MessageAction.share || MessageAction.regenerate || MessageAction.branch:
+      case MessageAction.share || MessageAction.regenerate || MessageAction.branch:
         break;
     }
   }
@@ -127,17 +134,19 @@ class UserBubble extends StatelessWidget {
     }
 
     // Its own semantics node, carrying the text and the long-press action.
+    final bubbleBody = DecoratedBox(
+      decoration: ShapeDecoration(color: surfaces.userBubble, shape: AppShape.bubble),
+      child: Padding(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8), child: content),
+    );
     final bubble = Semantics(
       container: true,
       header: true,
       label: l10n.chatMe,
-      child: HoldLift(
-        onLongPress: () => _menu(context),
-        child: DecoratedBox(
-          decoration: ShapeDecoration(color: surfaces.userBubble, shape: AppShape.bubble),
-          child: Padding(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8), child: content),
-        ),
-      ),
+      // 已发送的消息：长按直接选字（同助手正文）。乐观气泡还没回显，仍走
+      // 长按菜单（撤回/排队状态在气泡下方）。
+      child: pendingLabel == null
+          ? _SelectableBubble(actions: selectionActions, child: bubbleBody)
+          : HoldLift(onLongPress: () => _menu(context), child: bubbleBody),
     );
 
     return LayoutBuilder(
@@ -177,13 +186,32 @@ class UserBubble extends StatelessWidget {
                   ),
                 ),
               _PendingSlot(label: pendingLabel, icon: pendingIcon, actions: pendingActions),
-              if (time case final time?)
-                MessageTime(
-                  time: time,
-                  expanded: timestampExpanded,
-                  showDate: timestampShowDate,
-                  onTap: onToggleTimestamp,
-                  alignEnd: true,
+              if (time != null || pendingLabel == null)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    if (time case final time?)
+                      Flexible(
+                        child: MessageTime(
+                          time: time,
+                          expanded: timestampExpanded,
+                          showDate: timestampShowDate,
+                          onTap: onToggleTimestamp,
+                          alignEnd: true,
+                        ),
+                      ),
+                    if (pendingLabel == null)
+                      IconButton(
+                        key: const ValueKey('user-more'),
+                        tooltip: l10n.commonMore,
+                        onPressed: () => _menu(context),
+                        visualDensity: VisualDensity.compact,
+                        padding: const EdgeInsets.only(left: 4),
+                        constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                        icon: Icon(AppIcons.more, size: 17),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: .55),
+                      ),
+                  ],
                 ),
             ],
           ),
@@ -191,6 +219,32 @@ class UserBubble extends StatelessWidget {
       },
     );
   }
+}
+
+/// 用户气泡正文的直接选字：长按选词，工具栏和助手正文同一套。
+class _SelectableBubble extends StatefulWidget {
+  const _SelectableBubble({required this.child, this.actions});
+
+  final Widget child;
+  final SelectionActions? actions;
+
+  @override
+  State<_SelectableBubble> createState() => _SelectableBubbleState();
+}
+
+class _SelectableBubbleState extends State<_SelectableBubble> {
+  String _selected = '';
+
+  @override
+  Widget build(BuildContext context) => SelectionArea(
+    onSelectionChanged: (content) => _selected = content?.plainText ?? '',
+    contextMenuBuilder: (context, region) => SelectionToolbar(
+      region: region,
+      text: _selected,
+      actions: widget.actions,
+    ),
+    child: widget.child,
+  );
 }
 
 /// [_PendingMeta] 的位置:回显时(同一行,标签变成 null)这一行和输入条上

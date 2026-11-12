@@ -157,14 +157,15 @@ void main() {
     expect(find.byType(SelectionArea), findsOneWidget);
     await tester.longPress(find.textContaining('服务端', findRichText: true));
     await tester.pumpAndSettle();
-    for (final label in ['复制', '全选', '翻译', '⋯']) {
+    for (final label in ['复制', '全选', '⋯']) {
       expect(find.text(label), findsOneWidget);
     }
     expect(find.text('引用'), findsNothing);
+    expect(find.text('翻译'), findsNothing);
 
     await tester.tap(find.text('⋯'));
     await tester.pumpAndSettle();
-    for (final label in ['分享', '朗读', '问 AI']) {
+    for (final label in ['翻译', '分享', '朗读', '问 AI']) {
       expect(find.text(label), findsOneWidget);
     }
     await tester.tap(find.text('问 AI'));

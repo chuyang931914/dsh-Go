@@ -6,6 +6,7 @@ import 'package:dsh_app/state/connection_state.dart';
 import 'package:dsh_app/state/sessions_state.dart';
 import 'package:dsh_app/ui/chat/chat_screen.dart';
 import 'package:dsh_app/ui/chat/widgets/message_time.dart';
+import 'package:dsh_app/ui/chat/widgets/quote_chip.dart';
 import 'package:dsh_app/ui/common/segmented_pill.dart';
 import 'package:dsh_app/ui/settings/settings_widgets.dart' show SettingsTile;
 import 'package:dsh_app/ui/share/share_panel.dart';
@@ -313,7 +314,7 @@ void main() {
       await pumpFrames(tester);
 
       Future<void> menu() async {
-        await tester.tap(find.byTooltip('更多'));
+        await tester.tap(find.byKey(const ValueKey('reply-action-more')));
         await pumpFrames(tester);
       }
 
@@ -336,6 +337,21 @@ void main() {
       expect(platform.shared, isEmpty);
       Navigator.of(tester.element(find.byType(SharePanel))).pop();
       await pumpFrames(tester);
+    });
+
+    testWidgets('long-press own message selects directly and can quote', (tester) async {
+      _platform(tester);
+      final harness = ChatHarness(session: 's1', states: {'s1': _conversation()});
+      await _pump(tester, harness);
+      await tester.longPress(find.text('帮我看看测试为什么失败'));
+      await pumpFrames(tester);
+
+      expect(find.byType(SettingsTile), findsNothing);
+      expect(find.text('翻译'), findsNothing);
+      expect(find.text('引用'), findsOneWidget);
+      await tester.tap(find.text('引用'));
+      await pumpFrames(tester);
+      expect(find.byType(QuoteChip), findsOneWidget);
     });
 
     testWidgets('tapping one timestamp expands every timestamp in the chat', (tester) async {
@@ -365,11 +381,12 @@ void main() {
 
       await tester.longPress(find.textContaining('多发了一次请求', findRichText: true).first);
       await pumpFrames(tester);
-      // 长按正文 = 选字:消息菜单不弹出,自定义工具栏只带复制/全选/翻译/⋯。
+      // 长按正文 = 选字:消息菜单不弹出；顶层复制/全选/引用/⋯，翻译收进⋯。
       expect(find.byType(SettingsTile), findsNothing);
       expect(find.text('复制'), findsWidgets);
       expect(find.text('全选'), findsOneWidget);
-      expect(find.text('翻译'), findsOneWidget);
+      expect(find.text('翻译'), findsNothing);
+      expect(find.text('引用'), findsOneWidget);
       expect(find.text('⋯'), findsOneWidget);
       for (final gone in ['AI搜索(推荐)', '爱奇艺搜索', '浏览器搜索', '快速搜索', '搜视频(推荐)', '问问 DeepSeek']) {
         expect(find.text(gone), findsNothing);
@@ -377,6 +394,7 @@ void main() {
 
       await tester.tap(find.text('⋯'));
       await pumpFrames(tester);
+      expect(find.text('翻译'), findsOneWidget);
       expect(find.text('分享'), findsOneWidget);
       expect(find.text('朗读'), findsOneWidget);
       expect(find.text('问 AI'), findsOneWidget);
@@ -396,9 +414,9 @@ void main() {
       final harness = ChatHarness(session: 's1', states: {'s1': _conversation()});
       await _pump(tester, harness);
       await tester.enterText(find.byType(TextField), '原对话草稿');
-      await tester.longPress(find.text('帮我看看测试为什么失败'));
+      await tester.tap(find.byKey(const ValueKey('user-more')).first);
       await pumpFrames(tester);
-      for (final label in ['复制', '选择文字', '编辑后重发']) {
+      for (final label in ['复制', '选择文字', '引用', '编辑后重发']) {
         expect(find.widgetWithText(SettingsTile, label), findsOneWidget);
       }
       expect(find.widgetWithText(SettingsTile, '分享'), findsNothing);
@@ -418,7 +436,7 @@ void main() {
       final harness = ChatHarness(session: 's1', states: {'s1': _conversation()});
       await _pump(tester, harness);
       harness.controllers['s1']!.forkOutcome = null;
-      await tester.longPress(find.text('帮我看看测试为什么失败'));
+      await tester.tap(find.byKey(const ValueKey('user-more')).first);
       await pumpFrames(tester);
       await tester.tap(find.widgetWithText(SettingsTile, '编辑后重发'));
       await pumpFrames(tester);

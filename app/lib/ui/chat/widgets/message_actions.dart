@@ -153,7 +153,13 @@ class _ReplyActionRowState extends State<ReplyActionRow> {
         if (onBranch != null) busyKey(MessageAction.branch, onBranch, widget.branching),
         if (onRegenerate != null) busyKey(MessageAction.regenerate, onRegenerate, widget.regenerating),
         if (onMore != null)
-          IconButton(tooltip: l10n.commonMore, onPressed: onMore, style: style, icon: const Icon(AppIcons.more)),
+          IconButton(
+            key: const ValueKey('reply-action-more'),
+            tooltip: l10n.commonMore,
+            onPressed: onMore,
+            style: style,
+            icon: const Icon(AppIcons.more),
+          ),
       ],
     );
     final trailing = widget.trailing;

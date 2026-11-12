@@ -1,5 +1,19 @@
 # 更新日志 · Changelog
 
+## 1.0.22 · 2026-11-12
+
+### 中文
+
+- **自己的消息也能长按直选。** 长按自己发的文字直接进入选字，不再先弹菜单；右下「⋯」保留复制、选择文字、引用、编辑后重发。
+- **选字工具栏加「引用」。** 助手和自己消息选中的一段文字都可以直接引用到输入框。
+- **翻译收进「⋯」。** 助手选字顶层改为复制、全选、引用、⋯；翻译移到 ⋯ 里，和分享/朗读/问AI 一起。
+
+### English
+
+- **Your own messages can be selected directly.** Long-press your text to select it; the “⋯” menu keeps Copy, Select text, Quote and Edit & resend.
+- **Quote in the selection toolbar.** Selected text from either side can be quoted into the composer.
+- **Translate moved into “⋯”.** The reply selection toolbar now has Copy, Select all, Quote and “⋯”; Translate sits with Share / Read aloud / Ask AI.
+
 ## 1.0.21 · 2026-11-12
 
 ### 中文

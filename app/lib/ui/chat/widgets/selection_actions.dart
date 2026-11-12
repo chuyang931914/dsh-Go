@@ -1,4 +1,4 @@
-// 长按选字的工具栏：只留复制、全选、翻译和「⋯」里的分享/朗读/问AI。
+// 长按选字的工具栏：复制、全选、引用和「⋯」里的翻译/分享/朗读/问AI。
 //
 // OEM 的文本选择菜单会把 AI 搜索、浏览器搜索、翻译、朗读、问问 DeepSeek 等
 // 全部塞进一根长条；这里用自己的 SelectionArea.contextMenuBuilder 接管，
@@ -20,6 +20,7 @@ class SelectionActions {
     required this.onShare,
     required this.onRead,
     this.onAsk,
+    this.onQuote,
   });
 
   final ValueChanged<String> onTranslate;
@@ -28,6 +29,9 @@ class SelectionActions {
 
   /// 只读对话没有输入框：为 null 时「问AI」不出现。
   final ValueChanged<String>? onAsk;
+
+  /// 把选中段落放进输入框上方的引用；只读对话为 null。
+  final ValueChanged<String>? onQuote;
 }
 
 /// 把聊天页的动作交给正文里的 SelectionArea。
@@ -103,13 +107,14 @@ class SelectionToolbar extends StatelessWidget {
           label: selectAll.label ?? l10n.chatSelectAll,
           onPressed: region.selectAll,
         ),
-      ContextMenuButtonItem(
-        label: l10n.chatTranslate,
-        onPressed: () {
-          region.hideToolbar();
-          actions.onTranslate(selected);
-        },
-      ),
+      if (actions.onQuote case final quote?)
+        ContextMenuButtonItem(
+          label: l10n.chatQuote,
+          onPressed: () {
+            region.hideToolbar();
+            quote(selected);
+          },
+        ),
       ContextMenuButtonItem(
         label: '⋯',
         onPressed: () {
@@ -130,6 +135,14 @@ class SelectionToolbar extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            ListTile(
+              leading: const Icon(Icons.translate),
+              title: Text(l10n.chatTranslate),
+              onTap: () {
+                Navigator.pop(sheet);
+                actions.onTranslate(text);
+              },
+            ),
             ListTile(
               leading: const Icon(Icons.ios_share),
               title: Text(l10n.commonShare),
