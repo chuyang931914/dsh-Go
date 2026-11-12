@@ -105,7 +105,19 @@ DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 - 换机/重装后，克隆仓库并运行 `bash tooling/install-workspace-memory.sh`，重建 `/root/workspace/AGENTS.md` 软链。
 - 这一页控制在 6KB 以内：它是“开机记忆”，不是详细文档。
 
-## 10. 每轮固定动作（防漂移）
+## 10. 电脑端开机记忆（只装一次）
+
+电脑新对话不应每次手贴文档。先确认仓库在 `/root/dsh-Go`，然后运行一次：
+
+```bash
+DSH_WORKSPACE=/root/workspace bash /root/dsh-Go/tooling/install-workspace-memory.sh
+```
+
+它把 `/root/workspace/AGENTS.md` 指向 `/root/dsh-Go/PROJECT_STATE.md`；之后新对话自动带上当前状态。仓库更新后 `PROJECT_STATE` 本身更新，不用重装软链。
+
+若电脑的工作区不是 `/root/workspace`，把 `DSH_WORKSPACE` 换成实际目录。脚本在父目录是 `/root` 且 `/root/workspace` 存在时也会自动选它。
+
+## 11. 每轮固定动作（防漂移）
 
 1. 手机改：`dart analyze` + 受影响非金色测试 → commit → push `phone`；插件源码、`config/ui.json`、文档同一轮入库。
 2. 电脑：`git fetch` → `git merge --ff-only origin/phone` → 测试通过才构建；构建后更新 HANDOFF 并同步 D 盘/飞书。
