@@ -124,3 +124,6 @@ DSH_WORKSPACE=/root/workspace bash /root/dsh-Go/tooling/install-workspace-memory
 3. 手机装：先记 baseline → 覆盖安装 → `bash tooling/check-device.sh` → 按本轮清单验 → 结果写 PROGRESS/PROJECT_STATE。
 4. 新对话先 `git pull` + `bash tooling/check-device.sh`，读第 2、6 节；不从旧聊天猜版本/配置。
 5. 一轮只收一个主题；版本号只在构建时 +1；未验证不写“收口”。
+6. **有红测试不出包**：要么修到全绿，要么在 HANDOFF 明确写 waiver 和风险；默认不允许带红构建。
+7. **出包后同一版本不再改代码**：任何修复进下一个 patch，避免 1.0.22→1.0.23 这种返工。
+8. **构建前 `main` 必须等于 `phone`**；手机装完必须跑 `bash tooling/check-device.sh`。
