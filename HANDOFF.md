@@ -4,7 +4,7 @@
 > 最后更新：2026-11-12
 > 权威副本：本文件同时放在仓库根目录 `HANDOFF.md`（随 Git 推送，跨设备可用）。
 >
-> **当前状态（2026-11-12 12:45）**：1.0.19/1.0.20 已收口；**1.0.21 代码完成待出包**（自己消息「选择文字」改用自定义工具栏）。AI 费用插件 `local-ai-cost` 已安装并实测（DeepSeek 余额 + 火山本月账单），待重启引擎加载 UI；密钥只在本地 600 文件，不入库。
+> **当前状态（2026-11-12 13:20）**：**1.0.21 已构建并验签**（`11121309`，206,211,961 字节，sha256 `e67678f3…401d`，证书 `fb462eb1…3c2f`）；自己消息「选择文字」已改用 `SelectionToolbar`，与助手正文一致，旧「引用」插入项移除。电脑侧 `test/chat` **1967 通过 / 0 失败**（含 4 张 message/image menu golden），手机端 4 张 golden 红为字体像素漂移（Rule 31），**未重建**。待真机覆盖安装后长按自己消息 → 选择文字复验。AI 费用插件 `local-ai-cost` 已安装并实测（DeepSeek 余额 + 火山本月账单），入口已隐藏（`hide: ["pluginCapsule"]`）；密钥只在本地 600 文件，不入库。
 
 > **新对话记忆**：`/root/workspace/AGENTS.md` 是指向 [`PROJECT_STATE.md`](PROJECT_STATE.md) 的软链，新对话会自动加载；换机/重装后运行 `bash tooling/install-workspace-memory.sh`。
 
@@ -32,7 +32,7 @@
 | 产物 | 路径 |
 | --- | --- |
 | 魔改版 APK（本地） | `D:\Android\apk\dsh-go-1.0.15-mogai-arm64.apk` |
-| **APK 下载（飞书云空间，优先）** | https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR （`dsh-go-1.0.20-11120812-mogai-arm64.apk`，当前 11120812；点开 → 右上角「...」→ 下载；飞书内直接下载，不走 GitHub/Gitee） |
+| **APK 下载（飞书云空间，优先）** | https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR （`dsh-go-1.0.21-11121309-mogai-arm64.apk`，当前 11121309；点开 → 右上角「...」→ 下载；飞书内直接下载，不走 GitHub/Gitee） |
 | **源码包（飞书云空间）** | https://my.feishu.cn/file/IEqgbC77zoOqWmxo277cr8Wdnue （`dsh-go-1.0.15-mogai-src.zip`，500MB；已排除 `.git`、`app/build`、`.dart_tool`、`runtime/.work`、`runtime/.cache`，保留 `runtime/out` 可直接重建 APK） |
 | APK 备份（GitHub Release） | https://github.com/chuyang931914/dsh-Go/releases/download/v1.0.15-mogai/dsh-go-1.0.15-mogai-arm64.apk |
 | 构建脚本原始输出 | WSL 内 `/root/dsh-Go/app/build/app/outputs/flutter-apk/app-arm64-release.apk` |
@@ -44,6 +44,10 @@
 | 构建源（唯一有效副本） | WSL `Ubuntu24` 内 `/root/dsh-Go` |
 | Windows 访问构建源的 UNC 路径 | `\\wsl.localhost\Ubuntu24\root\dsh-Go\`（可直接用编辑器读写） |
 | 交接文档（飞书云空间） | https://my.feishu.cn/file/OJSGbqo2IofCYQxm8uycjTGAn7d （`HANDOFF-dsh-Go.md`，每次更新后覆盖上传） |
+
+**构建 `11121309`（2026-11-12 13:09，1.0.21）**：`main` ← `phone` 快进（`f5306f9..c3bf654`，含 `197368c` 选字修复）；APK 206,211,961 字节，sha256 `e67678f34658c9bcf8cbc779203973b2967208d7ba5ab4a61788d66a9c75401d`，证书 `fb462eb1…3c2f`，versionCode `11121309` > `11120812`。电脑侧 `dart analyze` = 0 error / 0 warning / 24 info；`flutter test test/chat` = **1967 通过 / 0 失败**（含 message/image menu 4 张 golden 全通过）。手机端报告的 4 张 golden 红为字体像素漂移（Rule 31），**未重建金色基准**。APK 已存 `D:\Android\apk\dsh-go-1.0.21-11121309-mogai-arm64.apk`。
+
+**分发 `11121309`（2026-11-12 13:22）**：APK `1.0.21+11121309` 已覆盖飞书原 file token（云端版本 `7707152225507806485`，206,211,961 字节）；待发「城南」单聊并做覆盖安装复验。
 
 **分发 `11120812`（2026-11-12 08:18）**：APK `1.0.20+11120812` 已覆盖飞书原 file token（云端版本 `7707072743111445690`），并发送到「城南」单聊 `oc_ef1b285c3aa75900a8d4221654d58b20`（message_id `om_x100b6064131680a0de3549dac57d65b`）。
 
@@ -127,15 +131,15 @@ export PATH="/root/dev/jdk-17/bin:/root/dev/flutter/bin:/root/dev/android-sdk/cm
 - 凭据：`~/.git-credentials`（chmod 600，`credential.helper=store`）已存 Gitee 与 GitHub 令牌，推送可用。
 - 基线（2026-11-11）：电脑侧五批清账后，回归面 `test/settings test/star test/ui_config` = 473 通过 / 0 跳过 / 0 失败，全量 `flutter test` = 10845 通过 / ~288 跳过 / 0 失败；`dart analyze` = 0 error / 0 warning / 23 info。手机端复跑时金色图会因字体渲染不同而像素漂移（见 Rule 31），只验收 analyze 与非金色图结果。手机端交叉验证（`d746042`）：电脑侧改动过的 12 个测试文件 = 381 通过 / 39 金色图漂移 / 0 真实失败。
 
-### 3.5 四线一致性（2026-11-12 08:40，1.0.20 真机通过）
+### 3.5 四线一致性（2026-11-12 13:20，1.0.21 已构建待真机复验）
 
 | 线 | 事实 | 状态 |
 | --- | --- | --- |
-| 仓库 | `main` = `phone`（以 `git log -1` 为准；1.0.20 收口文档） | ✅ |
-| 代码 | 1.0.20 构建提交 `b29a4e5`（`home_shell.dart` 手势 + `pubspec 1.0.20`） | ✅ |
-| APK | `11120812`（1.0.20），206,211,199 字节，sha256 `817a3008…7d99`，证书 `fb462eb1…3c2f` | ✅ |
-| 实机 | 已装 `1.0.20+11120812`；时间戳与 0–80dp 边缘手势均通过 | ✅ |
-| 文档 | 本文件为权威；D 盘/飞书需随本次 1.0.20 收口记录再覆盖 | ⚠️ 电脑待同步 |
+| 仓库 | `main` = `phone`（`c3bf654`，1.0.21 选字修复 + 插件文档） | ✅ |
+| 代码 | 1.0.21：`message_menu.dart`/`user_bubble.dart`/`chat_list.dart` 改用 `SelectionToolbar`；`pubspec 1.0.21` | ✅ |
+| APK | `11121309`（1.0.21），206,211,961 字节，sha256 `e67678f3…401d`，证书 `fb462eb1…3c2f` | ✅ |
+| 实机 | 待覆盖安装 `1.0.21+11121309`，长按自己消息 → 选择文字复验 | ⏳ 待装 |
+| 文档 | 本文件为权威；D 盘/飞书已随 1.0.21 收口覆盖 | ✅ |
 
 手机端环境与验证（本机）：
 - 仓库 `/root/workspace/dsh-Go`（`/root/dsh-Go` 软链）；Flutter 3.47.7 linux-arm64（`/root/dev/flutter`）；Dart 3.13.5。
