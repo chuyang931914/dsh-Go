@@ -1,5 +1,15 @@
 # 更新日志 · Changelog
 
+## 1.0.20 · 2026-11-12
+
+### 中文
+
+- **边缘手势再放宽。** 从 8–40dp 改为 **0–80dp**：左右边缘 0–80dp 内都能起手，中间仍不响应。最靠边的 0–20dp 仍可能被系统返回手势拿走，这是 Android 的行为。
+
+### English
+
+- **Wider edge gestures.** The start band grows from 8–40dp to **0–80dp** on both edges; the middle still does nothing. The outermost 0–20dp can still be claimed by the Android back gesture; that part is system behavior.
+
 ## 1.0.19 · 2026-11-12
 
 ### 中文

@@ -252,12 +252,12 @@ class _HomeShellState extends ConsumerState<HomeShell> with TickerProviderStateM
         onStart: () => _onDragStart(_drawer),
         onDelta: (dx) => _onDragDelta(_drawer, _drawerWidth(context), dx),
         onEnd: (velocity) => _onDragEnd(_drawer, _drawerWidth(context), velocity),
-        // 默认禁用聊天页中间的横向滑动；左边缘 8–40dp 才开始跟手。
-        // 0–8dp 留给 Android 返回手势，避免系统先吃掉这一划。
+        // 聊天页中间不响应；左边缘 0–80dp 都可以起手。
+        // 最靠边的 0–20dp 仍可能被 Android 返回手势拿走，这是系统行为。
         acceptAt: (position) {
           if (_drawer.value > 0) return true;
           final left = MediaQuery.paddingOf(context).left;
-          return position.dx >= left + 8 && position.dx <= left + 40;
+          return position.dx <= left + 80;
         },
         debugOwner: this,
       ),
@@ -275,11 +275,11 @@ class _HomeShellState extends ConsumerState<HomeShell> with TickerProviderStateM
           onStart: () => _onDragStart(_quickPanel),
           onDelta: (dx) => _onDragDelta(_quickPanel, _quickPanelWidth(context), -dx),
           onEnd: (velocity) => _onDragEnd(_quickPanel, _quickPanelWidth(context), -velocity),
-          // 同理：右边缘 8–40dp 才开始拉快捷面板。
+          // 同理：右边缘 0–80dp 都可以拉快捷面板。
           acceptAt: (position) {
             if (_quickPanel.value > 0) return true;
             final right = MediaQuery.sizeOf(context).width - MediaQuery.paddingOf(context).right;
-            return position.dx >= right - 40 && position.dx <= right - 8;
+            return position.dx >= right - 80;
           },
           debugOwner: this,
         ),
