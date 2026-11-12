@@ -3,6 +3,11 @@
 > 追加式流水账：每次构建、装机、真机反馈、重要决策后加一条（最新在上）。
 > 这里记“发生了什么”；当前状态看 [`PROJECT_STATE.md`](PROJECT_STATE.md)，完整实现看 [`HANDOFF.md`](HANDOFF.md)。
 
+## 2026-11-12 13:00 · 隐藏插件入口
+
+- `ui.json`：`hide: ["pluginCapsule"]`，隐藏聊天页「插件」入口；费用条/面板保留。
+- 仍待电脑合并 phone、构建 1.0.21、同步 HANDOFF 到 D/飞书。
+
 ## 2026-11-12 12:45 · AI 费用插件完成
 
 - 插件 `local-ai-cost`：输入框上方摘要 + 「AI 费用」面板。

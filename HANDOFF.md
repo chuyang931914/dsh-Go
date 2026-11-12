@@ -612,6 +612,7 @@ flutter test > /tmp/full_test.log 2>&1                # 全量，目标 0 失败
 
 - **位置**：`$DSH_HOME/dsh-go/plugins/local-ai-cost`；`dsh plugin --profile web add` 安装；原生插件，不需要改 App/出包。
 - **界面**：输入框上方 `composer.strip` 一行（火山本月 + DeepSeek 余额），点开 `panels` 的「AI 费用」；每 30 分钟自动刷新，面板可手动刷新。
+- **入口**：`ui.json` 加 `hide: ["pluginCapsule"]`，隐藏聊天页 App 自带的「插件」聚合入口（红线那个）；插件费用条/面板仍在，面板可从费用条或「全部功能」进入。
 - **DeepSeek**：`GET https://api.deepseek.com/user/balance`，显示可用余额；Key 由插件独立配置，不读 App 里的 Key。
 - **火山**：官方 `@volcengine/openapi` 的 `billing.ListBillOverviewByProd`，查当前自然月账单（`BillPeriod` 走 query，不走 body）；需要子账号 **账单只读** AK/SK，不能用 Ark API Key。
 - **凭据**：`$DSH_HOME/dsh-go/plugins/local-ai-cost/secrets.json`，权限 600；没有写进代码、清单、视图、聊天或仓库。临时导入文件已删除。
