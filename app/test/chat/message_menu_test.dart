@@ -1,11 +1,12 @@
 // One menu for every message: a preview, then what you do with this message,
 // then — in its own card — what opens a new conversation. The order is the
 // menu's, not the caller's. Pictures get the same sheet with the picture as
-// the preview. 「选择文字」 offers 「引用」 for the selected passage.
+// the preview. 「选择文字」 uses the same custom selection toolbar as replies.
 
 import 'dart:convert';
 
 import 'package:dsh_app/ui/chat/widgets/message_menu.dart';
+import 'package:dsh_app/ui/chat/widgets/selection_actions.dart';
 import 'package:dsh_app/ui/common/app_sheet.dart';
 import 'package:dsh_app/ui/settings/settings_widgets.dart' show SettingsTile;
 import 'package:flutter/material.dart';
@@ -144,27 +145,42 @@ void main() {
     expect(result, [ImageAction.save]);
   });
 
-  testWidgets('选择文字: the toolbar quotes the selection', (tester) async {
-    final quoted = <String>[];
-    await _host(tester, (context) => showSelectTextSheet(context, _reply, markdown: true, onQuote: quoted.add));
+  testWidgets('选择文字 uses the custom toolbar and its ⋯ actions', (tester) async {
+    final asked = <String>[];
+    final actions = SelectionActions(
+      onTranslate: (_) {},
+      onShare: (_) {},
+      onRead: (_) {},
+      onAsk: asked.add,
+    );
+    await _host(tester, (context) => showSelectTextSheet(context, _reply, markdown: true, selectionActions: actions));
     expect(find.byType(SelectionArea), findsOneWidget);
     await tester.longPress(find.textContaining('服务端', findRichText: true));
     await tester.pumpAndSettle();
-    expect(find.text('引用'), findsOneWidget);
-    await tester.tap(find.text('引用'));
+    for (final label in ['复制', '全选', '翻译', '⋯']) {
+      expect(find.text(label), findsOneWidget);
+    }
+    expect(find.text('引用'), findsNothing);
+
+    await tester.tap(find.text('⋯'));
     await tester.pumpAndSettle();
-    expect(quoted, hasLength(1));
-    expect(quoted.single.trim(), isNotEmpty);
-    expect(_reply.replaceAll('**', ''), contains(quoted.single.trim()));
-    // The sheet closed with it.
-    expect(find.byType(SelectionArea), findsNothing);
+    for (final label in ['分享', '朗读', '问 AI']) {
+      expect(find.text(label), findsOneWidget);
+    }
+    await tester.tap(find.text('问 AI'));
+    await tester.pumpAndSettle();
+    expect(asked, hasLength(1));
+    expect(asked.single.trim(), isNotEmpty);
   });
 
-  testWidgets('选择文字 of a prompt has no 引用', (tester) async {
+  testWidgets('选择文字 without chat actions keeps only copy and select all', (tester) async {
     await _host(tester, (context) => showSelectTextSheet(context, '帮我看看测试为什么失败'));
     await tester.longPress(find.text('帮我看看测试为什么失败'));
     await tester.pumpAndSettle();
-    expect(find.text('引用'), findsNothing);
+    expect(find.text('复制'), findsOneWidget);
+    expect(find.text('全选'), findsOneWidget);
+    expect(find.text('翻译'), findsNothing);
+    expect(find.text('⋯'), findsNothing);
   });
 
   for (final brightness in Brightness.values) {

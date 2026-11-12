@@ -4,7 +4,7 @@
 > 最后更新：2026-11-12
 > 权威副本：本文件同时放在仓库根目录 `HANDOFF.md`（随 Git 推送，跨设备可用）。
 >
-> **当前状态（2026-11-12 08:40）**：**1.0.19 与 1.0.20 均已真机通过**。实机 `1.0.20+11120812`，数据保留；1.0.19 时间戳（精简/全局切换）正常；1.0.20 边缘手势 0–80dp 起手正常、中间仍不响应。代码/APK 已收口，待电脑覆盖最终文档。
+> **当前状态（2026-11-12 10:55）**：1.0.19/1.0.20 已收口；**1.0.21 修复自己消息「选择文字」仍用旧菜单**——`showSelectTextSheet` 改用自定义选区工具栏。代码完成，待出包（versionCode > `11120812`，证书 `fb462eb1…`）。
 
 > **新对话记忆**：`/root/workspace/AGENTS.md` 是指向 [`PROJECT_STATE.md`](PROJECT_STATE.md) 的软链，新对话会自动加载；换机/重装后运行 `bash tooling/install-workspace-memory.sh`。
 
@@ -601,6 +601,13 @@ flutter test > /tmp/full_test.log 2>&1                # 全量，目标 0 失败
 - **1.0.20 已出包并分发**：边缘触发带改为 **0–80dp**（`home_shell.dart`），中间仍不响应；`pubspec 1.0.20`。电脑侧 `dart analyze` 0 error / 0 warning / 24 info，`test/shell` **217 全通过**（无需重建金色图）。APK `dsh-go-1.0.20-11120812-mogai-arm64.apk`，206,211,199 字节，versionCode `11120812` > `11120055`，证书 `fb462eb1…3c2f`，sha256 `817a30088e2c03083cbd6b7066d365a44727964f6667c750bfa8ed5fb6567d99`；已覆盖飞书原链接并发送私聊。装后只验 0–80dp 边缘起手与中间不响应。
 - **1.0.20 真机验收（2026-11-12 08:3x）**：安装 `11120812` 成功、数据保留；0–80dp 边缘起手可稳定拉抽屉/快捷面板，中间横滑仍不响应；1.0.19 时间戳显示与全局切换也确认正常。**1.0.19/1.0.20 收口。**
 
+### 15）1.0.21：自己消息的「选择文字」用新工具栏（2026-11-12，代码完成，待出包）
+
+- **问题**：长按自己的消息 → 选择文字，弹出的 `_SelectTextSheet` 仍然用 `region.contextMenuButtonItems`，会带出 OEM/系统搜索、翻译等旧菜单；助手正文早已换新。
+- **修法**：`showSelectTextSheet` 增加 `SelectionActions?`；`_SelectTextSheet` 改用 `SelectionToolbar`（复制/全选/翻译/⋯），并删掉旧的「引用」插入项；`UserBubble` 从 `ChatList` 拿到选区动作后传入。
+- **验证**：`dart analyze` 0 error / 0 warning / 23 info；`message_actions + message_time + message_menu` 22 非金色用例通过；`message_menu` 4 张旧菜单 golden 变红是手机字重/菜单布局，待电脑确认/重建。
+- **待电脑**：合并 phone → 跑 `test/chat`/确认 4 张 golden → 构建 1.0.21（versionCode > `11120812`）→ 装机后长按自己消息→选择文字复验。
+
 ---
 
 ## 八、Git 与双仓库同步
@@ -723,6 +730,7 @@ git push origin phone   # 手机工作分支
 | 1.0.18 | 11112142 | 修翻译目标（vivo 翻译本体）+ 朗读 0.8×；真机复验通过 |
 | 1.0.19 | 11120055 | 时间戳 + 边缘手势 8–40dp；时间戳真机通过 |
 | 1.0.20 | 11120812 | 边缘手势 0–80dp；真机通过 |
+| 1.0.21 | 待构建 | 自己消息「选择文字」改用自定义选区工具栏 |
 
 ---
 

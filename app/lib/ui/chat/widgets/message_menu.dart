@@ -15,6 +15,7 @@ import '../../theme/app_icons.dart';
 import '../../theme/theme.dart';
 import '../render/markdown_body.dart';
 import 'message_actions.dart' show copyMessage;
+import 'selection_actions.dart';
 
 /// What the message menu offers, in its order. The ones with a [hint] open a
 /// new conversation and sit in the second group.
@@ -285,14 +286,14 @@ String menuPreview(String text) => text
     .trim();
 
 /// 「选择文字」: the whole message, freely selectable. Replies render as
-/// Markdown ([markdown]), prompts as plain text. With [onQuote], the
-/// selection toolbar also offers 「引用」: the sheet closes and the selected
-/// passage goes to [onQuote].
+/// Markdown ([markdown]), prompts as plain text. The selection toolbar uses
+/// the same custom actions as the reply body (copy / select all / translate /
+/// ⋯ share / read / ask).
 Future<void> showSelectTextSheet(
   BuildContext context,
   String text, {
   bool markdown = false,
-  ValueChanged<String>? onQuote,
+  SelectionActions? selectionActions,
 }) {
   return showAppSheet<void>(
     context,
@@ -304,23 +305,18 @@ Future<void> showSelectTextSheet(
         Navigator.pop(sheet);
         copyMessage(context, text);
       },
-      onQuote: onQuote == null
-          ? null
-          : (selected) {
-              Navigator.pop(sheet);
-              onQuote(selected);
-            },
+      selectionActions: selectionActions,
     ),
   );
 }
 
 class _SelectTextSheet extends StatefulWidget {
-  const _SelectTextSheet({required this.text, required this.markdown, required this.onCopyAll, this.onQuote});
+  const _SelectTextSheet({required this.text, required this.markdown, required this.onCopyAll, this.selectionActions});
 
   final String text;
   final bool markdown;
   final VoidCallback onCopyAll;
-  final ValueChanged<String>? onQuote;
+  final SelectionActions? selectionActions;
 
   @override
   State<_SelectTextSheet> createState() => _SelectTextSheetState();
@@ -330,25 +326,11 @@ class _SelectTextSheetState extends State<_SelectTextSheet> {
   /// What is selected right now (plain text).
   String _selected = '';
 
-  Widget _toolbar(BuildContext context, SelectableRegionState region) {
-    final items = [...region.contextMenuButtonItems];
-    final onQuote = widget.onQuote;
-    final selected = _selected;
-    if (onQuote != null && selected.trim().isNotEmpty) {
-      final copy = items.indexWhere((item) => item.type == ContextMenuButtonType.copy);
-      items.insert(
-        copy + 1,
-        ContextMenuButtonItem(
-          label: MessageAction.quote.label,
-          onPressed: () {
-            region.hideToolbar();
-            onQuote(selected);
-          },
-        ),
-      );
-    }
-    return AdaptiveTextSelectionToolbar.buttonItems(anchors: region.contextMenuAnchors, buttonItems: items);
-  }
+  Widget _toolbar(BuildContext context, SelectableRegionState region) => SelectionToolbar(
+    region: region,
+    text: _selected,
+    actions: widget.selectionActions,
+  );
 
   @override
   Widget build(BuildContext context) {

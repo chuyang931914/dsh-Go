@@ -862,6 +862,7 @@ class _ChatListState extends ConsumerState<ChatList> with SingleTickerProviderSt
       timestampExpanded: _timestampsExpanded,
       timestampShowDate: showDate,
       onToggleTimestamp: _toggleTimestamps,
+      selectionActions: widget.selectionActions,
       attachments: prompt.attachments.isEmpty ? null : SentAttachments.pending(prompt.attachments),
       pendingLabel: prompt.failed ? appL10n.chatFailedSubmission : label,
       pendingIcon: prompt.failed ? AppIcons.error : icon,
@@ -1194,6 +1195,7 @@ class _ChatListState extends ConsumerState<ChatList> with SingleTickerProviderSt
         timestampExpanded: _timestampsExpanded,
         timestampShowDate: showDate,
         onToggleTimestamp: _toggleTimestamps,
+        selectionActions: widget.selectionActions,
       ),
       PendingRow(:final prompt) => _pendingBubble(prompt, showDate: showDate),
       AssistantRow(:final item, :final showActions, :final footnote) =>

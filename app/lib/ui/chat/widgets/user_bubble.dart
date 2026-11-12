@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 
 import 'message_time.dart';
+import 'selection_actions.dart';
 
 import '../../../l10n/l10n.dart';
 import '../../../state/composer_quote.dart' show splitQuote;
@@ -43,6 +44,7 @@ class UserBubble extends StatelessWidget {
     this.timestampExpanded = false,
     this.timestampShowDate = false,
     this.onToggleTimestamp,
+    this.selectionActions,
   });
 
   final String text;
@@ -68,6 +70,9 @@ class UserBubble extends StatelessWidget {
   final bool timestampShowDate;
   final VoidCallback? onToggleTimestamp;
 
+  /// 选字面板的动作（同助手正文）。
+  final SelectionActions? selectionActions;
+
   /// What the bubble shows: a generation request without its header.
   String get _shown => GenerateHeader.parse(text)?.description ?? text;
 
@@ -85,7 +90,7 @@ class UserBubble extends StatelessWidget {
       case MessageAction.copy:
         await copyMessage(context, _shown);
       case MessageAction.selectText:
-        await showSelectTextSheet(context, _shown);
+        await showSelectTextSheet(context, _shown, selectionActions: selectionActions);
       case MessageAction.edit:
         onEdit?.call();
       case MessageAction.quote || MessageAction.share || MessageAction.regenerate || MessageAction.branch:

@@ -3,6 +3,13 @@
 > 追加式流水账：每次构建、装机、真机反馈、重要决策后加一条（最新在上）。
 > 这里记“发生了什么”；当前状态看 [`PROJECT_STATE.md`](PROJECT_STATE.md)，完整实现看 [`HANDOFF.md`](HANDOFF.md)。
 
+## 2026-11-12 10:55 · 1.0.21 自己消息选字修复
+
+- 用户反馈：长按自己消息→选择文字仍是旧 OEM 菜单。
+- `showSelectTextSheet`/`_SelectTextSheet` 改用 `SelectionToolbar`，`UserBubble` 传入 ChatList 的选区动作。
+- `dart analyze` 0/0/23；message_actions + message_time + message_menu 22 非金色通过；4 张旧菜单 golden 待电脑确认/重建。
+- 待出 1.0.21（versionCode > 11120812），装机复验。
+
 ## 2026-11-12 08:40 · 1.0.20 真机通过
 
 - 实机安装 `1.0.20+11120812`，数据保留。

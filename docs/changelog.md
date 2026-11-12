@@ -1,5 +1,15 @@
 # 更新日志 · Changelog
 
+## 1.0.21 · 2026-11-12
+
+### 中文
+
+- **自己消息的「选择文字」也换成新工具栏。** 长按自己的消息 → 选择文字，弹出的选字面板现在同样只有复制、全选、翻译和「⋯」（分享/朗读/问AI），不再出现系统/OEM 的搜索、翻译等条目。
+
+### English
+
+- **Selecting text in your own message now uses the same toolbar.** Long-press your message → Select text; the sheet offers only Copy, Select all, Translate and “⋯” (Share / Read aloud / Ask AI), with no system/OEM search or translate entries.
+
 ## 1.0.20 · 2026-11-12
 
 ### 中文
