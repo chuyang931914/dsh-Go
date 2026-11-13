@@ -3,6 +3,15 @@
 > 追加式流水账：每次构建、装机、真机反馈、重要决策后加一条（最新在上）。
 > 这里记“发生了什么”；当前状态看 [`PROJECT_STATE.md`](PROJECT_STATE.md)，完整实现看 [`HANDOFF.md`](HANDOFF.md)。
 
+## 2026-11-14 00:35 · 1.0.28 出包（arm64，buildNumber 11140025）
+
+- `main` = `phone` = `82cbb8c`，reset --hard 后裸跑通过；本地旧 47 commits 与两个测试文件未暂存改动全丢弃。
+- 电脑侧验证：`dart analyze` 0 error / 24 info；`flutter test test/chat` **1969 通过 / 0 失败**（含 message_menu 4 张 golden 全过；之前担心的字体 pixel 漂移未出现）。
+- 构建：`DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64`，281.5s，无 warning/error（仅 flutter_webrtc KGP 未来弃用警告 + 15 packages 有新版本可升级的提示）。
+- APK：`app-arm64-release.apk` → `D:\Android\apk\dsh-go-1.0.28-11140025-mogai-arm64.apk`，206,215,379 字节，sha256 `ed984049…55517f`，证书 `fb462eb1…3c2f`，versionCode `11140025` > `11131822`。
+- 本版改动只两件：选字全局指针路由 + 唤醒锁按需（`DshService.kt` + `RuntimePlugin.kt` 的 setBusy ~26 行）。思考照常显示。
+- 装机待验：选字滚、唤醒锁按需（后台与耗电）。
+
 ## 2026-11-14 02:00 · 撤掉隐藏思考
 
 - 用户改口：思考过程不隐藏，照常显示。`chat_rows.dart` 与相关断言回到 1.0.24 原样，仅保留 1.0.26 的「手动展开不自动收回」修法。
