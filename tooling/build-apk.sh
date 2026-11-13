@@ -18,6 +18,7 @@
 #   --build-name X.Y.Z               version name instead of app/pubspec.yaml's
 #   --keep-daemon                    leave the Gradle daemon running afterwards
 #   --beta                           embed the beta channel token (internal builds only)
+#   --push-main                      after a good build, push main and verify via ls-remote
 #   --dry-run                        print what would run
 #
 # The version name comes from app/pubspec.yaml; its `+N` is only a placeholder.
@@ -35,7 +36,7 @@ OUT="$APP/build/app/outputs/flutter-apk"
 usage() { sed -n '2,23p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; }
 die() { echo "build-apk: $*" >&2; exit 1; }
 
-flavor=arm64 mode=release target='' code='' name='' dry=0 keep_daemon=0 want_beta=0
+flavor=arm64 mode=release target='' code='' name='' dry=0 keep_daemon=0 want_beta=0 push_main=0
 extra=()
 while (($#)); do
   case "$1" in
@@ -50,6 +51,7 @@ while (($#)); do
     --build-name=*) name=${1#*=}; shift ;;
     --keep-daemon) keep_daemon=1; shift ;;
     --beta) want_beta=1; shift ;;
+    --push-main) push_main=1; shift ;;
     --dry-run) dry=1; shift ;;
     -h | --help) usage; exit 0 ;;
     --) shift; extra=("$@"); break ;;
@@ -116,6 +118,7 @@ done
 echo "dsh-go $name ($code, $when) · $mode · ${flavors[*]}$( ((beta)) && echo ' · beta channel')"
 if ((dry)); then
   for c in "${commands[@]}"; do echo "(cd app && ${c% })"; done
+  ((push_main)) && echo "(git push origin main; verify git ls-remote origin main == HEAD)"
   ((keep_daemon)) || echo "(cd app/android && ./gradlew --stop)"
   exit 0
 fi
@@ -168,3 +171,23 @@ done
 echo
 echo "dsh-go $name ($code, $when)"
 for apk in "${built[@]}"; do echo "  ${apk#"$ROOT/"}"; done
+
+# Optional: publish main and prove it landed. A bare `git push` can exit 0 while
+# the ref never moves (proxy hiccups, credentials), so always read it back.
+if ((push_main)); then
+  [[ -d $ROOT/.git ]] || die "--push-main needs $ROOT to be a git work tree"
+  branch=$(git -C "$ROOT" rev-parse --abbrev-ref HEAD)
+  [[ $branch == main ]] || die "--push-main only runs on main (now: $branch)"
+  head=$(git -C "$ROOT" rev-parse HEAD)
+  remote_main() { git -C "$ROOT" ls-remote origin refs/heads/main 2>/dev/null | awk 'NR==1{print $1}'; }
+  echo "→ git push origin main ($head)"
+  git -C "$ROOT" push origin main || die "git push failed"
+  remote=$(remote_main || true)
+  if [[ $remote != "$head" ]]; then
+    echo "build-apk: remote main is ${remote:-unknown} after push; retrying once" >&2
+    git -C "$ROOT" push origin main || die "git push retry failed"
+    remote=$(remote_main || true)
+  fi
+  [[ $remote == "$head" ]] || die "remote main is ${remote:-unknown}; expected $head"
+  echo "  verified: main = ${head:0:7} (remote matches)"
+fi
