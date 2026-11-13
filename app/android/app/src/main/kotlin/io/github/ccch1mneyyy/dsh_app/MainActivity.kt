@@ -210,9 +210,16 @@ class MainActivity : FlutterActivity() {
         super.cleanUpFlutterEngine(flutterEngine)
     }
 
-    // Back on the home screen sends the app to the background instead of finishing the activity
-    // (Android 12's default for launcher roots): coming back finds it as it was.
+    /** Back on the home screen sends the app to the background instead of finishing the activity
+     * (Android 12's default for launcher roots): coming back finds it as it was.
+     */
     override fun popSystemNavigator(): Boolean = moveTaskToBack(true)
+
+    /** The vault's system unlock prompt answers here; everything else goes on to Flutter. */
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (vaultPlugin?.onActivityResult(requestCode, resultCode, data) == true) return
+        super.onActivityResult(requestCode, resultCode, data)
+    }
 
     /** 设置 › 性能 › 刷新率; the Flutter side owns the stored choice. */
     private var refreshMode = "auto"
