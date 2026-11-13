@@ -715,6 +715,11 @@ git push origin phone   # 手机工作分支
 - 手机端工作分支 **`phone`**（2026-11-11 16:47 已快进到 `main` `c07ad5c`，不再基于旧 `0344644`），提交只推 Gitee `phone`（GitHub `phone` 由镜像自动同步），**不碰 `main`**（手机端新改动走 phone，经合并才进 main）。
 - 电脑侧接手机端成果：`git fetch origin phone && git merge origin/phone`（phone 基于 main，一般可快进）或 cherry-pick 需要的提交；合并后按 8.2 推 Gitee。
 - `/root/dev/dsh-push.sh`：只推 Gitee（`main`→`main`、其他分支同名），GitHub 交给镜像。
+- **本地 `remote.origin.fetch` 只映射 `main`**（2026-11-13 手机端发现）：当前值是 `+refs/heads/main:refs/remotes/origin/main`，所以 `git fetch` 不会更新 `origin/phone`，它会一直停在旧提交（本例 `462adc7`）。**推送正常**，只是 `origin/phone` 不可信；核对远端点用 `git ls-remote origin phone` 或 `git fetch origin phone`。要补齐映射：
+  ```bash
+  git config --add remote.origin.fetch '+refs/heads/phone:refs/remotes/origin/phone'
+  git fetch origin
+  ```
 
 ### 8.4 双端协作约定（手机端 + 电脑 WSL，2026-11-11）
 

@@ -1,6 +1,6 @@
 # dsh-Go 项目记忆（新对话先读这一页）
 
-> 最后更新：2026-11-13 16:15（Asia/Shanghai）
+> 最后更新：2026-11-13 16:18（Asia/Shanghai）
 >
 > 这一页是给每个新对话的“开机记忆”：项目是什么、当前状态、双端分工、必须遵守的规则、正在做的事和下一步。
 > 详细实现与历史看 [`HANDOFF.md`](HANDOFF.md)；长期用户指令与决策看 [`project_memory.md`](project_memory.md)。
@@ -124,7 +124,7 @@ DSH_WORKSPACE=/root/workspace bash /root/dsh-Go/tooling/install-workspace-memory
 1. 手机改：`dart analyze` + 受影响非金色测试 → commit → push `phone`；插件源码、`config/ui.json`、文档同一轮入库。
 2. 电脑：`git fetch` → `git merge --ff-only origin/phone` → 测试通过才构建；构建后更新 HANDOFF 并同步 D 盘/飞书。
 3. 手机装：先记 baseline → 覆盖安装 → `bash tooling/check-device.sh` → 按本轮清单验 → 结果写 PROGRESS/PROJECT_STATE。
-4. 新对话先 `git pull` + `bash tooling/check-device.sh`，读第 2、6 节；不从旧聊天猜版本/配置。
+4. 新对话先 `git pull` + `bash tooling/check-device.sh`，读第 2、6 节；不从旧聊天猜版本/配置。本地 fetch 只映射 `main`，`origin/phone` 可能是旧引用，核对用 `git ls-remote origin phone`（详见 HANDOFF 8.3）。
 5. 一轮只收一个主题；版本号只在构建时 +1；未验证不写“收口”。
 6. **有红测试不出包**：要么修到全绿，要么在 HANDOFF 明确写 waiver 和风险；默认不允许带红构建。
 7. **出包后同一版本不再改代码**：任何修复进下一个 patch，避免 1.0.22→1.0.23 这种返工。
