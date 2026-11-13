@@ -85,6 +85,9 @@ String _firstLine(String text) {
 class _ThinkingPillState extends State<ThinkingPill> {
   bool _expanded = false;
 
+  /// 用户亲手展开过：继续思考或这一轮流式结束时都不自动收起。
+  bool _userExpanded = false;
+
   /// 收起动画期间还要画的那块内容:收起时它已经不该在树上了,但高度收回
   /// 去的过程里得先留着,不能啪地消失留下一块空白。
   Widget? _body;
@@ -108,7 +111,7 @@ class _ThinkingPillState extends State<ThinkingPill> {
   void didUpdateWidget(ThinkingPill oldWidget) {
     super.didUpdateWidget(oldWidget);
     // 一轮结束:过程收进摘要,亲手展开的全文也不留在外面。
-    if (oldWidget.streaming && !widget.streaming) _expanded = false;
+    if (oldWidget.streaming && !widget.streaming && !_userExpanded) _expanded = false;
   }
 
   @override
@@ -173,7 +176,10 @@ class _ThinkingPillState extends State<ThinkingPill> {
       if (!_expanded) return ThinkingTicker(text: widget.reasoning);
       // 展开后,点正文本身和点头部一样收起。只在展开态挂这层手势:实时窗口
       // 还要能长按选字/随列表滚动,不该多一个点击目标。
-      void collapse() => setState(() => _expanded = false);
+      void collapse() => setState(() {
+        _expanded = false;
+        _userExpanded = false;
+      });
       return _hasProviderScope(context)
           ? _TranslatableReasoning(
               text: widget.reasoning.trim(),
@@ -208,7 +214,13 @@ class _ThinkingPillState extends State<ThinkingPill> {
         Semantics(
           button: true,
           expanded: _expanded,
-          child: StreamRowFrame(onTap: () => setState(() => _expanded = !_expanded), child: header),
+          child: StreamRowFrame(
+            onTap: () => setState(() {
+              _expanded = !_expanded;
+              _userExpanded = _expanded;
+            }),
+            child: header,
+          ),
         ),
         // 一个槽:思考中是实时窗口,点开换成全文,一轮结束收起。
         ExpandReveal(open: open && !_windowHeld, child: _body ?? const SizedBox.shrink()),

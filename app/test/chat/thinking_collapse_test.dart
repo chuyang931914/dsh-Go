@@ -102,6 +102,22 @@ void main() {
     expect(find.text(_preview), findsOneWidget);
   });
 
+  testWidgets('a user-expanded body stays open when streaming ends', (tester) async {
+    await tester.pumpWidget(
+      _app(const ThinkingPill(reasoning: _reasoning, active: true, streaming: true)),
+    );
+    await pumpFrames(tester, 4);
+    await _expand(tester, active: true);
+    expect(_body, findsOneWidget);
+
+    await tester.pumpWidget(
+      _app(const ThinkingPill(reasoning: _reasoning, streaming: false)),
+    );
+    await pumpFrames(tester, 8);
+    expect(_body, findsOneWidget);
+    expect(_ticker, findsNothing);
+  });
+
   testWidgets('the header still toggles the body on its own', (tester) async {
     await tester.pumpWidget(_app(const ThinkingPill(reasoning: _reasoning)));
     await pumpFrames(tester, 2);

@@ -15,8 +15,8 @@
 
 ## 2. 当前状态（以仓库当前提交为准）
 
-- 仓库：`main` = `ad3d8ce`；`phone` 含 1.0.23 收口文档（以 `git log -1` 为准）。
-- 实机：已装 **`1.0.23+11121734`**，数据保留；直选/引用/抽屉顺序/顶部边界/插件入口均真机通过。
+- 仓库：`main` = `8dbd484`；`phone` 含 1.0.24 代码/文档（以 `git log -1` 为准）。
+- 实机：已装 **`1.0.23+11121734`**；1.0.24 修长消息选字/思考展开，待出包。
 - 1.0.23 APK：`11121734`，206,211,017 字节，sha256 `9580eb73…4e1`，证书 `fb462eb1…3c2f`；飞书 APK token 待覆盖。
 - 电脑侧验证：`dart analyze` 0 error / 0 warning / 24 info；`test/chat` **1968 通过 / 0 失败**（`chat_top_boundary_test` 全绿，31 张 golden 按新 user_bubble 重建）。
 - 1.0.17 已交付：长按菜单裁剪（复制/全选/翻译 + ⋯ 分享/朗读/问AI）、问AI填入输入框、聊天页宠物关闭、左右滑只保留边缘 24dp、系统翻译。
@@ -53,13 +53,13 @@
 - 文档/代码改动先 commit + 推 Gitee `phone`/`main`，推完才算完成（HANDOFF Rule 33）。
 - **不要把 Gitee 令牌、keystore 密码写进文档/仓库/聊天**；凭据在 `~/.git-credentials`（600）。
 - **仓库是唯一源头**：手机/电脑的代码、插件源码、界面配置、文档改动都必须提交并推送；只有密钥（`secrets.json`）和 `node_modules/` 例外。
-- versionName 按发布 patch +1（当前 1.0.23），versionCode 由构建脚本按 `MMDDHHmm` 生成；APK 名带 versionName + buildNumber。
+- versionName 按发布 patch +1（当前 1.0.24），versionCode 由构建脚本按 `MMDDHHmm` 生成；APK 名带 versionName + buildNumber。
 - 手机端不构建 APK；出包/分发只在电脑侧，走飞书云空间链接。
 - 用户偏好：中文、手机屏幕小要简洁；先结论后细节；给绝对路径；不擅自扩大改动范围。
 
 ## 6. 当前待办（按顺序）
 
-1. **1.0.23 已收口**：实机通过；1.0.22 跳过未装。下一步等新需求/问题。
+1. **1.0.24 待出包**：长消息跨页选字；手动展开的思考不被再次思考折叠。装后真机验。
 2. **AI 费用插件**：`local-ai-cost` 已在用，DeepSeek 余额 + 火山本月账单；凭据在插件 `secrets.json` 600，不入库。
 3. **Live2D 聊天页宠物**：用户在确认素材/绑定能否做完；能做完做实时交互，做不完再议，未排期（见 `BACKLOG.md`）。
 4. 安全项（令牌与 keystore 密码复用）用户已决定暂缓，不主动提。

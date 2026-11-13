@@ -1,5 +1,17 @@
 # 更新日志 · Changelog
 
+## 1.0.24 · 2026-11-13
+
+### 中文
+
+- **长消息选字可以跨页。** 「选择文字」把选区包在滚动容器外，拖到页边会继续滚动，不再只能选当前一屏。
+- **手动展开的思考不再被折叠。** AI 继续思考或这一轮流式结束时，用户亲手展开的思考正文保持展开；点正文/再点头部仍可收起。
+
+### English
+
+- **Select across long messages.** The select-text sheet now puts the selection area outside the scroll view, so dragging past the edge keeps scrolling instead of limiting selection to one screen.
+- **A manually expanded reasoning body stays open.** Continued thinking or the end of the stream no longer folds it; tapping the body or header still collapses it.
+
 ## 1.0.23 · 2026-11-12
 
 ### 中文
