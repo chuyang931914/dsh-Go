@@ -103,7 +103,7 @@ void main() {
     expect(_opacityOf(tester, find.text('第二个回答')), 1);
   });
 
-  testWidgets('committing a reply preserves its state and folds the expanded thinking', (tester) async {
+  testWidgets('committing a reply preserves its state and keeps the expanded thinking open', (tester) async {
     usePhoneView(tester);
     final harness = ChatHarness(
       session: 's1',
@@ -136,8 +136,8 @@ void main() {
       expect(tester.state(find.byType(AssistantMessage)), same(state));
       expect(_opacityOf(tester, find.text('回答')), 1);
     }
-    // 一轮结束:亲手展开的全文收回去,只剩一行预览。
-    expect(pillExpanded(), isFalse);
+    // 一轮结束:亲手展开的全文保持展开(1.0.24 起不再自动收回)。
+    expect(pillExpanded(), isTrue);
   });
 
   testWidgets('adding a visual fence preserves the reply state', (tester) async {
