@@ -3,6 +3,12 @@
 > 追加式流水账：每次构建、装机、真机反馈、重要决策后加一条（最新在上）。
 > 这里记“发生了什么”；当前状态看 [`PROJECT_STATE.md`](PROJECT_STATE.md)，完整实现看 [`HANDOFF.md`](HANDOFF.md)。
 
+## 2026-11-14 01:20 · 1.0.28 收口为三件
+
+- 撤回后按用户要求把三项拣回 1.0.24 基底：选字全局指针路由、隐藏思考（`chat_rows.dart`）、唤醒锁按需（`DshService`/`RuntimePlugin`/`chat_screen` 的 `setBusy`）。
+- 手机会话验证：`dart analyze` 0 error / 25 info；`final_answers_fold` + `thinking_collapse` + `thinking_label` + `message_actions` 37 通过。
+- 保险箱、红后灯带、分层宠物仍不在本版，存档在 `archive/1.0.28-full`。
+
 ## 2026-11-14 00:35 · 1.0.28 撤回至 1.0.24 基底
 
 - 用户决定：1.0.25 之后的功能（保险箱、红后、唤醒锁、隐藏思考、宠物）全部撤出，只保留选字修复。

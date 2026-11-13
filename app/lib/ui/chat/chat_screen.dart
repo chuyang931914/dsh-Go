@@ -835,6 +835,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
   }
 
   /// Long-press on send while a turn runs: how this message should land.
+  /// 有活在跑时才让系统保持 CPU 醒；空闲立刻放掉，省待机。
+  Future<void> _setBusy(bool busy) async {
+    try {
+      await const MethodChannel('dsh/runtime').invokeMethod<void>('setBusy', {'busy': busy});
+    } catch (_) {
+      // 旧引擎/测试环境没有这个方法，忽略。
+    }
+  }
+
   Future<void> _sendOptions() async {
     final sessionId = ref.read(currentSessionProvider);
     final running = sessionId != null && ref.read(chatProvider(sessionId)).running;
@@ -1575,6 +1584,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     if (sessionId != null) {
       // A finished turn spent money: re-read the balance (throttled).
       ref.listen(chatProvider(sessionId).select((s) => s.running), (previous, running) {
+        _setBusy(running);
         if (running) {
           _spoken = null;
         } else if (previous == true) {

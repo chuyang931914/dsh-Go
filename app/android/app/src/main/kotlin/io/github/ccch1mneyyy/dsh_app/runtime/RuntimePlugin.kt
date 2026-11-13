@@ -104,6 +104,14 @@ class RuntimePlugin :
                     if (error == null) result.success(null) else result.error("install_failed", error.message, null)
                 }
             }
+            "setBusy" -> {
+                val busy = call.argument<Boolean>("busy") ?: false
+                val intent = Intent(appContext, DshService::class.java)
+                    .setAction(DshService.ACTION_BUSY)
+                    .putExtra(DshService.EXTRA_BUSY, busy)
+                appContext.startService(intent)
+                result.success(true)
+            }
             "start" -> {
                 val env = (call.argument<Map<String, Any?>>("env") ?: emptyMap())
                     .mapNotNull { (k, v) -> v?.toString()?.let { k to it } }.toMap()
