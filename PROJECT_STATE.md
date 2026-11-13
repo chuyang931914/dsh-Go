@@ -61,7 +61,7 @@
 
 ## 6. 当前待办（按顺序）
 
-1. **1.0.27 待出包**：1.0.26 已出包（`11131613`）但未装；1.0.27 在其基础上加「选字边缘自动滚动」（长消息可拖选到屏幕外）。装 1.0.27 即可一并验 1.0.26 的选字回退。
+1. **1.0.27 已装、待验收**（`11131822`，19:11）：验长按选字、拖到边缘自动滚动、复制/全选/翻译/引用、思考展开保持；通过就收口。
 2. **AI 费用插件**：`local-ai-cost` 已在用，DeepSeek 余额 + 火山本月账单；凭据在插件 `secrets.json` 600，不入库。
 3. **聊天页宠物：停做**（2026-11-13 18:21 用户决定）。1.0.25 实验版保持默认关，不再迭代；WIP 在本地分支 `pets/layered-v2`（未推送）。
 4. 安全项（令牌与 keystore 密码复用）用户已决定暂缓，不主动提。
@@ -100,7 +100,7 @@ DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 - 进度日志：`PROGRESS.md`
 - 长期记忆：`project_memory.md`
 - 安装/覆盖验证：`/sdcard/Download/DSH-Go/` 下的反馈与标记文件
-- APK 下载（飞书）：`https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR`（当前 `1.0.26+11131613`，1.0.27 待出包）
+- APK 下载（飞书）：`https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR`（实机已装 `1.0.27+11131822`；飞书是否已覆盖待电脑确认）
 
 ## 9. 维护这一页
 
