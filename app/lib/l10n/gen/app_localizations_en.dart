@@ -3013,6 +3013,13 @@ class L10nEn extends L10n {
   String get botsPetSize => 'Size';
 
   @override
+  String get botsPetLayeredChat => 'Chat pet (layered)';
+
+  @override
+  String get botsPetLayeredChatSubtitle =>
+      'Blue-haired artwork with breathing, sway and tap reactions; independent of the existing pet';
+
+  @override
   String get botsPetQuiet => 'Quiet mode';
 
   @override

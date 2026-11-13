@@ -339,6 +339,8 @@
   "botsPetRemoveBody": "You can import it again later.",
   "botsPetRemoveFailed": "Couldn't delete {name}. Try again",
   "botsPetSize": "Size",
+  "botsPetLayeredChat": "Chat pet (layered)",
+  "botsPetLayeredChatSubtitle": "Blue-haired artwork with breathing, sway and tap reactions; independent of the existing pet",
   "botsPetQuiet": "Quiet mode",
   "botsPetQuietSubtitle": "Animations only, no bubbles",
   "botsPetShowNow": "Show now",

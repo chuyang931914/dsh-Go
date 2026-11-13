@@ -5252,6 +5252,18 @@ abstract class L10n {
   /// **'大小'**
   String get botsPetSize;
 
+  /// No description provided for @botsPetLayeredChat.
+  ///
+  /// In zh, this message translates to:
+  /// **'聊天页宠物（分层）'**
+  String get botsPetLayeredChat;
+
+  /// No description provided for @botsPetLayeredChatSubtitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'蓝发少女立绘：呼吸、摇晃、点击反应；与现有宠物互不影响'**
+  String get botsPetLayeredChatSubtitle;
+
   /// No description provided for @botsPetQuiet.
   ///
   /// In zh, this message translates to:

@@ -2838,6 +2838,12 @@ class L10nZh extends L10n {
   String get botsPetSize => '大小';
 
   @override
+  String get botsPetLayeredChat => '聊天页宠物（分层）';
+
+  @override
+  String get botsPetLayeredChatSubtitle => '蓝发少女立绘：呼吸、摇晃、点击反应；与现有宠物互不影响';
+
+  @override
   String get botsPetQuiet => '安静模式';
 
   @override

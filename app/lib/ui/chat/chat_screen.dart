@@ -49,6 +49,7 @@ import '../../state/voice_state.dart';
 import '../../state/voice_model_state.dart';
 import '../../state/voice_settings.dart';
 import '../../state/workspaces_state.dart' show selectedWorkspaceProvider, workspaceTitle;
+import '../../pets/pet_prefs.dart';
 import '../../usage/usage_stats.dart';
 import '../common/app_sheet.dart';
 import '../common/brief_notice.dart';
@@ -60,6 +61,7 @@ import '../common/status_dot.dart';
 import '../features/all_features_page.dart';
 import '../features/session_export_page.dart';
 import '../onboarding/local_install.dart';
+import '../pets/layered_pet.dart';
 import '../pets/pet_perch.dart';
 import '../pets/pet_stage.dart';
 import '../plugins/native/composer_strip.dart' show ComposerStripSlot;
@@ -1670,6 +1672,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     // the start of the capsule row otherwise. Their own row only where neither
     // shows (read only; a phone on its side typing folds both away).
     final running = chat?.running ?? false;
+    final layeredChat = ref.watch(petPrefsProvider.select((p) => p.layeredChat));
     final pillsBesideStrip = sessionId != null && running && !typing;
     final pillsInCapsules = !readOnly && !running && !typing;
     final composerPills = _composerPills(
@@ -1696,8 +1699,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
               sessionId: sessionId,
               aside: typing,
               showPet: false,
-              child: CustomMultiChildLayout(
-                delegate: _ChatLayout(_veilHeight),
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: CustomMultiChildLayout(
+                      delegate: _ChatLayout(_veilHeight),
                 children: [
                   LayoutId(
                     id: _Slot.body,
@@ -2126,10 +2132,19 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                     ),
                   ),
                 ],
-              ),
+                  ),
+                ),
+                if (sessionId != null && layeredChat)
+                  Positioned(
+                    right: 14,
+                    bottom: 96,
+                    child: LayeredPet(height: 140, busy: running),
+                  ),
+              ],
             ),
           ),
         ),
+      ),
       ),
     );
     return UiTrace(scope: 'chat', child: screen);

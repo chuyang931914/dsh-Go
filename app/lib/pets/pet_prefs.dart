@@ -26,6 +26,7 @@ class PetPrefs {
     this.position = defaultPosition,
     this.hiddenUntil,
     this.loaded = false,
+    this.layeredChat = false,
   });
 
   /// Where a new pet stands: a quarter along its perch, clear of the
@@ -47,6 +48,9 @@ class PetPrefs {
   final DateTime? hiddenUntil;
   final bool loaded;
 
+  /// 聊天页的分层宠物（阶段 1）。默认关，避免影响现有界面与测试。
+  final bool layeredChat;
+
   bool get enabled => packId != noPetId;
 
   bool hiddenAt(DateTime now) => hiddenUntil != null && hiddenUntil!.isAfter(now);
@@ -60,6 +64,7 @@ class PetPrefs {
     DateTime? hiddenUntil,
     bool clearHidden = false,
     bool? loaded,
+    bool? layeredChat,
   }) => PetPrefs(
     packId: packId ?? this.packId,
     packExplicit: packExplicit ?? this.packExplicit,
@@ -68,6 +73,7 @@ class PetPrefs {
     position: position ?? this.position,
     hiddenUntil: clearHidden ? null : (hiddenUntil ?? this.hiddenUntil),
     loaded: loaded ?? this.loaded,
+    layeredChat: layeredChat ?? this.layeredChat,
   );
 
   @override
@@ -79,10 +85,11 @@ class PetPrefs {
       other.quiet == quiet &&
       other.position == position &&
       other.hiddenUntil == hiddenUntil &&
-      other.loaded == loaded;
+      other.loaded == loaded &&
+      other.layeredChat == layeredChat;
 
   @override
-  int get hashCode => Object.hash(packId, packExplicit, size, quiet, position, hiddenUntil, loaded);
+  int get hashCode => Object.hash(packId, packExplicit, size, quiet, position, hiddenUntil, loaded, layeredChat);
 }
 
 class PetPrefsController extends Notifier<PetPrefs> {
@@ -92,6 +99,7 @@ class PetPrefsController extends Notifier<PetPrefs> {
     quiet: 'pet.quiet',
     position: 'pet.position',
     hidden: 'pet.hidden_until',
+    layeredChat: 'pet.layered_chat',
   );
 
   late Future<void> _loaded;
@@ -128,6 +136,7 @@ class PetPrefsController extends Notifier<PetPrefs> {
         position: (prefs.getDouble(keys.position) ?? PetPrefs.defaultPosition).clamp(0.0, 1.0),
         hiddenUntil: hidden == null ? null : DateTime.fromMillisecondsSinceEpoch(hidden),
         loaded: true,
+        layeredChat: prefs.getBool(keys.layeredChat) ?? false,
       );
     } catch (_) {
       // No preferences backend (tests): defaults.
@@ -170,6 +179,8 @@ class PetPrefsController extends Notifier<PetPrefs> {
 
   Future<void> setSize(PetSize v) => _save((s) => s.copyWith(size: v), (p) => p.setString(keys.size, v.name));
   Future<void> setQuiet(bool v) => _save((s) => s.copyWith(quiet: v), (p) => p.setBool(keys.quiet, v));
+  Future<void> setLayeredChat(bool v) =>
+      _save((s) => s.copyWith(layeredChat: v), (p) => p.setBool(keys.layeredChat, v));
   Future<void> setPosition(double v) {
     final x = v.clamp(0.0, 1.0);
     return _save((s) => s.copyWith(position: x), (p) => p.setDouble(keys.position, x));

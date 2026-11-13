@@ -788,6 +788,8 @@
     }
   },
   "botsPetSize": "大小",
+  "botsPetLayeredChat": "聊天页宠物（分层）",
+  "botsPetLayeredChatSubtitle": "蓝发少女立绘：呼吸、摇晃、点击反应；与现有宠物互不影响",
   "botsPetQuiet": "安静模式",
   "botsPetQuietSubtitle": "只做动作，不冒气泡",
   "botsPetShowNow": "立即显示",

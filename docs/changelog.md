@@ -1,5 +1,15 @@
 # 更新日志 · Changelog
 
+## 1.0.25 · 2026-11-13
+
+### 中文
+
+- **聊天页分层宠物（阶段 1，默认关）。** 设置 → 宠物 打开「聊天页宠物（分层）」后，蓝发少女立绘出现在聊天页右下角：呼吸、摇晃、点击回弹，思考中动作更活跃。素材由立绘去底，阶段 2 再加眨眼/表情/口型分层。
+
+### English
+
+- **Chat-page layered pet (stage 1, off by default).** Enable “Chat pet (layered)” under Pets and a blue-haired artwork appears at the chat page's lower-right: breathing, sway and tap bounce, livelier while thinking. Art is a cut-out illustration; stage 2 adds blink/expression/mouth layers.
+
 ## 1.0.24 · 2026-11-13
 
 ### 中文

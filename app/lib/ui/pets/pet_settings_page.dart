@@ -64,6 +64,17 @@ class PetSettingsPage extends ConsumerWidget {
           footer: Text(_source(l10n, prefs.packId, ref.watch(petPackProvider(prefs.packId)).value)),
           children: const [PetPicker(importable: true)],
         ),
+        SettingsSection(
+          children: [
+            SettingsSwitchTile(
+              spot: Spots.petQuiet,
+              title: l10n.botsPetLayeredChat,
+              subtitle: l10n.botsPetLayeredChatSubtitle,
+              value: prefs.layeredChat,
+              onChanged: (v) => unawaited(notifier.setLayeredChat(v)),
+            ),
+          ],
+        ),
         ExpandReveal(
           open: prefs.enabled,
           child: Column(
