@@ -659,11 +659,11 @@ flutter test > /tmp/full_test.log 2>&1                # 全量，目标 0 失败
 ### 20）1.0.25：聊天页分层宠物阶段 1（2026-11-13，代码完成，待出包）
 
 - **开关**：`PetPrefs.layeredChat`，默认 false；设置 → 宠物 → 「聊天页宠物（分层）」。
-- **渲染**：`LayeredPet` 呼吸/摇晃/点击回弹/随机歪头踮脚；`busy` 时幅度放大；随机眨眼用 `_BlinkPainter` 程序化眼睑（坐标按 900×900 立绘标定）。整张立绘去底，未分层。
+- **渲染**：`LayeredPet` 呼吸/摇晃/点击回弹/随机歪头踮脚；`busy` 时幅度放大；随机眨眼用同一构图的真实闭眼帧 `closed.png` 交叉淡入（用户提供），不再用程序化眼睑。整张立绘去底，未分层。
 - **素材**：`app/assets/pets/bluefox/front.png`（900×900，去白底）；源图在 `tooling/pet-assets/bluefox/source`（正面/背面/侧面/脸部/举手）。
 - **集成**：`ChatScreen` 的 `CustomMultiChildLayout` 外包 `Stack`，右下角 `LayeredPet`；默认关不影响现有测试。
 - **验证**：`dart analyze` 0/0/23；`chat_screen` 31/31。1.0.24 的 26 非金色也通过。
-- **阶段 2**：眨眼已用程序化眼睑完成；下一步表情/口型/真正的眼部图层。
+- **阶段 2**：闭眼帧已完成；下一步表情/口型/真正的眼部图层。
 - **待电脑**：合并 phone → test/chat → 构建 1.0.25（versionCode > `11121734`；若 1.0.24 未出直接跳）→ 装机开开关验。
 
 ---

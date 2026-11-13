@@ -137,7 +137,14 @@ class _LayeredPetState extends State<LayeredPet> with SingleTickerProviderStateM
                           ),
                           if (!reduced)
                             IgnorePointer(
-                              child: CustomPaint(painter: _BlinkPainter(_blink.value)),
+                              child: Opacity(
+                                opacity: _blink.value,
+                                child: Image.asset(
+                                  'assets/pets/bluefox/closed.png',
+                                  fit: BoxFit.contain,
+                                  filterQuality: FilterQuality.medium,
+                                ),
+                              ),
                             ),
                         ],
                       ),
@@ -151,51 +158,4 @@ class _LayeredPetState extends State<LayeredPet> with SingleTickerProviderStateM
       ),
     );
   }
-}
-
-
-/// 程序化闭眼：在两只眼睛上盖一层肤色眼睑 + 一条睫毛线，随 blink 进度淡入。
-class _BlinkPainter extends CustomPainter {
-  const _BlinkPainter(this.progress);
-
-  final double progress;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (progress <= 0) return;
-    final skin = Paint()..color = const Color(0xFFF6D9D4).withValues(alpha: 0.55 * progress);
-    final line = Paint()
-      ..color = const Color(0xFF5A4555).withValues(alpha: 0.55 * progress)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = size.width * 0.0016
-      ..strokeCap = StrokeCap.round;
-
-    void eye(double cx, double cy, double ew) {
-      final center = Offset(cx * size.width, cy * size.height);
-      canvas.drawOval(
-        Rect.fromCenter(center: center, width: ew * size.width, height: size.height * 0.014),
-        skin,
-      );
-      final half = ew * size.width / 2;
-      final path = Path();
-      for (var i = 0; i <= 20; i++) {
-        final t = i / 20.0;
-        final x = center.dx - half + 2 * half * t;
-        final wave = 1 - math.pow(2 * t - 1, 2).toDouble();
-        final y = center.dy + size.height * 0.0035 * wave;
-        if (i == 0) {
-          path.moveTo(x, y);
-        } else {
-          path.lineTo(x, y);
-        }
-      }
-      canvas.drawPath(path, line);
-    }
-
-    eye(0.4744, 0.1644, 0.031);
-    eye(0.5344, 0.1622, 0.031);
-  }
-
-  @override
-  bool shouldRepaint(covariant _BlinkPainter oldDelegate) => oldDelegate.progress != progress;
 }
