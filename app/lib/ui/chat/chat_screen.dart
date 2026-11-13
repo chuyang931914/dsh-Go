@@ -100,6 +100,7 @@ import 'slash_palette.dart';
 import 'trajectory_sheet.dart';
 import 'usage_sheet.dart';
 import 'voice/voice_controller.dart';
+import 'run_info.dart';
 import 'widgets/activity_strip.dart';
 import 'widgets/hacker_tint.dart';
 import 'widgets/attachments.dart';
@@ -1673,6 +1674,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     // the start of the capsule row otherwise. Their own row only where neither
     // shows (read only; a phone on its side typing folds both away).
     final running = chat?.running ?? false;
+    // 红后模式的落字：绿屏显示当前步骤，红屏见下。
+    final hackActivity = sessionId == null ? null : ref.watch(chatProvider(sessionId).select(runActivityOf));
+    final hackerLines = hackActivity == null
+        ? const <String>['思考中…']
+        : <String>[
+            hackActivity.title,
+            if (hackActivity.detail.isNotEmpty) hackActivity.detail,
+            if ((hackActivity.narration ?? '').isNotEmpty) '⏵ ${hackActivity.narration}',
+          ];
     final layeredChat = ref.watch(petPrefsProvider.select((p) => p.layeredChat));
     final pillsBesideStrip = sessionId != null && running && !typing;
     final pillsInCapsules = !readOnly && !running && !typing;
@@ -2145,6 +2155,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                           ? HackerTint(
                               key: const ValueKey('hacker-tint'),
                               tone: failureCard ? HackerTone.failure : HackerTone.thinking,
+                              lines: failureCard
+                                  ? const ['连接失败。本机引擎没有应答。', '建议：重试，或到设置里重启引擎。']
+                                  : hackerLines,
                             )
                           : const SizedBox.expand(),
                     ),
