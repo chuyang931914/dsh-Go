@@ -163,17 +163,17 @@ class _BlinkPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     if (progress <= 0) return;
-    final skin = Paint()..color = const Color(0xFFF6D9D4).withValues(alpha: 0.92 * progress);
+    final skin = Paint()..color = const Color(0xFFF6D9D4).withValues(alpha: 0.65 * progress);
     final line = Paint()
-      ..color = const Color(0xFF413341).withValues(alpha: 0.95 * progress)
+      ..color = const Color(0xFF5A4555).withValues(alpha: 0.80 * progress)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = size.width * 0.0035
+      ..strokeWidth = size.width * 0.0022
       ..strokeCap = StrokeCap.round;
 
     void eye(double cx, double cy, double ew) {
       final center = Offset(cx * size.width, cy * size.height);
       canvas.drawOval(
-        Rect.fromCenter(center: center, width: ew * size.width, height: size.height * 0.020),
+        Rect.fromCenter(center: center, width: ew * size.width, height: size.height * 0.016),
         skin,
       );
       final half = ew * size.width / 2;
@@ -182,7 +182,7 @@ class _BlinkPainter extends CustomPainter {
         final t = i / 20.0;
         final x = center.dx - half + 2 * half * t;
         final wave = 1 - math.pow(2 * t - 1, 2).toDouble();
-        final y = center.dy + size.height * 0.0045 * wave;
+        final y = center.dy + size.height * 0.0035 * wave;
         if (i == 0) {
           path.moveTo(x, y);
         } else {
@@ -192,8 +192,8 @@ class _BlinkPainter extends CustomPainter {
       canvas.drawPath(path, line);
     }
 
-    eye(0.4744, 0.1644, 0.040);
-    eye(0.5344, 0.1622, 0.040);
+    eye(0.4744, 0.1644, 0.034);
+    eye(0.5344, 0.1622, 0.034);
   }
 
   @override
