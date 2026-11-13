@@ -5,6 +5,13 @@
 
 ## 后续（未排期）
 
+- **R8/混淆没开（记着，别顺手开）**（2026-11-13 22:20）
+  - 现状：`android/app/build.gradle.kts` 的 release 没设 `isMinifyEnabled`，等于不混淆；密钥保险箱的类名、通道名都是明文，逆向成本低。
+  - 为什么没开：本仓库有 proot/JNI 与手机操控的反射调用，开 R8 可能整包崩；必须先单独一轮验证。
+  - 验证方案：先把 `isMinifyEnabled = true` + `isShrinkResources = true` 加在 release，`proguard-rules.pro` 补 keep（RuntimeController、VaultPlugin、phone/TLS 相关类），构建后跑：启动、引擎起停、手机操控、语音、分享、密钥保险箱录入/解锁。
+  - 配套加固候选：签名校验（安装证书与内置一致）、`Debug.isDebuggerConnected()` 拒绝调试、关键字符串拆分。
+  - 结论：等 1.0.28 装机通过后再单开一轮，别和功能改动混。
+
 - **攒着一起出包的待验项**（2026-11-13 19:22 起，用户要求不单独出包）
   - 选字自动滚动：1.0.27 无效，1.0.28 改全局指针路由（`85441a0`），待装验证。
   - 思考展开保持（1.0.24 规则）：1.0.26 起未在真机复验。
