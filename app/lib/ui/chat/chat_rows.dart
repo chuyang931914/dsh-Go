@@ -321,8 +321,8 @@ List<ChatRow> deriveRows({
         case final AssistantRow row when row.item.isFinalAnswer && row.item.text.trim().isNotEmpty:
           var item = row.item;
           if (item.reasoning.trim().isNotEmpty) {
-            final (thinking, reply) = _splitReasoning(item);
-            process.add(AssistantRow(thinking));
+            // 思考过程不再展示：只把正文从推理里剥出来。
+            final (_, reply) = _splitReasoning(item);
             item = reply;
           }
           keptAnswer = kept.length;
@@ -338,8 +338,7 @@ List<ChatRow> deriveRows({
     }
     var answerRow = answer == null ? null : rows[answer] as AssistantRow;
     if (answerRow != null && answerRow.item.reasoning.trim().isNotEmpty) {
-      final (thinking, reply) = _splitReasoning(answerRow.item);
-      process.add(AssistantRow(thinking));
+      final (_, reply) = _splitReasoning(answerRow.item);
       answerRow = AssistantRow(reply);
     }
     // 只有一段思考(普通问答):思考胶囊本来就是一行,不必再收一层。

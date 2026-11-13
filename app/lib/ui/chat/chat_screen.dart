@@ -101,6 +101,7 @@ import 'trajectory_sheet.dart';
 import 'usage_sheet.dart';
 import 'voice/voice_controller.dart';
 import 'widgets/activity_strip.dart';
+import 'widgets/hacker_tint.dart';
 import 'widgets/attachments.dart';
 import 'widgets/notice_row.dart';
 import 'widgets/permission_pill.dart';
@@ -2132,6 +2133,21 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                     ),
                   ),
                 ],
+                  ),
+                ),
+                // 红后模式：思考中上半屏绿光扫描，失败时红光。
+                Positioned.fill(
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: FractionallySizedBox(
+                      heightFactor: 0.5,
+                      child: running || failureCard
+                          ? HackerTint(
+                              key: const ValueKey('hacker-tint'),
+                              tone: failureCard ? HackerTone.failure : HackerTone.thinking,
+                            )
+                          : const SizedBox.expand(),
+                    ),
                   ),
                 ),
                 if (sessionId != null && layeredChat)
