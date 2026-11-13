@@ -40,6 +40,13 @@ class _LayeredPetState extends State<LayeredPet> with SingleTickerProviderStateM
   Timer? _idleTimer;
   int _idleDir = 1;
 
+  /// 眨眼：用程序化眼睑盖住眼睛，不依赖额外图层；坐标按 900×900 立绘标定。
+  late final AnimationController _blink = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 130),
+  );
+  Timer? _blinkTimer;
+
   void _pressed() => _squash.forward(from: 0);
 
   void _released() => _squash.reverse();
@@ -48,6 +55,7 @@ class _LayeredPetState extends State<LayeredPet> with SingleTickerProviderStateM
   void initState() {
     super.initState();
     _scheduleIdle();
+    _scheduleBlink();
   }
 
   void _scheduleIdle() {
@@ -65,9 +73,22 @@ class _LayeredPetState extends State<LayeredPet> with SingleTickerProviderStateM
     );
   }
 
+  void _scheduleBlink() {
+    _blinkTimer?.cancel();
+    _blinkTimer = Timer(Duration(milliseconds: 2400 + math.Random().nextInt(5200)), () {
+      if (!mounted) return;
+      _blink.forward(from: 0).then((_) {
+        if (mounted) _blink.reverse();
+      });
+      _scheduleBlink();
+    });
+  }
+
   @override
   void dispose() {
     _idleTimer?.cancel();
+    _blinkTimer?.cancel();
+    _blink.dispose();
     _breath.dispose();
     _squash.dispose();
     _idle.dispose();
@@ -89,7 +110,7 @@ class _LayeredPetState extends State<LayeredPet> with SingleTickerProviderStateM
         onTapCancel: _released,
         child: RepaintBoundary(
           child: AnimatedBuilder(
-            animation: Listenable.merge([_breath, _squash, _idle]),
+            animation: Listenable.merge([_breath, _squash, _idle, _blink]),
             builder: (context, _) {
               final scaleX = 1 + 0.006 * math.sin(phase) * alive;
               final scaleY = 1 + 0.014 * math.sin(phase) * alive - _squash.value * 0.08;
@@ -104,11 +125,22 @@ class _LayeredPetState extends State<LayeredPet> with SingleTickerProviderStateM
                     scaleX: scaleX,
                     scaleY: scaleY,
                     alignment: Alignment.bottomCenter,
-                    child: Image.asset(
-                      'assets/pets/bluefox/front.png',
-                      height: widget.height,
-                      fit: BoxFit.fitHeight,
-                      filterQuality: FilterQuality.medium,
+                    child: SizedBox.square(
+                      dimension: widget.height,
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          Image.asset(
+                            'assets/pets/bluefox/front.png',
+                            fit: BoxFit.contain,
+                            filterQuality: FilterQuality.medium,
+                          ),
+                          if (!reduced)
+                            IgnorePointer(
+                              child: CustomPaint(painter: _BlinkPainter(_blink.value)),
+                            ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -119,4 +151,51 @@ class _LayeredPetState extends State<LayeredPet> with SingleTickerProviderStateM
       ),
     );
   }
+}
+
+
+/// 程序化闭眼：在两只眼睛上盖一层肤色眼睑 + 一条睫毛线，随 blink 进度淡入。
+class _BlinkPainter extends CustomPainter {
+  const _BlinkPainter(this.progress);
+
+  final double progress;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (progress <= 0) return;
+    final skin = Paint()..color = const Color(0xFFF6D9D4).withValues(alpha: 0.92 * progress);
+    final line = Paint()
+      ..color = const Color(0xFF413341).withValues(alpha: 0.95 * progress)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = size.width * 0.0035
+      ..strokeCap = StrokeCap.round;
+
+    void eye(double cx, double cy, double ew) {
+      final center = Offset(cx * size.width, cy * size.height);
+      canvas.drawOval(
+        Rect.fromCenter(center: center, width: ew * size.width, height: size.height * 0.020),
+        skin,
+      );
+      final half = ew * size.width / 2;
+      final path = Path();
+      for (var i = 0; i <= 20; i++) {
+        final t = i / 20.0;
+        final x = center.dx - half + 2 * half * t;
+        final wave = 1 - math.pow(2 * t - 1, 2).toDouble();
+        final y = center.dy + size.height * 0.0045 * wave;
+        if (i == 0) {
+          path.moveTo(x, y);
+        } else {
+          path.lineTo(x, y);
+        }
+      }
+      canvas.drawPath(path, line);
+    }
+
+    eye(0.4744, 0.1644, 0.040);
+    eye(0.5344, 0.1622, 0.040);
+  }
+
+  @override
+  bool shouldRepaint(covariant _BlinkPainter oldDelegate) => oldDelegate.progress != progress;
 }
