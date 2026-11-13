@@ -11,6 +11,12 @@
 - 验证：`dart analyze` 0/0；`message_menu` + `message_actions` 非金色 **19 通过**。
 - 待出包 1.0.28。
 
+## 2026-11-13 19:17 · build-apk.sh 增加 --push-main 复核
+
+- 背景：`git push` 今天 4 次「退出 0 但远端没动」（Rule 38），人工 `ls-remote` 复核容易漏。
+- 改动：`tooling/build-apk.sh` 新增可选 `--push-main`（默认关）：构建成功后校验当前分支为 `main`，裸 `git push`，再用 `ls-remote` 读回比对 HEAD；不一致自动重试一次，仍不一致则非 0 退出。
+- 验证：`bash -n` 通过；`--dry-run --push-main` 输出符合预期；默认不带参数行为不变。
+
 ## 2026-11-13 18:31 · 1.0.27 出包
 
 - 电脑侧构建 `1.0.27+11131822`，208,016,839 字节，sha256 `659be6a6…d5ac0`，证书 `fb462eb1…3c2f`；`main` 本地对齐 `265afde`。

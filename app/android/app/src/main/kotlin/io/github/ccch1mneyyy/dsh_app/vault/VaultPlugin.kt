@@ -39,7 +39,6 @@ class VaultPlugin(
 
     fun attach() {
         channel.setMethodCallHandler(this)
-        (activity as io.flutter.embedding.android.FlutterActivity).addActivityResultListener(this)
     }
 
     fun detach() {

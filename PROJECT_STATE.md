@@ -13,10 +13,16 @@
 
 ## 2. 当前状态
 
-- 仓库：`phone` = `7b938e6`；`main` 落后，构建前由电脑快进到 `phone`。
-- 版本：`app/pubspec.yaml` = `1.0.28+1`；1.0.28 **代码已好、攒着一起出包**（用户 19:22 决定）。
-- 实机：已装 `1.0.27+11131822`（19:11 装，基线已记）。选字恢复正常；拖到边缘自动滚动无效，1.0.28 已改全局指针路由，未验。
-- 验证基线：`dart analyze` 0 error / 0 warning / 24 info；`message_menu` + `message_actions` 非金色 19 通过；电脑侧 `test/chat` 1969 通过。
+- 仓库：`main` 已合并 `phone` `fb93fe7`（1.0.28 + 密钥保险箱），线性历史因上一轮 `05865ff`（build-apk `--push-main`）产生一次 merge commit。
+- 版本：`app/pubspec.yaml` = `1.0.28+1`。
+- 1.0.28 改动：① 选字拖到边缘自动滚动失效 → 改用 `pointerRouter.addGlobalRoute` 收全局指针，按 `GlobalKey` 换算滚动区坐标；② 新增 `vault/VaultPlugin.kt` 密钥保险箱（Keystore 绑锁屏 + 截屏保护 + 硬件密钥自检），`MainActivity.kt` 注册插件；③ 中英文案补 `app_en.arb` / `app_zh.arb`。
+- 验证基线（1.0.27 出包时）：`dart analyze` 0 error / 0 warning / 24 info；`test/chat` **1970 通过 / 0 失败**。
+- 实机：已装 `1.0.27+11131822`（19:11 装）。选字恢复正常；拖到边缘自动滚动无效，1.0.28 待验。
+- 1.0.27 APK：`11131822`，208,016,839 字节，sha256 `659be6a6…d5ac0`，证书 `fb462eb1…3c2f`；飞书 APK 已覆盖（版本 `7707603926094334996`，文件名 `dsh-go-1.0.27-11131822-mogai-arm64.apk`，链接不变）。
+- 1.0.26 回退说明：`SelectionArea` 退回 `SingleChildScrollView` 内部，恢复「选择文字」；长消息跨页选字靠 1.0.27 的边缘自动滚动补足。
+- 1.0.17 已交付：长按菜单裁剪（复制/全选/翻译 + ⋯ 分享/朗读/问AI）、问AI填入输入框、聊天页宠物关闭、左右滑只保留边缘 24dp、系统翻译。
+- 1.0.17 真机反馈两个问题：翻译跳到了 vivo **浏览器**、朗读语速太快；菜单/问AI/宠物/滑动手势三项未报问题。
+- 1.0.18 已收口：`SelectionPlugin.kt` 优先 `com.vivo.translator`、排除浏览器；朗读 `rate: 0.8, pitch: 1.0`；真机两项复验通过。
 - 1.0.25 的分层宠物是实验版，默认关，已停做。
 
 ## 3. 双端分工

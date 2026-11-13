@@ -4,7 +4,7 @@
 > 最后更新：2026-11-13
 > 权威副本：本文件同时放在仓库根目录 `HANDOFF.md`（随 Git 推送，跨设备可用）。
 >
-> **当前状态（2026-11-13 16:13）**：**1.0.26 已出包并验签**（`11131613`，208,014,088 字节，sha256 `22af8244…ea5c6`，证书 `fb462eb1…3c2f`）。回退选区结构，恢复「选择文字」；代价是长消息跨页选字退回单页（1.0.24 的跨页增强暂撤）。聊天页分层宠物为**实验版，默认关，不作为验收项**。电脑侧 `dart analyze` 0/0/24；`test/chat` **1969 通过 / 0 失败**。1.0.25 已装但「选择文字」坏了，直接覆盖装 1.0.26。
+> **当前状态（2026-11-13 18:39）**：**1.0.27 已出包、验签并覆盖飞书**（`11131822`，208,016,839 字节，sha256 `659be6a6…d5ac0`，证书 `fb462eb1…3c2f`，飞书版本 `7707603926094334996`）。新增「选择文字支持拖到边缘自动滚动」，沿用 1.0.26 的选区回退（长消息仍限单页内扩选）。电脑侧 `dart analyze` 0/0/24；`test/chat` **1970 通过 / 0 失败**。实机待装 1.0.27。
 
 > **新对话记忆**：`/root/workspace/AGENTS.md` 是指向 [`PROJECT_STATE.md`](PROJECT_STATE.md) 的软链，新对话会自动加载；换机/重装后运行 `bash tooling/install-workspace-memory.sh`。
 
@@ -54,6 +54,8 @@
 **构建 `11121734`（2026-11-12 17:34，1.0.23）**：`main` ← `phone` 快进到 `58fbe22`（含 `fbd7474`/`665475e` 等：顶部 17px 边界修复 + 1.0.22 直选/引用/翻译折叠 + 抽屉分组顺序 + 新对话自动加载 PROJECT_STATE）。APK 206,211,017 字节，sha256 `9580eb7380e0fe6940ba21cd842e648577afb86338d4d42787a71ac8ef5484e1`，证书 `fb462eb1…3c2f`，versionCode `11121734` > `11121454`。电脑侧 `dart analyze` 0/0/24；`test/chat` **1968 通过 / 0 失败**（`chat_top_boundary_test` 全绿，31 张 golden 按新 user_bubble 重建）。APK 已存 `D:\Android\apk\dsh-go-1.0.23-11121734-mogai-arm64.apk`；1.0.22（`11121454`）跳过未装。
 
 **构建 `11121454`（2026-11-12 14:54，1.0.22）**：`main` ← `phone` 快进到 `705f46b`（直选/引用/翻译折叠 + 抽屉分组顺序）。APK 206,211,242 字节，sha256 `9d850a4299459332fc5edfd80af6a1804d4b789f19b859c1868589514428deb3`，证书 `fb462eb1…3c2f`，versionCode `11121454` > `11121309`。电脑侧 `dart analyze` 0/0/24；`test/chat` **1967 通过 / 1 失败**。为匹配新交互：`message_flow`/`fork_toast`/`secret_mask` 改用 `user-more`/`reply-action-more` 键进入菜单（不再长按/按 tooltip 找“更多”），39 张 chat golden 按新 UI 重建；唯一红 `chat_top_boundary_test` 为短历史顶部边界少算 17.04px（`min=424`，实际需 `441.04`，首行 `14.96` vs `32.0`），**待 phone 修**。APK 已存 `D:\Android\apk\dsh-go-1.0.22-11121454-mogai-arm64.apk`。
+
+**分发 `11131822`（2026-11-13 18:39）**：APK `1.0.27+11131822` 已覆盖飞书原 file token（云端版本 `7707603926094334996`，208,016,839 字节，文件名 `dsh-go-1.0.27-11131822-mogai-arm64.apk`）；链接不变，仍为 `https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR`。
 
 **分发 `11131613`（2026-11-13 16:26）**：APK `1.0.26+11131613` 已覆盖飞书原 file token（云端版本 `7707568738974829557`，208,014,088 字节）；HANDOFF 已覆盖飞书与 `D:\HANDOFF.md`。
 
@@ -779,7 +781,7 @@ git push origin phone   # 手机工作分支
 36. **聊天回复正文的长按已是选字**（2026-11-11）：助手回复 `selectable: !streaming`，长按正文 = 选择（系统工具栏复制/全选），消息菜单走 ⋯；不要再把 `selectable` 改回 false 或把选择塞回弹层。用户消息（`UserBubble`）暂仍走菜单里的「选择文字」弹层。
 
 37. **飞书重新授权后不要复用旧私聊 `chat_id`**（2026-11-12）：旧「城南」会话 `oc_5f1bf17fa051caa90b02dcb06d597b7a` 在重新授权后返回 `230001 / invalid receive_id`。先用 `lark-cli im +chat-list --as user --types p2p` 查当前账号可见的单聊，确认名称与 `p2p_target_id`，再用 `+messages-send --user-id <p2p_target_id>` 发送；不要连续拿旧 ID 重试，也不要擅自切换 bot。
-38. **`git push` 必须以 `git ls-remote origin main` 复核**（2026-11-13，连犯 3 次）：`git push ... | tail -n` 的退出码来自 `tail`，push 失败会被吞掉，本地 commit 看起来「已完成」但远端没动。写法改成裸 `git push origin main`，随后 `git ls-remote origin main` 对比 `git rev-parse HEAD`，不一致就重试。同理，`cp HANDOFF.md /mnt/d/` 后要 `grep 版本号` 确认落盘。
+38. **`git push` 必须以 `git ls-remote origin main` 复核**（2026-11-13，连犯 4 次）：`git push ... | tail -n` 的退出码来自 `tail`，push 失败会被吞掉，本地 commit 看起来「已完成」但远端没动。写法改成裸 `git push origin main`，随后 `git ls-remote origin main` 对比 `git rev-parse HEAD`，不一致就重试。`tooling/build-apk.sh --push-main` 已内置这套复核（不一致自动重试一次，仍不一致非 0 退出）；同理，`cp HANDOFF.md /mnt/d/` 后要 `grep 版本号` 确认落盘。
 
 ---
 
