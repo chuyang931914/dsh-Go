@@ -13,7 +13,7 @@
 
 ## 2. 当前状态
 
-- 仓库：`phone` = `85441a0`（1.0.28 修复，未见远端新提交）；`main` 落后，下一次构建前由电脑快进到 `phone`。
+- 仓库：`phone` = `7b938e6`；`main` 落后，构建前由电脑快进到 `phone`。
 - 版本：`app/pubspec.yaml` = `1.0.28+1`；1.0.28 **代码已好、攒着一起出包**（用户 19:22 决定）。
 - 实机：已装 `1.0.27+11131822`（19:11 装，基线已记）。选字恢复正常；拖到边缘自动滚动无效，1.0.28 已改全局指针路由，未验。
 - 验证基线：`dart analyze` 0 error / 0 warning / 24 info；`message_menu` + `message_actions` 非金色 19 通过；电脑侧 `test/chat` 1969 通过。
@@ -31,9 +31,8 @@
 ## 4. 新对话先做
 
 1. 读完这页，别凭旧聊天猜状态。
-2. 核对事实：`git fetch origin` → `git log -1 --format='%h %s'` → `grep '^version:' app/pubspec.yaml`。
-3. 看工作树与分支；改动走 `phone`，**不要动 `main`**。
-4. 时间要精确：涉及时间先 `date '+%F %T %Z'`，不写“约/左右”。
+2. 核对事实：`git fetch origin` → `git log -1 --format='%h %s'` → `grep '^version:' app/pubspec.yaml`；看工作树与分支。
+3. 改动走 `phone`，**不要动 `main`**；涉及时间先 `date '+%F %T %Z'`，不写“约/左右”。
 
 ## 5. 规则（不可违反）
 
@@ -58,9 +57,8 @@
 
 - 聊天页宠物关闭（`PetStage(showPet: false)`）；悬浮窗与设置里的宠物保留。
 - 聊天页中间左右滑禁用，只保留左右边缘 0–80dp 起手（真机验证）。
-- 每条消息显示时间；点任意时间全聊天切换完整格式（真机验证）。
 - 长按菜单只留复制/全选/翻译，⋯ 放分享/朗读/问AI；翻译走 `ACTION_PROCESS_TEXT`，优先 vivo 翻译本体；问AI只填入输入框。
-- AI 费用插件用官方接口；火山走子账号只读 AK/SK。
+- AI 费用插件走官方接口；火山用子账号只读 AK/SK。
 - 聊天页用 `ui.json` 的 `hide: ["pluginCapsule"]` 隐藏插件入口，费用条保留。
 - `选择文字` 定为「弹层内边缘自动滚动」，不再把 `SelectionArea` 套到滚动容器外。
 - 分层宠物做不好，停做；不再投入。
@@ -85,7 +83,7 @@ DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 
 1. 手机改：analyze + 测试 → commit → push `phone`。
 2. 电脑：`fetch` → `merge --ff-only origin/phone` → 测试全绿 → `main` 快进 → 构建 → 同步 D 盘/飞书。
-3. 手机装：记 baseline → 覆盖安装 → `check-device.sh` → 按清单验 → 写回 `PROGRESS` / `PROJECT_STATE`。
+3. 手机装：记 baseline → 装 → `check-device.sh` → 按清单验 → 写回 `PROGRESS`/`PROJECT_STATE`。
 4. 新对话先 pull + `check-device.sh`，读第 2、6 节。
 5. 构建前 `main` 必须等于 `phone`；有红测试不出包。
 
