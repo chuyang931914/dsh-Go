@@ -19369,6 +19369,61 @@ class L10nEn extends L10n {
   String get usageUpgradeOff => 'Turn off';
 
   @override
+  String get vaultTitle => 'Key safe';
+
+  @override
+  String get vaultIntro =>
+      'Hands the archive key to the system: it can only be read after fingerprint or screen-lock confirmation, and the app never stores it in the clear.';
+
+  @override
+  String get vaultStatusEmpty => 'No key enrolled yet';
+
+  @override
+  String get vaultStatusEnrolled => 'Enrolled — unlock needs fingerprint or screen lock';
+
+  @override
+  String get vaultEnroll => 'Enroll key';
+
+  @override
+  String get vaultUnlock => 'Unlock and write temp key';
+
+  @override
+  String get vaultClear => 'Remove key';
+
+  @override
+  String get vaultPaste => 'Paste the private key';
+
+  @override
+  String vaultEnrolledDone(int count) {
+    return 'Enrolled, $count characters';
+  }
+
+  @override
+  String get vaultUnlockedDone => 'Unlocked; the temp file lives for 5 minutes';
+
+  @override
+  String vaultUnlockedFailed(String message) {
+    return 'Unlock failed: $message';
+  }
+
+  @override
+  String get vaultNoLock => 'No screen lock is set, so the safe cannot be used';
+
+  @override
+  String get vaultEnrollHint =>
+      'The key passes through memory once while enrolling; afterwards the system Keystore holds it.';
+
+  @override
+  String get vaultClearDone => 'Removed';
+
+  @override
+  String get vaultNeedKey => 'Paste the private key first';
+
+  @override
+  String get vaultNotHardwareBacked =>
+      'This device keeps the key outside secure hardware (some ROMs/emulators do); protection is weaker.';
+
+  @override
   String viewArtifactSaved(String value) {
     return 'Saved to $value';
   }

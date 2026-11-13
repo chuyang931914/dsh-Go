@@ -1,0 +1,32 @@
+{
+  "vaultTitle": "密钥保险箱",
+  "vaultIntro": "把加密归档的私钥交给系统保管：用指纹或锁屏密码确认后才可取出，App 不保存明文。",
+  "vaultStatusEmpty": "还没有录入密钥",
+  "vaultStatusEnrolled": "已录入，解锁需要指纹或锁屏密码",
+  "vaultEnroll": "录入密钥",
+  "vaultUnlock": "解锁并写入临时文件",
+  "vaultClear": "清除密钥",
+  "vaultPaste": "粘贴私钥内容",
+  "vaultEnrolledDone": "已录入，共 {count} 个字符",
+  "vaultUnlockedDone": "已解锁，临时文件保留 5 分钟",
+  "vaultUnlockedFailed": "解锁失败：{message}",
+  "vaultNoLock": "设备没有设置锁屏，无法使用保险箱",
+  "vaultEnrollHint": "私钥只在录入时经过一次内存，之后由系统 Keystore 保管。",
+  "vaultClearDone": "已清除",
+  "vaultNeedKey": "请先粘贴私钥",
+  "@vaultEnrolledDone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@vaultUnlockedFailed": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "vaultNotHardwareBacked": "这台设备的密钥没落在安全硬件里（部分机型/模拟器如此），保护强度会打折。"
+}

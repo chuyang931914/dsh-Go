@@ -3,6 +3,14 @@
 > 追加式流水账：每次构建、装机、真机反馈、重要决策后加一条（最新在上）。
 > 这里记“发生了什么”；当前状态看 [`PROJECT_STATE.md`](PROJECT_STATE.md)，完整实现看 [`HANDOFF.md`](HANDOFF.md)。
 
+## 2026-11-13 19:18 · 1.0.28 修自动滚动失效
+
+- 1.0.27 装机（`11131822`）后真机反馈：选字恢复了，但拖到边缘**不滚动**。
+- 原因判断：选区手柄画在 overlay 上，手指拖手柄时事件不进 `_SelectTextSheet` 里的 `Listener`，拿不到位置。
+- 改法：`pointerRouter.addGlobalRoute` 收全局指针，`GlobalKey` 把全局坐标换算到滚动区；有选中文字时才滚，避免点工具栏误触。
+- 验证：`dart analyze` 0/0；`message_menu` + `message_actions` 非金色 **19 通过**。
+- 待出包 1.0.28。
+
 ## 2026-11-13 19:17 · build-apk.sh 增加 --push-main 复核
 
 - 背景：`git push` 今天 4 次「退出 0 但远端没动」（Rule 38），人工 `ls-remote` 复核容易漏。

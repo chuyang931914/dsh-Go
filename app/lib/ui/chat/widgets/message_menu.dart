@@ -5,6 +5,7 @@
 // forks; the source stays as it is). Pictures in messages get the same sheet
 // with the picture as the preview.
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -328,23 +329,55 @@ class _SelectTextSheetState extends State<_SelectTextSheet> with SingleTickerPro
   String _selected = '';
 
   final _scroll = ScrollController();
+  final _scrollKey = GlobalKey();
   late final Ticker _edgeTicker = createTicker(_onEdgeTick);
   Offset? _pointer;
   Size _viewport = Size.zero;
+  int _pointers = 0;
 
   /// 手指按住时，拖到上下边缘就自动滚，选中范围才能延伸出屏幕。
   static const _edgeBand = 56.0;
 
   @override
+  void initState() {
+    super.initState();
+    // 选区手柄画在 overlay 上，手指拖它时碰不到下面的 Listener；
+    // 所以按全局指针路由收位置，才能知道手指贴到了哪条边。
+    GestureBinding.instance.pointerRouter.addGlobalRoute(_onGlobalPointer);
+  }
+
+  @override
   void dispose() {
+    GestureBinding.instance.pointerRouter.removeGlobalRoute(_onGlobalPointer);
     _edgeTicker.dispose();
     _scroll.dispose();
     super.dispose();
   }
 
+  void _onGlobalPointer(PointerEvent event) {
+    if (!mounted) return;
+    final box = _scrollKey.currentContext?.findRenderObject() as RenderBox?;
+    if (box == null || !box.hasSize) return;
+    final local = box.globalToLocal(event.position);
+    if (event is PointerDownEvent) {
+      _pointers += 1;
+      _pointer = local;
+      if (!_edgeTicker.isActive) _edgeTicker.start();
+    } else if (event is PointerMoveEvent) {
+      _pointer = local;
+    } else if (event is PointerUpEvent || event is PointerCancelEvent) {
+      _pointers = _pointers > 0 ? _pointers - 1 : 0;
+      if (_pointers == 0) {
+        _pointer = null;
+        if (_edgeTicker.isActive) _edgeTicker.stop();
+      }
+    }
+  }
+
   void _onEdgeTick(Duration _) {
     final pointer = _pointer;
-    if (pointer == null || _viewport.height <= 0 || !_scroll.hasClients) return;
+    if (pointer == null || _selected.isEmpty) return;
+    if (_viewport.height <= 0 || !_scroll.hasClients) return;
     final h = _viewport.height;
     final band = _edgeBand < h / 3 ? _edgeBand : h / 3;
     double? step;
@@ -380,20 +413,10 @@ class _SelectTextSheetState extends State<_SelectTextSheet> with SingleTickerPro
           child: LayoutBuilder(
             builder: (context, constraints) {
               _viewport = Size(constraints.maxWidth, constraints.maxHeight);
-              return Listener(
-                onPointerDown: (event) {
-                  _pointer = event.localPosition;
-                  if (!_edgeTicker.isActive) _edgeTicker.start();
-                },
-                onPointerMove: (event) => _pointer = event.localPosition,
-                onPointerUp: (_) {
-                  _pointer = null;
-                  if (_edgeTicker.isActive) _edgeTicker.stop();
-                },
-                onPointerCancel: (_) {
-                  _pointer = null;
-                  if (_edgeTicker.isActive) _edgeTicker.stop();
-                },
+              return SizedBox(
+                key: _scrollKey,
+                width: constraints.maxWidth,
+                height: constraints.maxHeight,
                 child: SingleChildScrollView(
                   controller: _scroll,
                   padding: const EdgeInsets.fromLTRB(24, 4, 24, 32),
