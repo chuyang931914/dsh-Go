@@ -163,17 +163,17 @@ class _BlinkPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     if (progress <= 0) return;
-    final skin = Paint()..color = const Color(0xFFF6D9D4).withValues(alpha: 0.65 * progress);
+    final skin = Paint()..color = const Color(0xFFF6D9D4).withValues(alpha: 0.55 * progress);
     final line = Paint()
-      ..color = const Color(0xFF5A4555).withValues(alpha: 0.80 * progress)
+      ..color = const Color(0xFF5A4555).withValues(alpha: 0.55 * progress)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = size.width * 0.0022
+      ..strokeWidth = size.width * 0.0016
       ..strokeCap = StrokeCap.round;
 
     void eye(double cx, double cy, double ew) {
       final center = Offset(cx * size.width, cy * size.height);
       canvas.drawOval(
-        Rect.fromCenter(center: center, width: ew * size.width, height: size.height * 0.016),
+        Rect.fromCenter(center: center, width: ew * size.width, height: size.height * 0.014),
         skin,
       );
       final half = ew * size.width / 2;
@@ -192,8 +192,8 @@ class _BlinkPainter extends CustomPainter {
       canvas.drawPath(path, line);
     }
 
-    eye(0.4744, 0.1644, 0.034);
-    eye(0.5344, 0.1622, 0.034);
+    eye(0.4744, 0.1644, 0.031);
+    eye(0.5344, 0.1622, 0.031);
   }
 
   @override
