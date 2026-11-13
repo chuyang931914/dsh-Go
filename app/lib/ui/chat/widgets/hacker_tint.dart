@@ -93,6 +93,9 @@ class _RainPainter extends CustomPainter {
   static const _glyphs = 'アイウエオカキクケコサシスセソタチツテトナ0123456789ABCDEF';
   static const _fontSize = 13.0;
 
+  /// 每帧给上百个字符重新 layout 是最大开销；按 字+色阶 缓存，最多几百个。
+  static final Map<String, TextPainter> _cache = {};
+
   @override
   void paint(Canvas canvas, Size size) {
     final rect = Offset.zero & size;
@@ -109,14 +112,14 @@ class _RainPainter extends CustomPainter {
         ).createShader(rect),
     );
 
-    final columns = (size.width / 22).floor().clamp(8, 26);
+    final columns = (size.width / 30).floor().clamp(6, 16);
     final charW = size.width / columns;
     for (var i = 0; i < columns; i++) {
       final seed = (i * 2654435761) & 0x7fffffff;
       final speed = 0.55 + (seed % 100) / 160;
       final phase = (seed % 997) / 997;
       final head = ((t * speed * 1.7 + phase) % 1.25 - 0.15) * size.height;
-      final chars = matrix ? 9 : 6;
+      final chars = matrix ? 6 : 4;
       for (var k = 0; k < chars; k++) {
         final y = head - k * _fontSize * 1.15;
         if (y < -_fontSize || y > size.height + _fontSize) continue;
@@ -124,18 +127,22 @@ class _RainPainter extends CustomPainter {
         final fade = 1 - k / chars;
         final a = (matrix ? 0.85 : 0.6) * fade;
         if (a <= 0.02) continue;
-        final tp = TextPainter(
-          text: TextSpan(
-            text: _glyphs[g],
-            style: TextStyle(
-              fontFamily: 'JetBrainsMono',
-              fontSize: _fontSize,
-              color: color.withValues(alpha: a),
-              shadows: k == 0 ? [Shadow(color: color.withValues(alpha: 0.8), blurRadius: 8)] : null,
+        final bucket = (a * 10).round().clamp(1, 10);
+        final key = '${_glyphs[g]}|${color.toARGB32()}|$bucket|${k == 0}';
+        final tp = _cache.putIfAbsent(key, () {
+          return TextPainter(
+            text: TextSpan(
+              text: _glyphs[g],
+              style: TextStyle(
+                fontFamily: 'JetBrainsMono',
+                fontSize: _fontSize,
+                color: color.withValues(alpha: bucket / 10),
+                shadows: k == 0 ? [Shadow(color: color.withValues(alpha: 0.8), blurRadius: 8)] : null,
+              ),
             ),
-          ),
-          textDirection: TextDirection.ltr,
-        )..layout();
+            textDirection: TextDirection.ltr,
+          )..layout();
+        });
         tp.paint(canvas, Offset(i * charW + 4, y));
       }
     }
@@ -143,7 +150,7 @@ class _RainPainter extends CustomPainter {
     // 顶边自检线 + 轻微的扫描线。
     canvas.drawRect(Rect.fromLTWH(0, 0, size.width, 2), Paint()..color = color.withValues(alpha: 0.4));
     final line = Paint()..color = color.withValues(alpha: 0.05);
-    for (var y = 0.0; y < size.height; y += 4) {
+    for (var y = 0.0; y < size.height; y += 8) {
       canvas.drawRect(Rect.fromLTWH(0, y, size.width, 1), line);
     }
   }
