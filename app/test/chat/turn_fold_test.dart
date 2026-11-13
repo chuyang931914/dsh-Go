@@ -65,9 +65,11 @@ void main() {
       expect(answer.showActions, isTrue);
       expect(answer.footnote, same(s.turns.single));
       if (last.reasoning.trim().isNotEmpty) {
-        final thinking = process.rows.last as AssistantRow;
-        expect(thinking.item.reasoning, last.reasoning);
-        expect(thinking.item.text, isEmpty);
+        // 思考不再展示：也进不了折叠。
+        expect(
+          process.rows.whereType<AssistantRow>().map((r) => r.item.reasoning),
+          isNot(contains(last.reasoning)),
+        );
       }
     });
 

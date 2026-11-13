@@ -111,8 +111,8 @@ void main() {
       expect(last.cut, isNull);
       expect(last.key, 'tp0', reason: 'the key the list settles and opens by');
       expect(last.toolCalls, 1);
-      // The answer's own thinking went inside.
-      expect((last.rows.last as AssistantRow).item.reasoning, '整理一下');
+      // 思考不再展示：也进不了折叠。
+      expect(last.rows.whereType<AssistantRow>().map((r) => r.item.reasoning), isNot(contains('整理一下')));
 
       final answer = rows[4] as AssistantRow;
       expect(answer.item.text, '是一个 glTF 模型。');
@@ -171,7 +171,7 @@ void main() {
       expect(before.key, 'tp0@5');
       expect(before.toolCalls, 1);
       expect(before.messages, 0, reason: 'the line kept outside is not inside');
-      expect((before.rows.last as AssistantRow).item.reasoning, '要查文档');
+      expect(before.rows.whereType<AssistantRow>().map((r) => r.item.reasoning), isNot(contains('要查文档')));
 
       final said = rows[2] as AssistantRow;
       expect(said.item.text, '我先查一下文档。');

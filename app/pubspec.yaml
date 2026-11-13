@@ -148,8 +148,6 @@ flutter:
     # The vector styles' SVG masters in assets/tiles/ are not bundled.
     - assets/tiles/glassy/
     - assets/pets/deepy-whale/
-    # 聊天页分层宠物（阶段1）蓝发少女立绘。
-    - assets/pets/bluefox/
     - assets/pets/whale-girl/
     # The star prompt's whale girl (lib/ui/star/star_prompt_dialog.dart), 576px WebP.
     - assets/star/
