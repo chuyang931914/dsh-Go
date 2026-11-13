@@ -3,6 +3,13 @@
 > 追加式流水账：每次构建、装机、真机反馈、重要决策后加一条（最新在上）。
 > 这里记“发生了什么”；当前状态看 [`PROJECT_STATE.md`](PROJECT_STATE.md)，完整实现看 [`HANDOFF.md`](HANDOFF.md)。
 
+## 2026-11-13 16:15 · 1.0.26 选字回退（手机侧自测）
+
+- 回退 `_SelectTextSheet` 结构：`SelectionArea` 回到 `SingleChildScrollView` 内，恢复选字/复制/全选/翻译/引用；代价是长消息跨页自动滚暂时没有，以后单独实现，别再动这个结构。
+- 手机侧验证：`dart analyze` 0 error / 0 warning / 24 info；`message_menu_test` + `message_actions_test` 非金色 **18 通过 / 0 失败**（4 个 golden 用例按分工留电脑侧）。
+- 实机仍 `1.0.25+11131541`；`tooling/check-device.sh` RESULT OK，baseline `11131541` 已在。
+- 待电脑：`git merge --ff-only origin/phone` → `main` 快进 → `test/chat` → `build-apk.sh -f arm64`（1.0.26，versionCode > 11131541）。
+
 ## 2026-11-13 15:41 · 1.0.25 出包（跳过 1.0.24）
 
 - `main` ← `phone` 快进到 `816408d`（1.0.24 长消息跨页选字 + 思考展开保持；1.0.25 聊天页分层宠物：呼吸/随机小动作/真实闭眼眨眼）。

@@ -11,8 +11,8 @@
 
 | 项 | 值 |
 |---|---|
-| `phone` | `d418f2a`（`e5dad4f` 代码 + 文档收口） |
-| `main` | `80f99b0` |
+| `phone` | `ede40b3`（`e5dad4f` 代码 + 文档收口） |
+| `main` | `80f99b0`（落后 phone，电脑侧快进） |
 | 源码版本 | `1.0.26` |
 | 手机已装 | `1.0.25+11131541` |
 | 1.0.25 APK | 208,013,822 字节，sha256 `7f4f28d3…75cd`，证书 `fb462eb1…3c2f` |
@@ -60,7 +60,7 @@
 cd /root/dsh-Go
 git fetch origin
 git merge --ff-only origin/phone
-# 应为 d418f2a
+# 应为 ede40b3；再把 main 快进到 phone（构建前 main 必须等于 phone）
 flutter test test/chat
 tooling/build-apk.sh -f arm64   # 1.0.26，versionCode > 11131541
 ```
