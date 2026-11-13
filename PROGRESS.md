@@ -3,6 +3,12 @@
 > 追加式流水账：每次构建、装机、真机反馈、重要决策后加一条（最新在上）。
 > 这里记“发生了什么”；当前状态看 [`PROJECT_STATE.md`](PROJECT_STATE.md)，完整实现看 [`HANDOFF.md`](HANDOFF.md)。
 
+## 2026-11-14 02:00 · 撤掉隐藏思考
+
+- 用户改口：思考过程不隐藏，照常显示。`chat_rows.dart` 与相关断言回到 1.0.24 原样，仅保留 1.0.26 的「手动展开不自动收回」修法。
+- 1.0.28 定稿三件变两件：选字全局指针路由 + 唤醒锁按需。
+- 手机侧验证：`final_answers_fold` + `rows_fold` + `turn_fold` + `stream_motion` + `thinking_collapse` + `thinking_label` 62 通过。
+
 ## 2026-11-14 01:20 · 1.0.28 收口为三件
 
 - 撤回后按用户要求把三项拣回 1.0.24 基底：选字全局指针路由、隐藏思考（`chat_rows.dart`）、唤醒锁按需（`DshService`/`RuntimePlugin`/`chat_screen` 的 `setBusy`）。

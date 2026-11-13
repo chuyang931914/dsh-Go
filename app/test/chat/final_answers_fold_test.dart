@@ -68,9 +68,10 @@ void main() {
       'Checking the source',
       'Checking a late result',
     ]);
-    // 思考过程不再展示：只有未定稿的那条还带着自己的正文推理。
     expect(process.rows.whereType<AssistantRow>().map((r) => r.item.reasoning).where((s) => s.isNotEmpty), [
       'plan',
+      'conclusion',
+      'follow-up',
     ]);
     _expectUniqueKeys(rows);
   });
