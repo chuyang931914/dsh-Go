@@ -4,7 +4,7 @@
 > 最后更新：2026-11-13
 > 权威副本：本文件同时放在仓库根目录 `HANDOFF.md`（随 Git 推送，跨设备可用）。
 >
-> **当前状态（2026-11-13 16:05）**：1.0.25 已装，但「选择文字」被 1.0.25 的选区改动弄坏；**1.0.26 已回退修复**，待出包。聊天页分层宠物是实验版（整图动画、点击/拖拽不完整），默认关，不算成品。
+> **当前状态（2026-11-13 16:13）**：**1.0.26 已出包并验签**（`11131613`，208,014,088 字节，sha256 `22af8244…ea5c6`，证书 `fb462eb1…3c2f`）。回退选区结构，恢复「选择文字」；代价是长消息跨页选字退回单页（1.0.24 的跨页增强暂撤）。聊天页分层宠物为**实验版，默认关，不作为验收项**。电脑侧 `dart analyze` 0/0/24；`test/chat` **1969 通过 / 0 失败**。1.0.25 已装但「选择文字」坏了，直接覆盖装 1.0.26。
 
 > **新对话记忆**：`/root/workspace/AGENTS.md` 是指向 [`PROJECT_STATE.md`](PROJECT_STATE.md) 的软链，新对话会自动加载；换机/重装后运行 `bash tooling/install-workspace-memory.sh`。
 
@@ -32,7 +32,7 @@
 | 产物 | 路径 |
 | --- | --- |
 | 魔改版 APK（本地） | `D:\Android\apk\dsh-go-1.0.15-mogai-arm64.apk` |
-| **APK 下载（飞书云空间，优先）** | https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR （`dsh-go-1.0.25-11131541-mogai-arm64.apk`，当前 11131541；点开 → 右上角「...」→ 下载；飞书内直接下载，不走 GitHub/Gitee） |
+| **APK 下载（飞书云空间，优先）** | https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR （`dsh-go-1.0.26-11131613-mogai-arm64.apk`，当前 11131613；点开 → 右上角「...」→ 下载；飞书内直接下载，不走 GitHub/Gitee） |
 | **源码包（飞书云空间）** | https://my.feishu.cn/file/IEqgbC77zoOqWmxo277cr8Wdnue （`dsh-go-1.0.15-mogai-src.zip`，500MB；已排除 `.git`、`app/build`、`.dart_tool`、`runtime/.work`、`runtime/.cache`，保留 `runtime/out` 可直接重建 APK） |
 | APK 备份（GitHub Release） | https://github.com/chuyang931914/dsh-Go/releases/download/v1.0.15-mogai/dsh-go-1.0.15-mogai-arm64.apk |
 | 构建脚本原始输出 | WSL 内 `/root/dsh-Go/app/build/app/outputs/flutter-apk/app-arm64-release.apk` |
@@ -46,6 +46,8 @@
 | 交接文档（飞书云空间） | https://my.feishu.cn/file/OJSGbqo2IofCYQxm8uycjTGAn7d （`HANDOFF-dsh-Go.md`，每次更新后覆盖上传） |
 
 **构建 `11121309`（2026-11-12 13:09，1.0.21）**：`main` ← `phone` 快进（`f5306f9..c3bf654`，含 `197368c` 选字修复）；APK 206,211,961 字节，sha256 `e67678f34658c9bcf8cbc779203973b2967208d7ba5ab4a61788d66a9c75401d`，证书 `fb462eb1…3c2f`，versionCode `11121309` > `11120812`。电脑侧 `dart analyze` = 0 error / 0 warning / 24 info；`flutter test test/chat` = **1967 通过 / 0 失败**（含 message/image menu 4 张 golden 全通过）。手机端报告的 4 张 golden 红为字体像素漂移（Rule 31），**未重建金色基准**。APK 已存 `D:\Android\apk\dsh-go-1.0.21-11121309-mogai-arm64.apk`。
+
+**构建 `11131613`（2026-11-13 16:13，1.0.26）**：`main` ← `phone` 快进到 `d418f2a`（回退选区结构，恢复「选择文字」）。`SelectionArea` 退回 `SingleChildScrollView` 内部，代价是长消息跨页选字回到单页。APK 208,014,088 字节，sha256 `22af82441e0dd44929bbf40e1d80c977793c3662fb658baa750aeaf1518ea5c6`，证书 `fb462eb1…3c2f`，versionCode `11131613` > `11131541`。电脑侧 `dart analyze` 0/0/24；`test/chat` **1969 通过 / 0 失败**。APK 已存 `D:\Android\apk\dsh-go-1.0.26-11131613-mogai-arm64.apk`；宠物实验版默认关，不作为验收项。
 
 **构建 `11131541`（2026-11-13 15:41，1.0.25）**：`main` ← `phone` 快进到 `816408d`（含 1.0.24 长消息跨页选字 + 思考展开保持；1.0.25 聊天页分层宠物：呼吸/随机小动作/真实闭眼眨眼）。APK 208,013,822 字节，sha256 `7f4f28d3db4b39622156acfa0e54e3758f900778dbc55d860b4d6651668e75cd`，证书 `fb462eb1…3c2f`，versionCode `11131541` > `11121734`。电脑侧 `dart analyze` 0/0/24；`test/chat` **1969 通过 / 0 失败**（同步修正 `stream_motion_test` 旧断言：用户展开的思考在流结束后保持展开，对齐 1.0.24 新规则）。APK 已存 `D:\Android\apk\dsh-go-1.0.25-11131541-mogai-arm64.apk`；1.0.24 未出包。
 
@@ -141,16 +143,16 @@ export PATH="/root/dev/jdk-17/bin:/root/dev/flutter/bin:/root/dev/android-sdk/cm
 - 凭据：`~/.git-credentials`（chmod 600，`credential.helper=store`）已存 Gitee 与 GitHub 令牌，推送可用。
 - 基线（2026-11-11）：电脑侧五批清账后，回归面 `test/settings test/star test/ui_config` = 473 通过 / 0 跳过 / 0 失败，全量 `flutter test` = 10845 通过 / ~288 跳过 / 0 失败；`dart analyze` = 0 error / 0 warning / 23 info。手机端复跑时金色图会因字体渲染不同而像素漂移（见 Rule 31），只验收 analyze 与非金色图结果。手机端交叉验证（`d746042`）：电脑侧改动过的 12 个测试文件 = 381 通过 / 39 金色图漂移 / 0 真实失败。
 
-### 3.5 四线一致性（2026-11-13 15:41，1.0.25 已构建待真机覆盖）
+### 3.5 四线一致性（2026-11-13 16:13，1.0.26 已构建待真机覆盖）
 
 | 线 | 事实 | 状态 |
 | --- | --- | --- |
-| 仓库 | `main` = `phone`（`816408d`，1.0.25 分层宠物 + 1.0.24 长消息选字/思考保持） | ✅ |
-| 代码 | 1.0.24：长消息跨页选字、思考展开保持；1.0.25：聊天页分层宠物（呼吸/随机小动作/真实闭眼眨眼） | ✅ |
-| APK | `11131541`（1.0.25），208,013,822 字节，sha256 `7f4f28d3…75cd`，证书 `fb462eb1…3c2f` | ✅ |
-| 实机 | 已装 1.0.21+11121309；**直接覆盖装 1.0.25+11131541**，跳过 1.0.24 | ⏳ 待装 |
+| 仓库 | `main` = `phone`（`d418f2a`，1.0.26 回退选区结构） | ✅ |
+| 代码 | 1.0.26：`SelectionArea` 退回 `SingleChildScrollView` 内部，恢复「选择文字」；长消息跨页选字退回单页 | ✅ |
+| APK | `11131613`（1.0.26），208,014,088 字节，sha256 `22af8244…ea5c6`，证书 `fb462eb1…3c2f` | ✅ |
+| 实机 | 已装 1.0.25+11131541（选择文字异常）；**直接覆盖装 1.0.26+11131613** | ⏳ 待装 |
 | 测试 | `dart analyze` 0/0/24；`test/chat` 1969/0 | ✅ |
-| 文档 | 本文件为权威；D 盘/飞书随 1.0.25 覆盖 | ✅ |
+| 文档 | 本文件为权威；D 盘/飞书随 1.0.26 覆盖 | ✅ |
 
 手机端环境与验证（本机）：
 - 仓库 `/root/workspace/dsh-Go`（`/root/dsh-Go` 软链）；Flutter 3.47.7 linux-arm64（`/root/dev/flutter`）；Dart 3.13.5。
