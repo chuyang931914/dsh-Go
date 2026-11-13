@@ -3,12 +3,13 @@
 > 追加式流水账：每次构建、装机、真机反馈、重要决策后加一条（最新在上）。
 > 这里记“发生了什么”；当前状态看 [`PROJECT_STATE.md`](PROJECT_STATE.md)，完整实现看 [`HANDOFF.md`](HANDOFF.md)。
 
-## 2026-11-13 16:15 · 1.0.26 选字回退（手机侧自测）
+## 2026-11-13 16:13 · 1.0.26 出包（回退选区结构）
 
-- 回退 `_SelectTextSheet` 结构：`SelectionArea` 回到 `SingleChildScrollView` 内，恢复选字/复制/全选/翻译/引用；代价是长消息跨页自动滚暂时没有，以后单独实现，别再动这个结构。
-- 手机侧验证：`dart analyze` 0 error / 0 warning / 24 info；`message_menu_test` + `message_actions_test` 非金色 **18 通过 / 0 失败**（4 个 golden 用例按分工留电脑侧）。
-- 实机仍 `1.0.25+11131541`；`tooling/check-device.sh` RESULT OK，baseline `11131541` 已在。
-- 待电脑：`git merge --ff-only origin/phone` → `main` 快进 → `test/chat` → `build-apk.sh -f arm64`（1.0.26，versionCode > 11131541）。
+- `main` ← `phone` 快进到 `d418f2a`（1.0.26：`SelectionArea` 退回 `SingleChildScrollView` 内部，恢复「选择文字」）。
+- APK `1.0.26+11131613`，208,014,088 字节，sha256 `22af8244…ea5c6`，证书 `fb462eb1…3c2f`。
+- 电脑侧 `dart analyze` 0/0/24；`test/chat` **1969 通过 / 0 失败**；手机侧 `message_menu` + `message_actions` 非金色 **18 通过 / 0 失败**。
+- 取舍：长消息跨页选字退回单页（1.0.24 增强暂撤）；宠物实验版默认关，不作为验收项。
+- 装机：实机仍 `1.0.25+11131541`，**未覆盖安装**（用户 2026-11-13 16:37 决定先攒问题一起装）。
 
 ## 2026-11-13 15:41 · 1.0.25 出包（跳过 1.0.24）
 
