@@ -33506,6 +33506,102 @@ abstract class L10n {
   /// **'关闭'**
   String get usageUpgradeOff;
 
+  /// No description provided for @vaultTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'密钥保险箱'**
+  String get vaultTitle;
+
+  /// No description provided for @vaultIntro.
+  ///
+  /// In zh, this message translates to:
+  /// **'把加密归档的私钥交给系统保管：用指纹或锁屏密码确认后才可取出，App 不保存明文。'**
+  String get vaultIntro;
+
+  /// No description provided for @vaultStatusEmpty.
+  ///
+  /// In zh, this message translates to:
+  /// **'还没有录入密钥'**
+  String get vaultStatusEmpty;
+
+  /// No description provided for @vaultStatusEnrolled.
+  ///
+  /// In zh, this message translates to:
+  /// **'已录入，解锁需要指纹或锁屏密码'**
+  String get vaultStatusEnrolled;
+
+  /// No description provided for @vaultEnroll.
+  ///
+  /// In zh, this message translates to:
+  /// **'录入密钥'**
+  String get vaultEnroll;
+
+  /// No description provided for @vaultUnlock.
+  ///
+  /// In zh, this message translates to:
+  /// **'解锁并写入临时文件'**
+  String get vaultUnlock;
+
+  /// No description provided for @vaultClear.
+  ///
+  /// In zh, this message translates to:
+  /// **'清除密钥'**
+  String get vaultClear;
+
+  /// No description provided for @vaultPaste.
+  ///
+  /// In zh, this message translates to:
+  /// **'粘贴私钥内容'**
+  String get vaultPaste;
+
+  /// No description provided for @vaultEnrolledDone.
+  ///
+  /// In zh, this message translates to:
+  /// **'已录入，共 {count} 个字符'**
+  String vaultEnrolledDone(int count);
+
+  /// No description provided for @vaultUnlockedDone.
+  ///
+  /// In zh, this message translates to:
+  /// **'已解锁，临时文件保留 5 分钟'**
+  String get vaultUnlockedDone;
+
+  /// No description provided for @vaultUnlockedFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'解锁失败：{message}'**
+  String vaultUnlockedFailed(String message);
+
+  /// No description provided for @vaultNoLock.
+  ///
+  /// In zh, this message translates to:
+  /// **'设备没有设置锁屏，无法使用保险箱'**
+  String get vaultNoLock;
+
+  /// No description provided for @vaultEnrollHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'私钥只在录入时经过一次内存，之后由系统 Keystore 保管。'**
+  String get vaultEnrollHint;
+
+  /// No description provided for @vaultClearDone.
+  ///
+  /// In zh, this message translates to:
+  /// **'已清除'**
+  String get vaultClearDone;
+
+  /// No description provided for @vaultNeedKey.
+  ///
+  /// In zh, this message translates to:
+  /// **'请先粘贴私钥'**
+  String get vaultNeedKey;
+
+  /// No description provided for @vaultNotHardwareBacked.
+  ///
+  /// In zh, this message translates to:
+  /// **'这台设备的密钥没落在安全硬件里（部分机型/模拟器如此），保护强度会打折。'**
+  String get vaultNotHardwareBacked;
+
   /// No description provided for @viewArtifactSaved.
   ///
   /// In zh, this message translates to:

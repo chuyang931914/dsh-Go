@@ -18340,6 +18340,58 @@ class L10nZh extends L10n {
   String get usageUpgradeOff => '关闭';
 
   @override
+  String get vaultTitle => '密钥保险箱';
+
+  @override
+  String get vaultIntro => '把加密归档的私钥交给系统保管：用指纹或锁屏密码确认后才可取出，App 不保存明文。';
+
+  @override
+  String get vaultStatusEmpty => '还没有录入密钥';
+
+  @override
+  String get vaultStatusEnrolled => '已录入，解锁需要指纹或锁屏密码';
+
+  @override
+  String get vaultEnroll => '录入密钥';
+
+  @override
+  String get vaultUnlock => '解锁并写入临时文件';
+
+  @override
+  String get vaultClear => '清除密钥';
+
+  @override
+  String get vaultPaste => '粘贴私钥内容';
+
+  @override
+  String vaultEnrolledDone(int count) {
+    return '已录入，共 $count 个字符';
+  }
+
+  @override
+  String get vaultUnlockedDone => '已解锁，临时文件保留 5 分钟';
+
+  @override
+  String vaultUnlockedFailed(String message) {
+    return '解锁失败：$message';
+  }
+
+  @override
+  String get vaultNoLock => '设备没有设置锁屏，无法使用保险箱';
+
+  @override
+  String get vaultEnrollHint => '私钥只在录入时经过一次内存，之后由系统 Keystore 保管。';
+
+  @override
+  String get vaultClearDone => '已清除';
+
+  @override
+  String get vaultNeedKey => '请先粘贴私钥';
+
+  @override
+  String get vaultNotHardwareBacked => '这台设备的密钥没落在安全硬件里（部分机型/模拟器如此），保护强度会打折。';
+
+  @override
   String viewArtifactSaved(String value) {
     return '已存到 $value';
   }

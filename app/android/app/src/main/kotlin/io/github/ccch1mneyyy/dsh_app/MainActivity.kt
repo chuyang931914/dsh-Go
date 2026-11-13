@@ -30,6 +30,7 @@ import java.util.TimeZone
 
 class MainActivity : FlutterActivity() {
     private var appChannel: MethodChannel? = null
+    private var vaultPlugin: io.github.ccch1mneyyy.dsh_app.vault.VaultPlugin? = null
 
     /**
      * One engine per process, outliving this activity: swiping the app away from recents keeps
@@ -60,6 +61,9 @@ class MainActivity : FlutterActivity() {
             engine.plugins.add(io.github.ccch1mneyyy.dsh_app.islands.IslandsPlugin())
             engine.plugins.add(io.github.ccch1mneyyy.dsh_app.nativemedia.NativeMediaPlugin())
             engine.plugins.add(io.github.ccch1mneyyy.dsh_app.nativefiles.NativeFilesPlugin())
+            val vault = io.github.ccch1mneyyy.dsh_app.vault.VaultPlugin(this, engine.dartExecutor.binaryMessenger)
+            vault.attach()
+            vaultPlugin = vault
             engine.plugins.add(io.github.ccch1mneyyy.dsh_app.web.WebFilesPlugin())
             engine.plugins.add(io.github.ccch1mneyyy.dsh_app.launch.LaunchPlugin())
             engine.plugins.add(io.github.ccch1mneyyy.dsh_app.launch.LaunchClipPlugin())
