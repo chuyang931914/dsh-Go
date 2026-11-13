@@ -344,13 +344,11 @@ class _SelectTextSheetState extends State<_SelectTextSheet> {
           actions: [TextButton(onPressed: widget.onCopyAll, child: Text(l10n.chatCopyAll))],
         ),
         Expanded(
-          // SelectionArea 必须包住 ScrollView，不能反过来：包在里面时选区
-          // 只认当前视口，拖到页边不会自动滚，长消息只能选到屏幕内一页。
-          child: SelectionArea(
-            onSelectionChanged: (content) => _selected = content?.plainText ?? '',
-            contextMenuBuilder: _toolbar,
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(24, 4, 24, 32),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(24, 4, 24, 32),
+            child: SelectionArea(
+              onSelectionChanged: (content) => _selected = content?.plainText ?? '',
+              contextMenuBuilder: _toolbar,
               child: widget.markdown
                   ? MarkdownBody(text: widget.text, selectable: false)
                   : Text(widget.text, style: AppType.chatBody(context, color: theme.colorScheme.onSurface)),

@@ -1,5 +1,15 @@
 # 更新日志 · Changelog
 
+## 1.0.26 · 2026-11-13
+
+### 中文
+
+- **恢复「选择文字」。** 1.0.25 把选区包到滚动容器外，真机上长按收不到事件；回退到 1.0.23 的结构，选字/复制/翻译/引用恢复。跨页自动滚动以后单独做。
+
+### English
+
+- **Restore Select text.** 1.0.25 moved the selection area outside the scroll view and long-press stopped working on device; this reverts to the 1.0.23 structure. Cross-page auto-scroll will be a separate change.
+
 ## 1.0.25 · 2026-11-13
 
 ### 中文
