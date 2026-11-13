@@ -18,8 +18,7 @@
 - 仓库：`main` = `e3d8391`（1.0.26 出包文档）；`phone` 已合并该提交，另含 1.0.27 选字滚动修复（待出包）。
 - 1.0.27 改动：`选择文字` 弹层加边缘自动滚动，长消息可拖着选到屏幕外；`dart analyze` 0/0/24，`message_menu` + `message_actions` 19 通过。
 - 1.0.26 APK：`11131613`，208,014,088 字节，sha256 `22af8244…ea5c6`，证书 `fb462eb1…3c2f`；飞书 APK token 已覆盖（版本 `7707568738974829557`）。
-- 实机：仍装 **`1.0.25+11131541`**（「选择文字」异常）；**1.0.26 暂不装**（用户 2026-11-13 16:37：先记着，攒问题一起处理）。
-- 手机侧自测：`dart analyze` 0 error / 0 warning / 24 info；`message_menu` + `message_actions` 非金色 **18 通过 / 0 失败**。
+- 实机：仍装 **`1.0.25+11131541`**（「选择文字」异常、长消息选不到屏幕外）；1.0.26 未装，直接装 1.0.27。
 - 电脑侧验证：`dart analyze` 0 error / 0 warning / 24 info；`test/chat` **1969 通过 / 0 失败**。
 - 1.0.26 回退说明：`SelectionArea` 退回 `SingleChildScrollView` 内部，恢复「选择文字」；长消息跨页选字回到单页（1.0.24 增强暂撤）。
 - 1.0.17 已交付：长按菜单裁剪（复制/全选/翻译 + ⋯ 分享/朗读/问AI）、问AI填入输入框、聊天页宠物关闭、左右滑只保留边缘 24dp、系统翻译。
@@ -56,7 +55,7 @@
 - 文档/代码改动先 commit + 推 Gitee `phone`/`main`，推完才算完成（HANDOFF Rule 33）。
 - **不要把 Gitee 令牌、keystore 密码写进文档/仓库/聊天**；凭据在 `~/.git-credentials`（600）。
 - **仓库是唯一源头**：手机/电脑的代码、插件源码、界面配置、文档改动都必须提交并推送；只有密钥（`secrets.json`）和 `node_modules/` 例外。
-- versionName 按发布 patch +1（当前 1.0.26），versionCode 由构建脚本按 `MMDDHHmm` 生成；APK 名带 versionName + buildNumber。
+- versionName 按发布 patch +1（当前 1.0.27），versionCode 由构建脚本按 `MMDDHHmm` 生成；APK 名带 versionName + buildNumber。
 - 手机端不构建 APK；出包/分发只在电脑侧，走飞书云空间链接。
 - 用户偏好：中文、手机屏幕小要简洁；先结论后细节；给绝对路径；不擅自扩大改动范围。
 
@@ -99,7 +98,7 @@ DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 - 进度日志：`PROGRESS.md`
 - 长期记忆：`project_memory.md`
 - 安装/覆盖验证：`/sdcard/Download/DSH-Go/` 下的反馈与标记文件
-- APK 下载（飞书）：`https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR`（当前 `1.0.26+11131613`）
+- APK 下载（飞书）：`https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR`（当前 `1.0.26+11131613`，1.0.27 待出包）
 
 ## 9. 维护这一页
 
