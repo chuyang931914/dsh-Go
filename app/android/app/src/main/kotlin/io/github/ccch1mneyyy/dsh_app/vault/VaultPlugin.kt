@@ -47,7 +47,7 @@ class VaultPlugin(
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
-            "status" -> result.success(mapOf("enrolled" to prefs.contains(ALIAS)))
+            "status" -> result.success(prefs.contains(ALIAS))
             "enroll" -> {
                 val secret = call.argument<String>("secret")
                 if (secret.isNullOrEmpty()) {
@@ -131,7 +131,7 @@ class VaultPlugin(
         var hardwareBacked = false
         runCatching {
             val key = secretKey(create = false) ?: return@runCatching
-            val factory = java.security.KeyFactory.getInstance(key.algorithm, "AndroidKeyStore")
+            val factory = javax.crypto.SecretKeyFactory.getInstance(key.algorithm, "AndroidKeyStore")
             val info = factory.getKeySpec(key, android.security.keystore.KeyInfo::class.java)
                     as android.security.keystore.KeyInfo
             hardwareBacked = info.isInsideSecureHardware

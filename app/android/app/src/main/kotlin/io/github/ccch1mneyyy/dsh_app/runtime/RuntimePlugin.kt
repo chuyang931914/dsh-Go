@@ -106,10 +106,10 @@ class RuntimePlugin :
             }
             "setBusy" -> {
                 val busy = call.argument<Boolean>("busy") ?: false
-                val intent = android.content.Intent(context, DshService::class.java)
+                val intent = Intent(appContext, DshService::class.java)
                     .setAction(DshService.ACTION_BUSY)
                     .putExtra(DshService.EXTRA_BUSY, busy)
-                context.startService(intent)
+                appContext.startService(intent)
                 result.success(true)
             }
             "start" -> {

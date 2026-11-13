@@ -100,9 +100,7 @@ import 'slash_palette.dart';
 import 'trajectory_sheet.dart';
 import 'usage_sheet.dart';
 import 'voice/voice_controller.dart';
-import 'run_info.dart';
 import 'widgets/activity_strip.dart';
-import 'widgets/hacker_tint.dart';
 import 'widgets/attachments.dart';
 import 'widgets/notice_row.dart';
 import 'widgets/permission_pill.dart';
@@ -1686,15 +1684,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     if (sessionId != null) {
       ref.listen(chatProvider(sessionId).select((c) => c.running), (_, next) => _setBusy(next));
     }
-    // 红后模式的落字：绿屏显示当前步骤，红屏见下。
-    final hackActivity = sessionId == null ? null : ref.watch(chatProvider(sessionId).select(runActivityOf));
-    final hackerLines = hackActivity == null
-        ? const <String>['思考中…']
-        : <String>[
-            hackActivity.title,
-            if (hackActivity.detail.isNotEmpty) hackActivity.detail,
-            if ((hackActivity.narration ?? '').isNotEmpty) '⏵ ${hackActivity.narration}',
-          ];
+    // 红后模式只留一条状态灯带：生成中绿、失败红，不再盖正文（原字符雨已删）。
+    final runTone = failureCard
+        ? const Color(0xFFFF2D2D)
+        : running
+        ? const Color(0xFF39FF14)
+        : null;
     final layeredChat = ref.watch(petPrefsProvider.select((p) => p.layeredChat));
     final pillsBesideStrip = sessionId != null && running && !typing;
     final pillsInCapsules = !readOnly && !running && !typing;
@@ -2157,24 +2152,23 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                 ],
                   ),
                 ),
-                // 红后模式：思考中上半屏绿光扫描，失败时红光。
-                Positioned.fill(
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: FractionallySizedBox(
-                      heightFactor: 0.5,
-                      child: running || failureCard
-                          ? HackerTint(
-                              key: const ValueKey('hacker-tint'),
-                              tone: failureCard ? HackerTone.failure : HackerTone.thinking,
-                              lines: failureCard
-                                  ? const ['连接失败。本机引擎没有应答。', '建议：重试，或到设置里重启引擎。']
-                                  : hackerLines,
-                            )
-                          : const SizedBox.expand(),
+                // 红后模式：标题栏下沿一条 2px 灯带，生成中绿、失败红。静态，不遮字。
+                if (runTone != null)
+                  Positioned(
+                    top: headerHeight,
+                    left: 0,
+                    right: 0,
+                    height: 2,
+                    child: IgnorePointer(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Colors.transparent, runTone.withValues(alpha: 0.75), Colors.transparent],
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
                 if (sessionId != null && layeredChat)
                   Positioned(
                     right: 14,

@@ -26,6 +26,8 @@ import io.github.ccch1mneyyy.dsh_app.phone.PhoneControl
 class DshService : Service() {
 
     private var wakeLock: PowerManager.WakeLock? = null
+    /** A reply is generating: the CPU lock is Dart's, not the unpack's. */
+    private var busy = false
     private var networkCallback: ConnectivityManager.NetworkCallback? = null
     private var networkWatch: NetworkAccess.Watch? = null
     private var installSink: RuntimeController.EventSink? = null
@@ -67,6 +69,8 @@ class DshService : Service() {
             ACTION_INSTALL_DONE -> {
                 installSink?.let { controller.removeSink(it) }
                 installSink = null
+                // The unpack no longer needs the CPU; a generating reply keeps its own lock.
+                if (!busy) releaseWakeLock()
                 if (controller.phase != RuntimeController.Phase.STARTING && controller.phase != RuntimeController.Phase.RUNNING) {
                     stopForegroundCompat()
                     stopSelf(startId)
@@ -83,7 +87,7 @@ class DshService : Service() {
             }
             ACTION_BUSY -> {
                 // 有活才拿 CPU 锁：生成中、后台任务跑的时候；空闲立刻放。
-                val busy = intent.getBooleanExtra(EXTRA_BUSY, false)
+                busy = intent.getBooleanExtra(EXTRA_BUSY, false)
                 if (busy) acquireWakeLock() else releaseWakeLock()
                 return START_NOT_STICKY
             }

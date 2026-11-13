@@ -61,9 +61,6 @@ class MainActivity : FlutterActivity() {
             engine.plugins.add(io.github.ccch1mneyyy.dsh_app.islands.IslandsPlugin())
             engine.plugins.add(io.github.ccch1mneyyy.dsh_app.nativemedia.NativeMediaPlugin())
             engine.plugins.add(io.github.ccch1mneyyy.dsh_app.nativefiles.NativeFilesPlugin())
-            val vault = io.github.ccch1mneyyy.dsh_app.vault.VaultPlugin(this, engine.dartExecutor.binaryMessenger)
-            vault.attach()
-            vaultPlugin = vault
             engine.plugins.add(io.github.ccch1mneyyy.dsh_app.web.WebFilesPlugin())
             engine.plugins.add(io.github.ccch1mneyyy.dsh_app.launch.LaunchPlugin())
             engine.plugins.add(io.github.ccch1mneyyy.dsh_app.launch.LaunchClipPlugin())
@@ -165,6 +162,12 @@ class MainActivity : FlutterActivity() {
     /** Per activity: the handler acts on this activity, so it goes with it (see [cleanUpFlutterEngine]). */
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        // Per activity, like appChannel below: the vault answers this activity's system prompt,
+        // and a cached engine must not keep one bound to a dead activity.
+        io.github.ccch1mneyyy.dsh_app.vault.VaultPlugin(this, flutterEngine.dartExecutor.binaryMessenger).also {
+            it.attach()
+            vaultPlugin = it
+        }
         appChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "dsh/app")
         appChannel!!.setMethodCallHandler { call, result ->
             when (call.method) {
@@ -207,6 +210,8 @@ class MainActivity : FlutterActivity() {
     override fun cleanUpFlutterEngine(flutterEngine: FlutterEngine) {
         appChannel?.setMethodCallHandler(null)
         appChannel = null
+        vaultPlugin?.detach()
+        vaultPlugin = null
         super.cleanUpFlutterEngine(flutterEngine)
     }
 
