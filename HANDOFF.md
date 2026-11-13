@@ -774,6 +774,7 @@ git push origin phone   # 手机工作分支
 36. **聊天回复正文的长按已是选字**（2026-11-11）：助手回复 `selectable: !streaming`，长按正文 = 选择（系统工具栏复制/全选），消息菜单走 ⋯；不要再把 `selectable` 改回 false 或把选择塞回弹层。用户消息（`UserBubble`）暂仍走菜单里的「选择文字」弹层。
 
 37. **飞书重新授权后不要复用旧私聊 `chat_id`**（2026-11-12）：旧「城南」会话 `oc_5f1bf17fa051caa90b02dcb06d597b7a` 在重新授权后返回 `230001 / invalid receive_id`。先用 `lark-cli im +chat-list --as user --types p2p` 查当前账号可见的单聊，确认名称与 `p2p_target_id`，再用 `+messages-send --user-id <p2p_target_id>` 发送；不要连续拿旧 ID 重试，也不要擅自切换 bot。
+38. **`git push` 必须以 `git ls-remote origin main` 复核**（2026-11-13，连犯 3 次）：`git push ... | tail -n` 的退出码来自 `tail`，push 失败会被吞掉，本地 commit 看起来「已完成」但远端没动。写法改成裸 `git push origin main`，随后 `git ls-remote origin main` 对比 `git rev-parse HEAD`，不一致就重试。同理，`cp HANDOFF.md /mnt/d/` 后要 `grep 版本号` 确认落盘。
 
 ---
 
