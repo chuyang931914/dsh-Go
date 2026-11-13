@@ -75,7 +75,7 @@ cd /root/dsh-Go && source tooling/env.sh
 DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 ```
 
-- 交接：`HANDOFF.md`｜版本表：`UPGRADE_TABLE.md`｜待办：`BACKLOG.md`｜日志：`PROGRESS.md`
+- 交接：`HANDOFF.md`｜版本表：`UPGRADE_TABLE.md`｜待办：`BACKLOG.md`｜日志：`PROGRESS.md`｜时间线：`docs/timeline.md`
 - 装机校验：`bash tooling/check-device.sh`；装包记录在 `$DSH_HOME/dsh-app/install-baseline-*.txt`
 - 飞书 APK：`https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR`
 
