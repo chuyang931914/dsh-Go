@@ -5,7 +5,9 @@
 // forks; the source stays as it is). Pictures in messages get the same sheet
 // with the picture as the preview.
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 
 import '../../../l10n/l10n.dart';
@@ -322,9 +324,73 @@ class _SelectTextSheet extends StatefulWidget {
   State<_SelectTextSheet> createState() => _SelectTextSheetState();
 }
 
-class _SelectTextSheetState extends State<_SelectTextSheet> {
+class _SelectTextSheetState extends State<_SelectTextSheet> with SingleTickerProviderStateMixin {
   /// What is selected right now (plain text).
   String _selected = '';
+
+  final _scroll = ScrollController();
+  final _scrollKey = GlobalKey();
+  late final Ticker _edgeTicker = createTicker(_onEdgeTick);
+  Offset? _pointer;
+  Size _viewport = Size.zero;
+  int _pointers = 0;
+
+  /// 手指按住时，拖到上下边缘就自动滚，选中范围才能延伸出屏幕。
+  static const _edgeBand = 56.0;
+
+  @override
+  void initState() {
+    super.initState();
+    // 选区手柄画在 overlay 上，手指拖它时碰不到下面的 Listener；
+    // 所以按全局指针路由收位置，才能知道手指贴到了哪条边。
+    GestureBinding.instance.pointerRouter.addGlobalRoute(_onGlobalPointer);
+  }
+
+  @override
+  void dispose() {
+    GestureBinding.instance.pointerRouter.removeGlobalRoute(_onGlobalPointer);
+    _edgeTicker.dispose();
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  void _onGlobalPointer(PointerEvent event) {
+    if (!mounted) return;
+    final box = _scrollKey.currentContext?.findRenderObject() as RenderBox?;
+    if (box == null || !box.hasSize) return;
+    final local = box.globalToLocal(event.position);
+    if (event is PointerDownEvent) {
+      _pointers += 1;
+      _pointer = local;
+      if (!_edgeTicker.isActive) _edgeTicker.start();
+    } else if (event is PointerMoveEvent) {
+      _pointer = local;
+    } else if (event is PointerUpEvent || event is PointerCancelEvent) {
+      _pointers = _pointers > 0 ? _pointers - 1 : 0;
+      if (_pointers == 0) {
+        _pointer = null;
+        if (_edgeTicker.isActive) _edgeTicker.stop();
+      }
+    }
+  }
+
+  void _onEdgeTick(Duration _) {
+    final pointer = _pointer;
+    if (pointer == null || _selected.isEmpty) return;
+    if (_viewport.height <= 0 || !_scroll.hasClients) return;
+    final h = _viewport.height;
+    final band = _edgeBand < h / 3 ? _edgeBand : h / 3;
+    double? step;
+    if (pointer.dy > h - band) {
+      step = 7.0 * ((pointer.dy - (h - band)) / band).clamp(0.25, 1.0);
+    } else if (pointer.dy < band) {
+      step = -7.0 * (((band - pointer.dy) / band).clamp(0.25, 1.0));
+    }
+    if (step == null) return;
+    final position = _scroll.position;
+    final target = (_scroll.offset + step).clamp(0.0, position.maxScrollExtent);
+    if (target != _scroll.offset) _scroll.jumpTo(target);
+  }
 
   Widget _toolbar(BuildContext context, SelectableRegionState region) => SelectionToolbar(
     region: region,
@@ -344,17 +410,26 @@ class _SelectTextSheetState extends State<_SelectTextSheet> {
           actions: [TextButton(onPressed: widget.onCopyAll, child: Text(l10n.chatCopyAll))],
         ),
         Expanded(
-          // SelectionArea 必须包住 ScrollView，不能反过来：包在里面时选区
-          // 只认当前视口，拖到页边不会自动滚，长消息只能选到屏幕内一页。
-          child: SelectionArea(
-            onSelectionChanged: (content) => _selected = content?.plainText ?? '',
-            contextMenuBuilder: _toolbar,
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(24, 4, 24, 32),
-              child: widget.markdown
-                  ? MarkdownBody(text: widget.text, selectable: false)
-                  : Text(widget.text, style: AppType.chatBody(context, color: theme.colorScheme.onSurface)),
-            ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              _viewport = Size(constraints.maxWidth, constraints.maxHeight);
+              return SizedBox(
+                key: _scrollKey,
+                width: constraints.maxWidth,
+                height: constraints.maxHeight,
+                child: SingleChildScrollView(
+                  controller: _scroll,
+                  padding: const EdgeInsets.fromLTRB(24, 4, 24, 32),
+                  child: SelectionArea(
+                    onSelectionChanged: (content) => _selected = content?.plainText ?? '',
+                    contextMenuBuilder: _toolbar,
+                    child: widget.markdown
+                        ? MarkdownBody(text: widget.text, selectable: false)
+                        : Text(widget.text, style: AppType.chatBody(context, color: theme.colorScheme.onSurface)),
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ],
