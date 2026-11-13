@@ -94,6 +94,7 @@ DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 ```
 
 - 交接文档：`HANDOFF.md`
+- 版本升级表：`UPGRADE_TABLE.md`
 - 待办/问题：`BACKLOG.md`
 - 进度日志：`PROGRESS.md`
 - 长期记忆：`project_memory.md`
