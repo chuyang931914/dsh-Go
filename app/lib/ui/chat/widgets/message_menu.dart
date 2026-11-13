@@ -6,6 +6,7 @@
 // with the picture as the preview.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 
 import '../../../l10n/l10n.dart';
@@ -322,9 +323,41 @@ class _SelectTextSheet extends StatefulWidget {
   State<_SelectTextSheet> createState() => _SelectTextSheetState();
 }
 
-class _SelectTextSheetState extends State<_SelectTextSheet> {
+class _SelectTextSheetState extends State<_SelectTextSheet> with SingleTickerProviderStateMixin {
   /// What is selected right now (plain text).
   String _selected = '';
+
+  final _scroll = ScrollController();
+  late final Ticker _edgeTicker = createTicker(_onEdgeTick);
+  Offset? _pointer;
+  Size _viewport = Size.zero;
+
+  /// 手指按住时，拖到上下边缘就自动滚，选中范围才能延伸出屏幕。
+  static const _edgeBand = 56.0;
+
+  @override
+  void dispose() {
+    _edgeTicker.dispose();
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  void _onEdgeTick(Duration _) {
+    final pointer = _pointer;
+    if (pointer == null || _viewport.height <= 0 || !_scroll.hasClients) return;
+    final h = _viewport.height;
+    final band = _edgeBand < h / 3 ? _edgeBand : h / 3;
+    double? step;
+    if (pointer.dy > h - band) {
+      step = 7.0 * ((pointer.dy - (h - band)) / band).clamp(0.25, 1.0);
+    } else if (pointer.dy < band) {
+      step = -7.0 * (((band - pointer.dy) / band).clamp(0.25, 1.0));
+    }
+    if (step == null) return;
+    final position = _scroll.position;
+    final target = (_scroll.offset + step).clamp(0.0, position.maxScrollExtent);
+    if (target != _scroll.offset) _scroll.jumpTo(target);
+  }
 
   Widget _toolbar(BuildContext context, SelectableRegionState region) => SelectionToolbar(
     region: region,
@@ -344,15 +377,36 @@ class _SelectTextSheetState extends State<_SelectTextSheet> {
           actions: [TextButton(onPressed: widget.onCopyAll, child: Text(l10n.chatCopyAll))],
         ),
         Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(24, 4, 24, 32),
-            child: SelectionArea(
-              onSelectionChanged: (content) => _selected = content?.plainText ?? '',
-              contextMenuBuilder: _toolbar,
-              child: widget.markdown
-                  ? MarkdownBody(text: widget.text, selectable: false)
-                  : Text(widget.text, style: AppType.chatBody(context, color: theme.colorScheme.onSurface)),
-            ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              _viewport = Size(constraints.maxWidth, constraints.maxHeight);
+              return Listener(
+                onPointerDown: (event) {
+                  _pointer = event.localPosition;
+                  if (!_edgeTicker.isActive) _edgeTicker.start();
+                },
+                onPointerMove: (event) => _pointer = event.localPosition,
+                onPointerUp: (_) {
+                  _pointer = null;
+                  if (_edgeTicker.isActive) _edgeTicker.stop();
+                },
+                onPointerCancel: (_) {
+                  _pointer = null;
+                  if (_edgeTicker.isActive) _edgeTicker.stop();
+                },
+                child: SingleChildScrollView(
+                  controller: _scroll,
+                  padding: const EdgeInsets.fromLTRB(24, 4, 24, 32),
+                  child: SelectionArea(
+                    onSelectionChanged: (content) => _selected = content?.plainText ?? '',
+                    contextMenuBuilder: _toolbar,
+                    child: widget.markdown
+                        ? MarkdownBody(text: widget.text, selectable: false)
+                        : Text(widget.text, style: AppType.chatBody(context, color: theme.colorScheme.onSurface)),
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ],

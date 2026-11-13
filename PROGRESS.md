@@ -3,6 +3,13 @@
 > 追加式流水账：每次构建、装机、真机反馈、重要决策后加一条（最新在上）。
 > 这里记“发生了什么”；当前状态看 [`PROJECT_STATE.md`](PROJECT_STATE.md)，完整实现看 [`HANDOFF.md`](HANDOFF.md)。
 
+## 2026-11-13 18:16 · 1.0.27 选字跨屏自动滚动
+
+- 问题：1.0.26 把 `SelectionArea` 放回滚动容器里，选字恢复了，但长消息只能选到屏幕内（用户 18:13 反馈“下面的没法选择复制”）。
+- 改动：`_SelectTextSheet` 加 `Listener` + 边缘滚动 ticker，手指按住拖到上下边缘时自动滚动，选区可延伸出屏幕。
+- 验证：`dart analyze` 0 error / 0 warning / 24 info；`message_menu` + `message_actions` 非金色 **19 通过**（新增自动滚动用例）。
+- 1.0.26 APK 未装；装机直接上 1.0.27，一并验选字回退。
+
 ## 2026-11-13 16:13 · 1.0.26 出包（回退选区结构）
 
 - `main` ← `phone` 快进到 `d418f2a`（1.0.26：`SelectionArea` 退回 `SingleChildScrollView` 内部，恢复「选择文字」）。

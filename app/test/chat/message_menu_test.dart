@@ -174,6 +174,29 @@ void main() {
     expect(asked.single.trim(), isNotEmpty);
   });
 
+  testWidgets('选择文字 drags past the viewport with edge auto-scroll', (tester) async {
+    final long = List.generate(
+      60,
+      (i) => '第 $i 行：服务端返回的数据需要逐条核对，否则会漏掉错误。',
+    ).join('\n');
+    await _host(tester, (context) => showSelectTextSheet(context, long));
+    await tester.pumpAndSettle();
+
+    final viewport = tester.getRect(find.byType(SingleChildScrollView));
+    final scrollable = tester.state<ScrollableState>(find.byType(Scrollable).first);
+    expect(scrollable.position.pixels, 0);
+
+    final gesture = await tester.startGesture(viewport.center);
+    await tester.pump(const Duration(milliseconds: 600));
+    await gesture.moveTo(Offset(viewport.center.dx, viewport.bottom - 12));
+    for (var i = 0; i < 30; i++) {
+      await tester.pump(const Duration(milliseconds: 16));
+    }
+    expect(scrollable.position.pixels, greaterThan(0));
+    await gesture.up();
+    await tester.pumpAndSettle();
+  });
+
   testWidgets('选择文字 without chat actions keeps only copy and select all', (tester) async {
     await _host(tester, (context) => showSelectTextSheet(context, '帮我看看测试为什么失败'));
     await tester.longPress(find.text('帮我看看测试为什么失败'));
