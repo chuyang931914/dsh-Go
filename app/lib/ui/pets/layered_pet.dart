@@ -2,6 +2,7 @@
 // 后续阶段会把头、眼、嘴拆成可动层，加眨眼与表情；现在先让宠物“活着”。
 // 素材：app/assets/pets/bluefox/front.png（由蓝发少女立绘去底裁切）。
 
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -31,14 +32,45 @@ class _LayeredPetState extends State<LayeredPet> with SingleTickerProviderStateM
     duration: const Duration(milliseconds: 240),
   );
 
+  /// 随机小动作：偶尔歪头/踮一下，让宠物不像循环动画。
+  late final AnimationController _idle = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 520),
+  );
+  Timer? _idleTimer;
+  int _idleDir = 1;
+
   void _pressed() => _squash.forward(from: 0);
 
   void _released() => _squash.reverse();
 
   @override
+  void initState() {
+    super.initState();
+    _scheduleIdle();
+  }
+
+  void _scheduleIdle() {
+    _idleTimer?.cancel();
+    _idleTimer = Timer(
+      Duration(milliseconds: 2800 + math.Random().nextInt(3600)),
+      () {
+        if (!mounted) return;
+        _idleDir = math.Random().nextBool() ? 1 : -1;
+        _idle.forward(from: 0).then((_) {
+          if (mounted) _idle.reverse();
+        });
+        _scheduleIdle();
+      },
+    );
+  }
+
+  @override
   void dispose() {
+    _idleTimer?.cancel();
     _breath.dispose();
     _squash.dispose();
+    _idle.dispose();
     super.dispose();
   }
 
@@ -57,12 +89,13 @@ class _LayeredPetState extends State<LayeredPet> with SingleTickerProviderStateM
         onTapCancel: _released,
         child: RepaintBoundary(
           child: AnimatedBuilder(
-            animation: Listenable.merge([_breath, _squash]),
+            animation: Listenable.merge([_breath, _squash, _idle]),
             builder: (context, _) {
               final scaleX = 1 + 0.006 * math.sin(phase) * alive;
               final scaleY = 1 + 0.014 * math.sin(phase) * alive - _squash.value * 0.08;
-              final rotation = 0.4 * math.sin(phase) * alive;
-              final lift = 1.6 * math.sin(phase) * alive;
+              final idleWave = math.sin(_idle.value * math.pi);
+              final rotation = 0.4 * math.sin(phase) * alive + 2.2 * idleWave * _idleDir;
+              final lift = 1.6 * math.sin(phase) * alive - 3.0 * idleWave;
               return Transform.translate(
                 offset: Offset(0, lift),
                 child: Transform.rotate(
