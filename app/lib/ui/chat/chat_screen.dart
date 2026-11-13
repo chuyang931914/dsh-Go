@@ -838,6 +838,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     }
   }
 
+  /// 有活在跑时才让系统保持 CPU 醒；空闲立刻放掉，省待机。
+  Future<void> _setBusy(bool busy) async {
+    try {
+      await const MethodChannel('dsh/runtime').invokeMethod<void>('setBusy', {'busy': busy});
+    } catch (_) {
+      // 旧引擎/测试环境没有这个方法，忽略。
+    }
+  }
+
   /// Long-press on send while a turn runs: how this message should land.
   Future<void> _sendOptions() async {
     final sessionId = ref.read(currentSessionProvider);
@@ -1674,6 +1683,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     // the start of the capsule row otherwise. Their own row only where neither
     // shows (read only; a phone on its side typing folds both away).
     final running = chat?.running ?? false;
+    if (sessionId != null) {
+      ref.listen(chatProvider(sessionId).select((c) => c.running), (_, next) => _setBusy(next));
+    }
     // 红后模式的落字：绿屏显示当前步骤，红屏见下。
     final hackActivity = sessionId == null ? null : ref.watch(chatProvider(sessionId).select(runActivityOf));
     final hackerLines = hackActivity == null

@@ -81,6 +81,12 @@ class DshService : Service() {
                 if (taskId != null) PhoneControl.get(this).stopShownTask("用户在通知里停止", taskId)
                 return START_NOT_STICKY
             }
+            ACTION_BUSY -> {
+                // 有活才拿 CPU 锁：生成中、后台任务跑的时候；空闲立刻放。
+                val busy = intent.getBooleanExtra(EXTRA_BUSY, false)
+                if (busy) acquireWakeLock() else releaseWakeLock()
+                return START_NOT_STICKY
+            }
             ACTION_STOP -> {
                 if (controller.phase == RuntimeController.Phase.INSTALLING) return START_NOT_STICKY
                 val expected = if (intent.hasExtra(EXTRA_STOP_GENERATION))
@@ -96,7 +102,7 @@ class DshService : Service() {
                 val notification = buildNotification(this, controller)
                 foreground(notification)
                 running = true
-                acquireWakeLock()
+                // 空闲不拿 CPU 锁；Dart 侧在有活时通过 ACTION_BUSY 打开。
                 registerNetworkCallback(controller)
                 logBackgroundPolicy(controller)
                 controller.startProcess()
@@ -166,6 +172,11 @@ class DshService : Service() {
         controller.note(line)
     }
 
+    private fun releaseWakeLock() {
+        wakeLock?.let { if (it.isHeld) it.release() }
+        wakeLock = null
+    }
+
     private fun acquireWakeLock() {
         if (wakeLock?.isHeld == true) return
         val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
@@ -186,6 +197,8 @@ class DshService : Service() {
         const val ACTION_START = "io.github.ccch1mneyyy.dsh_app.START"
         const val ACTION_STOP = "io.github.ccch1mneyyy.dsh_app.STOP"
         const val ACTION_PHONE_STOP = "io.github.ccch1mneyyy.dsh_app.PHONE_STOP"
+        const val ACTION_BUSY = "io.github.ccch1mneyyy.dsh_app.BUSY"
+        const val EXTRA_BUSY = "busy"
         private const val PHONE_TASK_SCHEME = "dsh-phone-task"
         private const val EXTRA_STOP_GENERATION = "stopGeneration"
 
