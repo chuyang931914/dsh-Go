@@ -12,6 +12,13 @@
 - 本版改动只两件：选字全局指针路由 + 唤醒锁按需（`DshService.kt` + `RuntimePlugin.kt` 的 setBusy ~26 行）。思考照常显示。
 - 装机待验：选字滚、唤醒锁按需（后台与耗电）。
 
+## 2026-11-14 09:40 · 1.0.29：选字滚动改到聊天列表
+
+- 1.0.28 装真机后用户反馈「没滚」。查明：1.0.28 改的是「选择文字」面板，这个版本没有该面板，用户是长按直接选字。
+- 改法：`chat_list.dart` 加全局指针路由 + ticker。判定「在选择」靠一个事实：手指动了、列表没动（拖动被选区吃掉）。此时手指进入上下 64px 边缘带，列表按 12px/帧滚动。
+- 修过一个坑：`_ChatListState` 原来是 `SingleTickerProviderStateMixin`，加第二个 ticker 直接崩，换成 `TickerProviderStateMixin`。
+- 验证：`dart analyze` 0 error / 24 info；`chat_shell` + `scroll_settle` 11 通过，仅 2 张 send_options 金色图因手机字体漂移红（电脑重建）。
+
 ## 2026-11-14 02:00 · 撤掉隐藏思考
 
 - 用户改口：思考过程不隐藏，照常显示。`chat_rows.dart` 与相关断言回到 1.0.24 原样，仅保留 1.0.26 的「手动展开不自动收回」修法。

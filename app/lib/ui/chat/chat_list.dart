@@ -7,6 +7,7 @@ import 'dart:math' as math;
 
 import 'package:dsh_client/dsh_client.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
@@ -151,7 +152,7 @@ class ChatList extends ConsumerStatefulWidget {
   ConsumerState<ChatList> createState() => _ChatListState();
 }
 
-class _ChatListState extends ConsumerState<ChatList> with SingleTickerProviderStateMixin {
+class _ChatListState extends ConsumerState<ChatList> with TickerProviderStateMixin {
   /// 当前聊天是否展开完整时间（周几 + 秒）；点任意一条时间统一切换。
   bool _timestampsExpanded = false;
 
@@ -213,6 +214,15 @@ class _ChatListState extends ConsumerState<ChatList> with SingleTickerProviderSt
   bool _gliding = false;
   bool _snapNext = false;
   late final Ticker _glide = createTicker(_onGlide);
+
+  // 长按选字时把手指拖到屏幕边缘:内容自己滚,选区才能延伸出屏幕。
+  // 用手势是否真的滚动了列表来判断"这是在选字",不依赖消息里的 SelectionArea。
+  Ticker? _edgeTicker;
+  Offset? _edgePointer;
+  Offset? _edgeDown;
+  double? _edgeOffsetAtDown;
+  bool _selectingText = false;
+  static const double _edgeBand = 64;
   Duration _glideLast = Duration.zero;
 
   /// Time constant of the glide: a line (about 28) lands in some 150ms, and lines
@@ -308,7 +318,66 @@ class _ChatListState extends ConsumerState<ChatList> with SingleTickerProviderSt
       ref.read(chatProvider(widget.sessionId).notifier).rejectQuestion(request);
 
   @override
+  void initState() {
+    super.initState();
+    GestureBinding.instance.pointerRouter.addGlobalRoute(_onEdgePointer);
+  }
+
+  void _onEdgePointer(PointerEvent event) {
+    if (!mounted) return;
+    final ticker = _edgeTicker ??= createTicker(_onEdgeTick);
+    if (event is PointerDownEvent) {
+      _edgeDown = event.position;
+      _edgePointer = event.position;
+      _edgeOffsetAtDown = _scroll.hasClients ? _scroll.offset : null;
+      _selectingText = false;
+      if (!ticker.isActive) ticker.start();
+      return;
+    }
+    if (event is PointerMoveEvent) {
+      _edgePointer = event.position;
+      final down = _edgeDown;
+      final at = _edgeOffsetAtDown;
+      // 手指动了、列表却没动:这一下被选区吃掉了,那就是在选字。
+      if (!_selectingText && down != null && at != null && _scroll.hasClients) {
+        final moved = (event.position - down).distance > 12;
+        if (moved && (_scroll.offset - at).abs() < 0.5) _selectingText = true;
+      }
+      return;
+    }
+    if (event is PointerUpEvent || event is PointerCancelEvent) {
+      _edgeDown = null;
+      _edgeOffsetAtDown = null;
+      _selectingText = false;
+      if (ticker.isActive) ticker.stop();
+    }
+  }
+
+  void _onEdgeTick(Duration _) {
+    if (!_selectingText) return;
+    final pointer = _edgePointer;
+    final box = context.findRenderObject();
+    if (pointer == null || box is! RenderBox || !box.hasSize) return;
+    if (!_scroll.hasClients) return;
+    final local = box.globalToLocal(pointer);
+    final h = box.size.height;
+    const band = _edgeBand;
+    double step = 0;
+    if (local.dy > h - band) {
+      step = 12 * ((local.dy - (h - band)) / band).clamp(0.2, 1.0);
+    } else if (local.dy < band) {
+      step = -12 * ((band - local.dy) / band).clamp(0.2, 1.0);
+    }
+    if (step == 0) return;
+    final position = _scroll.position;
+    final target = (position.pixels + step).clamp(position.minScrollExtent, position.maxScrollExtent);
+    if (target != position.pixels) position.jumpTo(target);
+  }
+
+  @override
   void dispose() {
+    GestureBinding.instance.pointerRouter.removeGlobalRoute(_onEdgePointer);
+    _edgeTicker?.dispose();
     _glide.dispose();
     _scroll.dispose();
     _showJump.dispose();
