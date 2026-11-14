@@ -55,21 +55,13 @@
 - 待验只剩一件（用户 2026-11-14 23:55 定：1.0.30 其他任务全剔）：**唤醒锁 20 分钟兜底**（1.0.30 改 `DshService.WAKE_TIMEOUT_MS = 20min`）：真机未验，待一次纯待机复测（20 分钟 ≤2% 正常，≥5% 查 batterystats）。
 - 【历史，已不做】保险箱当时要补的 Kotlin 坑：`RuntimePlugin` 用 `appContext`、`status` 返回 bool、`SecretKeyFactory` 取 KeyInfo、vault 插件按 Activity 注册、`INSTALL_DONE` 释放唤醒锁。
 
-## 手机操控在升级后掉线（2026-11-14 20:47）
-
-- 现象：20:47 后手机操控开关 false、桥接监听 false，无障碍工具从会话里消失。**用户 20:50 说明是他自己关的，不是升级导致的回归。**
-- 上游 v1.0.16 确实有「升级后不复用旧服务」的修复（#1096/#1104），我们没摘；但今天这次不是它引起。
-- 临时处理：在 App 里重新打开「手机操控」即可恢复。
-- 长期：1.0.31 优先摘上游那两条修复，否则每次升级都要手动重开。
-
 ## 1.0.32 排期（2026-11-14 22:35 用户定）
 
-只做两件，别扩范围。
+只做一件，别扩范围。
 
 1. **工具输出折叠**（摘上游 `c08f1cff`，14 文件 +1316/−47，零冲突；follow-up `728f1689` 只在两份 `04-phone-control.md` 冲突，按本地版改）。超长工具输出只排头尾，全文另开页。
-2. **1b 精简版**：只摘「升级后不复用旧服务」——后台服务绑定 `.version(versionCode)`，落在 `ShizukuStarter.kt`/`BackgroundControl.kt` 及配套提交；**不**整包重写 55 文件，不碰 tawcroot。上游自述未真机验证，必须真机验。
 
-- **验收**：① 覆盖安装 1.0.32 后手机操控开关/桥接/后台屏不掉线、不用重开；② 超长工具输出能折叠、全文页正常；③ `dart analyze` 0 error + 非金色测试 + `phone.background` 单测全绿。
+- **验收**：① 超长工具输出能折叠、全文页正常；② `dart analyze` 0 error + 非金色测试全绿。
 - **版本**：出包时 `pubspec.yaml` 改 `1.0.32+1`，buildNumber 由脚本按 `MMDDHHmm` 生成。
 
 ## 上游 v1.0.16 三条特性评估（2026-11-14 21:00）
@@ -77,5 +69,4 @@
 - 范围：`v1.0.15`→`v1.0.16` 段内 533 个提交；逐提交 patch 实测能否打到我们树上（只评估，未改代码、未建分支）。
 - **已摘（1a）**：`133d2122` OEM 拒绝命名空间时不再永久阻断旧后台资源恢复 + `f8ee2a6a` 无 displayId 的孤儿探针记录同一开机内结案。4 文件 +72/−23。`5db07c91`+`df16eb2` 是上游自我回退，跳过。
 - **可摘、未做**：超长工具输出只排头尾 + 全文另开页（`c08f1cff`，14 文件 +1316/−47，零冲突；follow-up `728f1689` 只在两份 `04-phone-control.md` 冲突）。
-- **需适配、未做（1b）**：后台屏/Shell 连接重写（`91bb9af3` 55 文件 +2843/−1113 + 4 个配套提交），11 文件实冲突：`BackgroundControl.kt`、`BackgroundGateState.kt`、`ShizukuStarter.kt`、`phone_control_screen.dart`、2 个 strings.xml、2 个测试、4 份文档。「升级后不复用旧服务」就在 `ShizukuStarter`/`BackgroundControl`（服务绑定 `.version(versionCode)`），上游自述未真机验证。
 - `#1096` 上游仍 open，`RecoveryPlatform.birth` 的 ns 三层判定 v1.0.16 没动（我们树里已是 try/catch 容错版）。
