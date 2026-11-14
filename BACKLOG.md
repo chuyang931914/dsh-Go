@@ -52,7 +52,7 @@
 ## 1.0.28 撤回后记（2026-11-14 00:40）
 
 - 撤回：保险箱、红后灯带、唤醒锁按需、隐藏思考、分层宠物；完整版在 `archive/1.0.28-full`。
-- 待验只剩一件（用户 2026-11-14 23:55 定：1.0.30 其他任务全剔）：**唤醒锁 20 分钟兜底**（1.0.30 改 `DshService.WAKE_TIMEOUT_MS = 20min`）：真机未验，待一次纯待机复测（20 分钟 ≤2% 正常，≥5% 查 batterystats）。
+- 待验只剩一件（用户 2026-11-14 23:5x 定：1.0.30 其他任务全剔）：**唤醒锁 20 分钟兜底**（1.0.30 改 `DshService.WAKE_TIMEOUT_MS = 20min`）：真机未验，待一次纯待机复测（20 分钟 ≤2% 正常，≥5% 查 batterystats）。
 - 【历史，已不做】保险箱当时要补的 Kotlin 坑：`RuntimePlugin` 用 `appContext`、`status` 返回 bool、`SecretKeyFactory` 取 KeyInfo、vault 插件按 Activity 注册、`INSTALL_DONE` 释放唤醒锁。
 
 ## 1.0.32 排期（2026-11-14 22:35 用户定）
