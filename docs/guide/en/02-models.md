@@ -6,7 +6,7 @@ Providers are stored in the current host's engine. On a remote host, you manage 
 
 ## Switch models and thinking effort
 
-On a phone, tap into the composer and then the model below it; on a tablet or a wider screen, tap the model capsule at the top right of the chat. Either opens **Choose model**:
+Tap the model capsule at the top right of a chat to open **Choose model**:
 
 - With several providers, pick a provider at the top, then a model. Switching providers alone doesn't change the current model.
 - Tapping a model takes effect at once. If the model has more than one level, **Thinking effort** appears below.
