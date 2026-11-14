@@ -50,7 +50,7 @@
 
 1. **1.0.30 待出包**：唤醒锁 20 分钟兜底超时 + 选字判定加长按门槛。装后测息屏 30 分钟耗电。
 2. **AI 费用插件**：`local-ai-cost` 在用；凭据在插件 `secrets.json`（600），不入库。
-3. **聊天页宠物**：停做，WIP 在 `pets/layered-v2`。
+3. **聊天页宠物**：停做，本地分支已删（代码仍在 `archive/1.0.28-full`）。
 4. **密钥保险箱**：2026-11-14 决定**不做**，撤出。
 5. 安全项（令牌/keystore 复用）暂缓，不主动提。
 
@@ -75,7 +75,7 @@ DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 ```
 
 - 交接 `HANDOFF.md`｜待办 `BACKLOG.md`｜日志 `PROGRESS.md`｜版本表 `UPGRADE_TABLE.md`
-- 飞书 APK：`https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR`
+- 飞书 APK：`https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR`（当前 1.0.29）
 
 ## 9. 维护这一页
 

@@ -52,8 +52,20 @@ if [ "$bytes" -le 6144 ]; then say "PROJECT_STATE" "${bytes}B"; else bad "PROJEC
 if [ -L /root/workspace/AGENTS.md ]; then say "AGENTS symlink" "$(readlink /root/workspace/AGENTS.md)"; else say "AGENTS symlink" "不是软链（可忽略）"; fi
 
 # 8. 插件目录残留
-extra=$(ls "$HOME/.dsh/dsh-go/plugins" 2>/dev/null | grep -v '^local-ai-cost$' || true)
+plugins_dir="$HOME/.dsh/dsh-go/plugins"
+extra=$(ls "$plugins_dir" 2>/dev/null | grep -v '^local-ai-cost$' || true)
 if [ -n "$extra" ]; then say "extra plugins" "$(echo "$extra" | tr '\n' ' ')"; fi
+
+# 9. 界面配置
+ui="$HOME/.dsh/dsh-go/ui.json"
+if [ -f "$ui" ]; then say "ui.json" "$(wc -c < "$ui")B"; else bad "ui.json" "缺失"; fi
+
+# 10. 实机版本与版本表最新行
+installed=$(bash tooling/check-device.sh 2>/dev/null | sed -n 's/.*versionCode:\([0-9]*\).*/\1/p' | head -1)
+if [ -n "$installed" ]; then
+  say "installed build" "$installed"
+  if grep -q "| $installed |" UPGRADE_TABLE.md; then say "installed in table" "ok"; else bad "installed in table" "版本表里没有 build $installed"; fi
+fi
 
 echo
 if [ "$fail" = 0 ]; then echo "RESULT OK"; else echo "RESULT FAIL"; fi
