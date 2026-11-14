@@ -3,6 +3,16 @@
 > 追加式流水账：每次构建、装机、真机反馈、重要决策后加一条（最新在上）。
 > 这里记“发生了什么”；当前状态看 [`PROJECT_STATE.md`](PROJECT_STATE.md)，完整实现看 [`HANDOFF.md`](HANDOFF.md)。
 
+## 2026-11-14 23:11 · 1.0.30 回退验证包已出（11142303，待装机）
+
+- 用途：**临时回退验证包**，把实机从 1.0.31 的实际行为拉回 1.0.30（不是正式发版），确认后再决定是否留档。
+- 来源：电脑端（WSL）按 `docs/rollback.md` 路径 A：从 `52ad553`（1.0.30 出包提交）切 `rel/1.0.30`，`DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64`。
+- 产物（电脑端报告）：`dsh-go-1.0.30-11142303-mogai-arm64.apk`，206,213,692 字节，sha256 `b84c012c…ac8d3dc`；Gradle 264.0s，0 error，warning 仅 flutter_webrtc KGP 弃用 1 条；与首发 1.0.30（`11142005` / `cc712b78…f15eed`）字节不同属正常。
+- **versionCode 顺序**：`11142303` > 1.0.31 的 `11142142`，装上后不能直接降回 1.0.31，要回 1.0.31 必须重打一版。这是回退验证的预期代价。
+- 包只在电脑 `D:\Android\apk\`，手机本地仍只有 1.0.27；需先传到手机 `/sdcard/Download/Lark/` 核字节数与 sha256，再覆盖安装。
+- 装后验收：`bash tooling/check-device.sh`（versionCode 11142303、版本名 1.0.30）、选字边缘滚动、会话/工作区/ui.json 是否保留；结果写 UPGRADE_TABLE（新增一行）与 PROJECT_STATE 第 2 节。
+- 电脑端提醒：`rel/1.0.30` 不要推远端；远端 `main`/`phone` 已到 `c7ccf49`（本轮文档剔除），先 `git fetch && git merge --ff-only`。
+
 ## 2026-11-14 22:35 · 1.0.31 装机验收（部分通过，① 只验到开关/桥接，② 免测）
 
 - 前置（22:23 诊断）：实机 `1.0.31+11142142`；手机操控开关 true · 桥接监听 true · 无障碍 true 且服务已连接。logcat 22:22:52 `DshA11y: accessibility service connected`。
