@@ -3,6 +3,16 @@
 > 追加式流水账：每次构建、装机、真机反馈、重要决策后加一条（最新在上）。
 > 这里记“发生了什么”；当前状态看 [`PROJECT_STATE.md`](PROJECT_STATE.md)，完整实现看 [`HANDOFF.md`](HANDOFF.md)。
 
+## 2026-11-14 20:10 · 1.0.30 出包（arm64，buildNumber 11142005）
+
+- `main` = `phone` = `52ad553`，工作区干净，reset --hard 后直接构建。
+- 两处改动核验：`DshService.kt:209` `private const val WAKE_TIMEOUT_MS = 20 * 60 * 1000L`；`chat_list.dart` `_longPressFloor = Duration(milliseconds: 300)`。
+- 电脑侧验证：`dart analyze` 0 error / 0 warning / 24 info（全 deprecated_member_use）；`flutter test test/chat` **1969 通过 / 0 失败**。
+- 构建：`DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64`，285.4s，无 error；warning 仅 flutter_webrtc KGP 未来弃用 + 15 packages 可升级。release 未设 `isMinifyEnabled`，R8/minify 关闭。
+- APK：`D:\Android\apk\dsh-go-1.0.30-11142005-mogai-arm64.apk`，206,213,645 字节，sha256 `cc712b7842a429af052614c839729b5684f033f77dcf0c67dd11ecd4e6f15eed`，证书 `fb462eb1…3c2f`，versionCode `11142005` > `11140932`。
+- push：`Everything up-to-date`，`ls-remote` = HEAD = `52ad553301d61c4a5afd52c4b815f4416fb2113e`。
+- 装机待验：息屏 30 分钟耗电、长按选字拖边缘。
+
 ## 2026-11-14 19:00 · 1.0.29 源码打包发飞书
 
 - 源：`main` = `4bd6477`（1.0.29 代码 `b5bd8e7` + 出包文档提交）。
