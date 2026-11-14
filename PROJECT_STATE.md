@@ -1,6 +1,6 @@
 # dsh-Go 项目记忆（新对话先读这一页）
 
-> 最后更新：2026-11-14 21:17（Asia/Shanghai）
+> 最后更新：2026-11-14 22:35（Asia/Shanghai）
 >
 > 新对话的开机记忆：项目、状态、分工、规则、待办。实现细节看 [`HANDOFF.md`](HANDOFF.md)。
 > 本文件是 `/root/workspace/AGENTS.md` 的软链目标，会自动加载。
@@ -13,14 +13,13 @@
 
 ## 2. 当前状态（以仓库当前提交为准）
 
-- **实机**：`1.0.30+11142005`（11-14 20:25 装，选字滚已验）；1.0.31 已出包待装。
-- **仓库**：`main` = `phone` = `c9a1547`，源码 `1.0.31+1`，buildNumber `11142142`。
-- **1.0.31 包**：APK 206,213,828 字节 sha256 `d2cc740b…f3d8e9`；analyze 0 error/24 info，test/chat 1969 全绿。
-- **1.0.31 内容**：上游 v1.0.16 资源自愈（+5 单测）：后台屏断连可自恢复、无 displayId 孤儿记录可结案。
-- **待验**：① 两版息屏 30 分钟耗电（20:27 基线 40%）；② 后台屏断开自恢复、journal 无残留。
-- **未摘上游**：工具输出折叠（可摘）、tawcroot（不能摘）、升级后不复用旧服务（需适配）。
-- **1.0.29 是回退基线**（sha256 `c34fb33c…1ee485`）。
-- 撤出的功能存档在 `archive/1.0.28-full`。
+- **实机**：`1.0.31+11142142`（22:07 前装，22:35 验完）；开关/桥接能自恢复，无障碍不自动重连（22:33 定暂不补）。
+- **仓库**：`main`=`phone`=`8dd9e2c`，源码 `1.0.31+1`，buildNumber `11142142`。
+- **1.0.31 包**：APK 206,213,828B sha256 `d2cc740b…f3d8e9`；analyze 0 err/24 info，test/chat 1969 全绿。
+- **内容**：上游 v1.0.16 资源自愈（+5 单测）：后台屏断连自恢复、无 displayId 孤儿记录可结案。
+- **验收**：1a 自愈路径未触发（无后台屏在跑）；息屏耗电免测。
+- **1.0.32**：工具输出折叠（`c08f1cff`+`728f1689`）+ 1b 精简版（只摘「升级后不复用旧服务」）。
+- **未摘上游**：tawcroot（不能摘）。回退基线 1.0.29（`c34fb33c…1ee485`）；旧功能存档 `archive/1.0.28-full`。
 
 ## 3. 双端分工
 
@@ -45,13 +44,13 @@
 - 文档/代码改动先 commit + 推 Gitee `phone`/`main`，推完才算完成（HANDOFF Rule 33）。
 - **不要把 Gitee 令牌、keystore 密码写进文档/仓库/聊天**；凭据在 `~/.git-credentials`（600）。
 - **仓库是唯一源头**：手机/电脑的代码、插件源码、界面配置、文档改动都必须提交并推送；只有密钥（`secrets.json`）和 `node_modules/` 例外。
-- versionName 按发布 patch +1（当前 1.0.30），versionCode 由构建脚本按 `MMDDHHmm` 生成；APK 名带 versionName + buildNumber。
+- versionName 按发布 patch +1（当前 1.0.31），versionCode 由构建脚本按 `MMDDHHmm` 生成；APK 名带 versionName + buildNumber。
 - 手机端不构建 APK；出包/分发只在电脑侧，走飞书云空间链接。
 - 用户偏好：中文、手机屏幕小要简洁；先结论后细节；给绝对路径；不擅自扩大改动范围。
 
 ## 6. 当前待办（按顺序）
 
-1. **1.0.31 待装**（11142142）：装后验后台屏自恢复 + 两版息屏耗电。
+1. **1.0.32**：工具输出折叠（`c08f1cff`+`728f1689`）+ 1b 精简版（只摘「升级后不复用旧服务」）；装机验升级后手机操控不掉线、超长输出折叠。
 2. **AI 费用插件**：`local-ai-cost` 在用；凭据在插件 `secrets.json`（600），不入库。
 3. **聊天页宠物**：停做，本地分支已删（代码仍在 `archive/1.0.28-full`）。
 4. **密钥保险箱**：2026-11-14 决定**不做**，撤出。
@@ -61,6 +60,7 @@
 
 - 宠物关闭（悬浮窗/设置保留）；长按菜单留复制/全选/引用/翻译/分享/朗读/问AI，翻译走 `ACTION_PROCESS_TEXT`。
 - 左边缘 0–80dp 起手翻页；保险箱/红后/隐藏思考/分层宠物已撤（存档 `archive/1.0.28-full`）；1.0.29 为回退基线。
+- 2026-11-14 22:33：无障碍自动恢复暂不补；1.0.30/1.0.31 息屏耗电免测。
 
 ## 8. 关键路径与命令
 
@@ -75,7 +75,7 @@ DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 ```
 
 - 交接 `HANDOFF.md`｜待办 `BACKLOG.md`｜日志 `PROGRESS.md`｜版本表 `UPGRADE_TABLE.md`｜装机 `tooling/acceptance-phone.md`｜回退 `docs/rollback.md`
-- 飞书 APK：`https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR`（当前 1.0.29）
+- 飞书 APK：`https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR`
 
 ## 9. 维护这一页
 
@@ -91,4 +91,3 @@ DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 5. 一轮只收一个主题；版本号只在构建时 +1；未验证不写“收口”。
 6. **有红测试不出包**：要么修到全绿，要么在 HANDOFF 明确写 waiver 和风险；默认不允许带红构建。
 7. **出包后同一版本不再改代码**：任何修复进下一个 patch，避免 1.0.22→1.0.23 这种返工。
-8. **构建前 `main` 必须等于 `phone`**；手机装完必须跑 `bash tooling/check-device.sh`。
