@@ -67,6 +67,22 @@ if [ -n "$installed" ]; then
   if grep -q "| $installed |" UPGRADE_TABLE.md; then say "installed in table" "ok"; else bad "installed in table" "版本表里没有 build $installed"; fi
 fi
 
+# 11. 下载目录里最新 APK 与版本表记录是否一致
+apk=$(ls -t /sdcard/Download/Lark/dsh-go-*.apk /sdcard/Download/dsh-go-*.apk 2>/dev/null | head -1)
+if [ -n "$apk" ]; then
+  size=$(stat -c %s "$apk")
+  build=$(echo "$apk" | sed -n 's/.*-\([0-9]\{8,\}\)-mogai.*/\1/p')
+  if [ -n "$build" ] && grep -q "$build" UPGRADE_TABLE.md; then
+    rec_size=$(grep "$build" UPGRADE_TABLE.md | grep -E '[0-9]{3},[0-9]{3},[0-9]{3}' | head -1 | grep -oE '[0-9]{1,3}(,[0-9]{3}){2}' | tr -d ',')
+    say "newest apk" "$build · ${size}B"
+    if [ "$rec_size" = "$size" ]; then
+      say "apk size in table" "ok"
+    else
+      bad "apk size in table" "表记 ${rec_size:-无}，实际 ${size}"
+    fi
+  fi
+fi
+
 echo
 if [ "$fail" = 0 ]; then echo "RESULT OK"; else echo "RESULT FAIL"; fi
 exit "$fail"
