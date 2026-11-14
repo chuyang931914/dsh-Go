@@ -34,7 +34,7 @@
 | 魔改版 APK（本地） | `D:\Android\apk\dsh-go-1.0.29-11140932-mogai-arm64.apk`（当前最新，206,214,152 字节，sha256 `c34fb33c…1ee485`） |
 | **APK 下载（飞书云空间，优先）** | https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR （`dsh-go-1.0.29-11140932-mogai-arm64.apk`，当前 11140932；点开 → 右上角「...」→ 下载；飞书内直接下载，不走 GitHub/Gitee） |
 | **源码包（飞书云空间）** | https://my.feishu.cn/file/K2kCbcXXDowHj4xewIpcTB1onRg （`dsh-go-1.0.29-11140932-mogai-src.zip`，626,822,487 字节 / 598MB，`main` = `4bd6477`，2026-11-14 上传；已排除 `.git`、`app/build`、`.dart_tool`、`runtime/.work`、`runtime/.cache`，保留 `runtime/out` 可直接重建 APK） |
-| 源码包（飞书，旧版存档） | https://my.feishu.cn/file/IEqgbC77zoOqWmxo277cr8Wdnue （`dsh-go-1.0.15-mogai-src.zip`，1.0.15 时代，保留未删） |
+| 源码包（旧版，已删） | `IEqgbC77zoOqWmxo277cr8Wdnue`（`dsh-go-1.0.15-mogai-src.zip`）已于 2026-11-14 删除，飞书只留最新一份 |
 | 源码包（本地） | `D:\Android\apk\dsh-go-1.0.29-11140932-mogai-src.zip`（同 sha256 `1c71d560…89029`） |
 | APK 备份（GitHub Release） | https://github.com/chuyang931914/dsh-Go/releases/download/v1.0.15-mogai/dsh-go-1.0.15-mogai-arm64.apk |
 | 构建脚本原始输出 | WSL 内 `/root/dsh-Go/app/build/app/outputs/flutter-apk/app-arm64-release.apk` |
@@ -47,7 +47,7 @@
 | Windows 访问构建源的 UNC 路径 | `\\wsl.localhost\Ubuntu24\root\dsh-Go\`（可直接用编辑器读写） |
 | 交接文档（飞书云空间） | https://my.feishu.cn/file/OJSGbqo2IofCYQxm8uycjTGAn7d （`HANDOFF-dsh-Go.md`，每次更新后覆盖上传） |
 
-**源码分发 `1.0.29`（2026-11-14 19:00）**：`dsh-go-1.0.29-11140932-mogai-src.zip` 已上传飞书（file token `K2kCbcXXDowHj4xewIpcTB1onRg`，云端版本 `7707983819785112840`），626,822,487 字节，sha256 `1c71d560f8c3ded5982725af523539ffb52ac2fb2ca44d1ef3dcff0b55089029`，6965 个文件，`pubspec` 1.0.29+1。已排除 `.git`/`app/build`/`.dart_tool`，保留 `runtime/out`。本地同份 `D:\Android\apk\`。**注意**：覆盖旧 token `IEqgbC77zoOqWmxo277cr8Wdnue` 连续两次报服务端 `1061001 unknown error`，改用新建文件上传成功，旧 1.0.15 源码包保留原 token 未删。
+**源码分发 `1.0.29`（2026-11-14 19:00）**：`dsh-go-1.0.29-11140932-mogai-src.zip` 已上传飞书（file token `K2kCbcXXDowHj4xewIpcTB1onRg`，云端版本 `7707983819785112840`），626,822,487 字节，sha256 `1c71d560f8c3ded5982725af523539ffb52ac2fb2ca44d1ef3dcff0b55089029`，6965 个文件，`pubspec` 1.0.29+1。已排除 `.git`/`app/build`/`.dart_tool`，保留 `runtime/out`。本地同份 `D:\Android\apk\`。**注意**：覆盖旧 token `IEqgbC77zoOqWmxo277cr8Wdnue` 连续两次报服务端 `1061001 unknown error`，改用新建文件上传成功，旧 1.0.15 源码包于同日删除，避免拿错。
 
 **构建 `11140932`（2026-11-14 09:38，1.0.29）**：`main` = `phone` = `b5bd8e7`（1.0.28 全部 + 聊天页长按选字边缘自动滚；本版只动 `chat_list.dart` +71 行，`_ChatListState` 由 `SingleTickerProviderStateMixin` 换 `TickerProviderStateMixin`，`_SelectTextSheet` 滚动代码保留未删；无 Kotlin 改动）。APK 206,214,152 字节，sha256 `c34fb33cfc49ef71b96306dd00b47e777759e1c81508bf08619df8b7131ee485`，证书 `fb462eb1…3c2f`，versionCode `11140932` > `11140025`，release 未开 R8/minify。电脑侧 `dart analyze` 0 error / 0 warning / 24 info；`flutter test test/chat` **1969 通过 / 0 失败**。APK 已存 `D:\Android\apk\dsh-go-1.0.29-11140932-mogai-arm64.apk`。
 
