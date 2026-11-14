@@ -23,7 +23,7 @@ dsh-go App 会读 `$DSH_HOME/dsh-go/ui.json`（`DSH_HOME` 默认 `~/.dsh`），�
 1. 先读现有文件：`cat "$DSH_HOME/dsh-go/ui.json"`（没有就新建，目录不存在就 `mkdir -p`）。
 2. 只改用户要求的部分，其他键原样保留。用户之前的配置不要删。
 3. 写回：严格 JSON，UTF-8，不要注释，不要尾逗号，不超过 64 KiB。最好先写临时文件再 `mv` 过去。
-4. 自查：`node "${DSH_HOME:-$HOME/.dsh}/skills/dsh-go-ui/scripts/check.mjs"`。输出和 App 设置里看到的完全一样：
+4. 自查：`node "$DSH_HOME/skills/dsh-go-ui/scripts/check.mjs"`。输出和 App 设置里看到的完全一样：
    - `错误 /composer/quickActions/2/action/url：只支持 https 链接`：这一项不生效，其余照常；
    - `忽略`：App 不认识或超出上限的部分；
    - `提示`：已自动修正（比如文字太长被截断），仍然生效；
@@ -69,7 +69,7 @@ dsh-go App 会读 `$DSH_HOME/dsh-go/ui.json`（`DSH_HOME` 默认 `~/.dsh`），�
 | `theme.mode` | `system`、`light`、`dark` |
 | `theme.accentPreset` | `mist` 雾蓝、`daiqing` 黛青、`dusk` 暮紫、`turquoise` 松石、`amber` 琥珀、`graphite` 石墨 |
 | `theme.accent` | 自定义强调色 `#RRGGBB`（App 会自动调到对比度达标）；和 `accentPreset` 二选一 |
-| `pet` | `id`、`position`（`top-left` / `top-right` / `bottom-left` / `bottom-right`）、`quiet`（布尔）。宠物功能已停做，字段只作兼容校验 |
+| `pet` | `id`、`position`（`top-left` / `top-right` / `bottom-left` / `bottom-right`）、`quiet`（布尔）。宠物功能上线前只校验 |
 | `shortcuts` | 平板外接键盘快捷键，≤ 20 条：`keys` 如 `ctrl+k`、`ctrl+shift+n`、`alt+1`、`f5`（必须带 ctrl 或 alt，F 键除外；不能用 meta/cmd/win；`ctrl+a/c/v/x/y/z`、`ctrl+shift+v/z`、`alt+f4` 被占用）+ `action` |
 | `plugins.seats` | 插件在原生界面里怎么出现：`{ "<slot>": { "<npm 包名>": "native" \| "island" \| "web" \| "hidden" } }`（原生画 / 内嵌网页 / 在网页版打开 / 隐藏）。slot 名见 `schema.json` 的 `x-dsh-go.slots.known`；`unseatable` 里的是 App 自己的界面，不放插件 |
 
