@@ -65,7 +65,7 @@
 
 - 撤回：保险箱、红后灯带、唤醒锁按需、隐藏思考、分层宠物；完整版在 `archive/1.0.28-full`。
 - 待验三件（用户要求记住）：①选字边缘滚动（改过两次：1.0.27 Listener 版失败、1.0.28 全局指针版待验）；②唤醒锁按需 + 待机耗电基线，未测；③隐藏思考过程，未验。
-- 保险箱进 1.0.29 前要先补的 Kotlin 坑：`RuntimePlugin` 用 `appContext`、`status` 返回 bool、`SecretKeyFactory` 取 KeyInfo、vault 插件按 Activity 注册、`INSTALL_DONE` 释放唤醒锁。
+- 【历史，已不做】保险箱当时要补的 Kotlin 坑：`RuntimePlugin` 用 `appContext`、`status` 返回 bool、`SecretKeyFactory` 取 KeyInfo、vault 插件按 Activity 注册、`INSTALL_DONE` 释放唤醒锁。
 
 ## 已决定不做
 

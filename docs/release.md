@@ -1,5 +1,7 @@
 # 发版与应用内更新
 
+> **状态：已过期（2026-11-14）**。本仓的自动更新链路已剔除（`autoCheckIfDue()` 恒 false），APK 走飞书分发；本文仅作历史设计参考。现状看根目录 `PROJECT_STATE.md`。
+
 App 以 APK 分发、不上商店，更新靠 App 自己查 GitHub Releases、下载、校验、调系统安装器。本文是发版约定和步骤，以及更新链路的取舍。代码在 `app/lib/update/`（检查、下载、校验）、`app/lib/state/update_state.dart`（状态与节流）、`app/lib/ui/update/`（设置行、弹窗）、`app/android/.../update/`（PackageInstaller 安装）。
 
 > **正式发版前必须先换成固定的发布密钥**（见「签名」）。存在 `app/android/key.properties` 时 release 使用其中的发布密钥；缺少配置时仅为本地构建回落到 debug key，不可用于正式发布。
