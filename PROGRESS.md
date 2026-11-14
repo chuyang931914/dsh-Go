@@ -3,6 +3,14 @@
 > 追加式流水账：每次构建、装机、真机反馈、重要决策后加一条（最新在上）。
 > 这里记“发生了什么”；当前状态看 [`PROJECT_STATE.md`](PROJECT_STATE.md)，完整实现看 [`HANDOFF.md`](HANDOFF.md)。
 
+## 2026-11-14 09:38 · 1.0.29 出包（arm64，buildNumber 11140932）
+
+- `main` = `phone` = `b5bd8e7`，工作区干净，reset --hard 后直接构建；本版改动仅 `chat_list.dart` +71 行、`pubspec.yaml` 版本号、两处文档，无 Kotlin 改动。
+- 电脑侧验证：`dart analyze` 0 error / 0 warning / 24 info（全 deprecated_member_use）；`flutter test test/chat` **1969 通过 / 0 失败**（手机侧报红的 2 张 send_options golden 在电脑上全绿）。
+- 构建：`DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64`，266.8s，无 error；warning 仅 flutter_webrtc 的 KGP 未来弃用提示 + 15 packages 可升级。release 未设 `isMinifyEnabled`，R8/minify 确认为关闭。
+- APK：`app-arm64-release.apk` → `D:\Android\apk\dsh-go-1.0.29-11140932-mogai-arm64.apk`，206,214,152 字节，sha256 `c34fb33c…1ee485`，证书 `fb462eb1…3c2f`，versionCode `11140932` > `11140025`。
+- 装机待验：长按选字拖到屏幕上下边缘是否自动滚（1.0.28 的「无效」复验点）。
+
 ## 2026-11-14 00:35 · 1.0.28 出包（arm64，buildNumber 11140025）
 
 - `main` = `phone` = `82cbb8c`，reset --hard 后裸跑通过；本地旧 47 commits 与两个测试文件未暂存改动全丢弃。

@@ -4,7 +4,7 @@
 > 最后更新：2026-11-14
 > 权威副本：本文件同时放在仓库根目录 `HANDOFF.md`（随 Git 推送，跨设备可用）。
 >
-> **当前状态（2026-11-14 00:35）**：1.0.28 已出包，buildNumber `11140025`。**1.0.24 基底 + 选区全局指针路由 + 唤醒锁按需**，思考照常显示。`main` = `phone` = `82cbb8c`。保险箱/红后/分层宠物/隐藏思考全部撤出，存档 `archive/1.0.28-full`。APK 已存 `D:\Android\apk\dsh-go-1.0.28-11140025-mogai-arm64.apk`，待装机验证选字滚动与按需唤醒锁。
+> **当前状态（2026-11-14 09:38）**：1.0.29 已出包，buildNumber `11140932`。**1.0.28 全部 + 聊天页长按选字边缘自动滚**（`chat_list.dart` 全局指针路由 + `TickerProviderStateMixin`）。`main` = `phone` = `b5bd8e7`。1.0.28 的选区弹层滚动代码保留未删。APK 已存 `D:\Android\apk\dsh-go-1.0.29-11140932-mogai-arm64.apk`，待装机验证长按选字拖边缘是否真的滚。
 
 > **新对话记忆**：`/root/workspace/AGENTS.md` 是指向 [`PROJECT_STATE.md`](PROJECT_STATE.md) 的软链，新对话会自动加载；换机/重装后运行 `bash tooling/install-workspace-memory.sh`。
 
@@ -31,8 +31,8 @@
 
 | 产物 | 路径 |
 | --- | --- |
-| 魔改版 APK（本地） | `D:\Android\apk\dsh-go-1.0.28-11140025-mogai-arm64.apk`（当前最新，206,215,379 字节，sha256 `ed984049…55517f`） |
-| **APK 下载（飞书云空间，优先）** | https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR （`dsh-go-1.0.28-11140025-mogai-arm64.apk`，当前 11140025；点开 → 右上角「...」→ 下载；飞书内直接下载，不走 GitHub/Gitee） |
+| 魔改版 APK（本地） | `D:\Android\apk\dsh-go-1.0.29-11140932-mogai-arm64.apk`（当前最新，206,214,152 字节，sha256 `c34fb33c…1ee485`） |
+| **APK 下载（飞书云空间，优先）** | https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR （`dsh-go-1.0.29-11140932-mogai-arm64.apk`，当前 11140932；点开 → 右上角「...」→ 下载；飞书内直接下载，不走 GitHub/Gitee） |
 | **源码包（飞书云空间）** | https://my.feishu.cn/file/IEqgbC77zoOqWmxo277cr8Wdnue （`dsh-go-1.0.15-mogai-src.zip`，500MB；已排除 `.git`、`app/build`、`.dart_tool`、`runtime/.work`、`runtime/.cache`，保留 `runtime/out` 可直接重建 APK） |
 | APK 备份（GitHub Release） | https://github.com/chuyang931914/dsh-Go/releases/download/v1.0.15-mogai/dsh-go-1.0.15-mogai-arm64.apk |
 | 构建脚本原始输出 | WSL 内 `/root/dsh-Go/app/build/app/outputs/flutter-apk/app-arm64-release.apk` |
@@ -44,6 +44,8 @@
 | 构建源（唯一有效副本） | WSL `Ubuntu24` 内 `/root/dsh-Go` |
 | Windows 访问构建源的 UNC 路径 | `\\wsl.localhost\Ubuntu24\root\dsh-Go\`（可直接用编辑器读写） |
 | 交接文档（飞书云空间） | https://my.feishu.cn/file/OJSGbqo2IofCYQxm8uycjTGAn7d （`HANDOFF-dsh-Go.md`，每次更新后覆盖上传） |
+
+**构建 `11140932`（2026-11-14 09:38，1.0.29）**：`main` = `phone` = `b5bd8e7`（1.0.28 全部 + 聊天页长按选字边缘自动滚；本版只动 `chat_list.dart` +71 行，`_ChatListState` 由 `SingleTickerProviderStateMixin` 换 `TickerProviderStateMixin`，`_SelectTextSheet` 滚动代码保留未删；无 Kotlin 改动）。APK 206,214,152 字节，sha256 `c34fb33cfc49ef71b96306dd00b47e777759e1c81508bf08619df8b7131ee485`，证书 `fb462eb1…3c2f`，versionCode `11140932` > `11140025`，release 未开 R8/minify。电脑侧 `dart analyze` 0 error / 0 warning / 24 info；`flutter test test/chat` **1969 通过 / 0 失败**。APK 已存 `D:\Android\apk\dsh-go-1.0.29-11140932-mogai-arm64.apk`。
 
 **构建 `11140025`（2026-11-14 00:25，1.0.28）**：`main` = `phone` = `82cbb8c`（撤回至 1.0.24 基底 `9da1d7c` + 选区全局指针路由 `e252b28` + 唤醒锁按需；隐藏思考已撤）。APK 206,215,379 字节，sha256 `ed984049db4adeceb8874219dab717091c225005c6ce2bd31d467eb53e55517f`，证书 `fb462eb1…3c2f`，versionCode `11140025` > `11131822`。电脑侧 `dart analyze` 0 error / 24 info；`flutter test test/chat` **1969 通过 / 0 失败**（含 message_menu 4 张 golden 全过）。新增 Kotlin 仅 `DshService.kt` + `RuntimePlugin.kt` 的 `setBusy` ~26 行。APK 已存 `D:\Android\apk\dsh-go-1.0.28-11140025-mogai-arm64.apk`。
 
