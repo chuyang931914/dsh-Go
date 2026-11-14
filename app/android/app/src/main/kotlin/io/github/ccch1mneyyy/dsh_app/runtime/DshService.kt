@@ -186,7 +186,8 @@ class DshService : Service() {
         val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "dsh-app:runtime").apply {
             setReferenceCounted(false)
-            acquire()
+            // 兜底超时:引擎那侧忘了发 busy=false 时,锁自己到期,不会整夜占着 CPU。
+            acquire(WAKE_TIMEOUT_MS)
         }
     }
 
@@ -203,6 +204,9 @@ class DshService : Service() {
         const val ACTION_PHONE_STOP = "io.github.ccch1mneyyy.dsh_app.PHONE_STOP"
         const val ACTION_BUSY = "io.github.ccch1mneyyy.dsh_app.BUSY"
         const val EXTRA_BUSY = "busy"
+
+        /** 一次唤醒锁最长持有时间;正常生成远短于此,超时即视为泄漏。 */
+        private const val WAKE_TIMEOUT_MS = 20 * 60 * 1000L
         private const val PHONE_TASK_SCHEME = "dsh-phone-task"
         private const val EXTRA_STOP_GENERATION = "stopGeneration"
 
