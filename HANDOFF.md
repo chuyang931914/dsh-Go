@@ -47,7 +47,7 @@
 
 **构建 `11140025`（2026-11-14 00:25，1.0.28）**：`main` = `phone` = `82cbb8c`（撤回至 1.0.24 基底 `9da1d7c` + 选区全局指针路由 `e252b28` + 唤醒锁按需；隐藏思考已撤）。APK 206,215,379 字节，sha256 `ed984049db4adeceb8874219dab717091c225005c6ce2bd31d467eb53e55517f`，证书 `fb462eb1…3c2f`，versionCode `11140025` > `11131822`。电脑侧 `dart analyze` 0 error / 24 info；`flutter test test/chat` **1969 通过 / 0 失败**（含 message_menu 4 张 golden 全过）。新增 Kotlin 仅 `DshService.kt` + `RuntimePlugin.kt` 的 `setBusy` ~26 行。APK 已存 `D:\Android\apk\dsh-go-1.0.28-11140025-mogai-arm64.apk`。
 
-**分发 `11140025`（2026-11-14 00:35）**：APK `1.0.28+11140025` 待覆盖飞书原 file token；HANDOFF 待覆盖飞书与 `D:\HANDOFF.md`。
+**分发 `11140025`（2026-11-14 00:35）**：APK `1.0.28+11140025` 已覆盖飞书原 file token（云端版本 `7707699211113860288`，206,215,379 字节）；HANDOFF 已覆盖飞书（云端版本 `7707698589039856935`）与 `D:\HANDOFF.md`。
 
 **构建 `11121309`（2026-11-12 13:09，1.0.21）**：`main` ← `phone` 快进（`f5306f9..c3bf654`，含 `197368c` 选字修复）；APK 206,211,961 字节，sha256 `e67678f34658c9bcf8cbc779203973b2967208d7ba5ab4a61788d66a9c75401d`，证书 `fb462eb1…3c2f`，versionCode `11121309` > `11120812`。电脑侧 `dart analyze` = 0 error / 0 warning / 24 info；`flutter test test/chat` = **1967 通过 / 0 失败**（含 message/image menu 4 张 golden 全通过）。手机端报告的 4 张 golden 红为字体像素漂移（Rule 31），**未重建金色基准**。APK 已存 `D:\Android\apk\dsh-go-1.0.21-11121309-mogai-arm64.apk`。
 
