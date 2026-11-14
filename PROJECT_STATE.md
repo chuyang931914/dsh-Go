@@ -1,29 +1,23 @@
 # dsh-Go 项目记忆（新对话先读这一页）
 
-> 最后更新：2026-11-14 09:38（Asia/Shanghai）
+> 最后更新：2026-11-14 19:20（Asia/Shanghai）
 >
-> 这一页是给每个新对话的“开机记忆”：项目是什么、当前状态、双端分工、必须遵守的规则、正在做的事和下一步。
-> 详细实现与历史看 [`HANDOFF.md`](HANDOFF.md)；长期用户指令与决策看 [`project_memory.md`](project_memory.md)。
-> 本文件同时是 `/root/workspace/AGENTS.md` 的软链目标，新对话会把它作为工作区指令自动加载。
+> 新对话的开机记忆：项目、状态、分工、规则、待办。实现细节看 [`HANDOFF.md`](HANDOFF.md)。
+> 本文件是 `/root/workspace/AGENTS.md` 的软链目标，会自动加载。
 
 ## 1. 项目是什么
 
-- **dsh-Go 个人魔改版**：DeepSeek Harness 的 Android 客户端（Flutter 原生界面 + 纯 Dart 客户端 + PRoot 里跑 `dsh web` 的引擎运行时）。
-- 上游 1.0.15；本仓库是自用魔改，**不发布、不跟随官方更新**，自签名（证书 SHA-256 `fb462eb1…3c2f`，keystore `D:\Android\keystore\dsh-go-release.jks`）。
-- Gitee 是唯一事实源：`gitee.com/chuyang931914/dsh-go-mogai`；GitHub `chuyang931914/dsh-Go` 由 Gitee Push 镜像自动同步；默认分支都是 `main`。
-- 手机端仓库：`/root/workspace/dsh-Go`（兼容软链 `/root/dsh-Go`）；电脑端构建源：WSL `/root/dsh-Go`。
+- DeepSeek Harness 的 Android 客户端魔改版：Flutter 原生界面 + 纯 Dart 客户端 + PRoot 里跑 `dsh web` 的引擎。
+- 自用、不发布、不跟随官方；自签名（证书 `fb462eb1…3c2f`，keystore `D:\Android\keystore\dsh-go-release.jks`）。
+- Gitee 是唯一事实源 `gitee.com/chuyang931914/dsh-go-mogai`；手机端仓库 `/root/workspace/dsh-Go`，电脑构建源 WSL `/root/dsh-Go`。
 
 ## 2. 当前状态（以仓库当前提交为准）
 
-- **main = phone = `b5bd8e7`**（2026-11-14 09:38 出包）：1.0.29 = 1.0.28 全部 + 聊天页长按选字边缘自动滚（`chat_list.dart` 全局指针路由 + `TickerProviderStateMixin`）。版本 `1.0.29+11140932`。
-- **1.0.29 已出包**：buildNumber `11140932`，APK 206,214,152 字节，sha256 `c34fb33c…1ee485`，证书 `fb462eb1…3c2f`，D 盘 `D:\Android\apk\dsh-go-1.0.29-11140932-mogai-arm64.apk`，飞书待覆盖。
-- 电脑侧验证（b5bd8e7）：`dart analyze` 0 error / 0 warning / 24 info；`flutter test test/chat` **1969 通过 / 0 失败**；release 未开 R8/minify。
-- 1.0.28（`82cbb8c`，buildNumber `11140025`，206,215,379 字节，sha256 `ed984049…55517f`）：1.0.24 基底（`9da1d7c`）+ 选区全局指针路由（`e252b28`）+ 唤醒锁按需。思考过程**照常显示**（2026-11-14 02:00 撤掉隐藏思考）。真机反馈**边缘自动滚动仍无效**——1.0.28 改错了面板（改的是「选择文字」弹层，实际用的是长按直选），1.0.29 修。
-- 2026-11-14 00:35 **撤回**：1.0.25–1.0.28 的保险箱、红后灯带、隐藏思考、分层宠物全部撤出；完整版存档在分支 `archive/1.0.28-full`（`c82570c`，未推送前仅本地）。
-- 实机：**`1.0.29+11140932`**（2026-11-14 09:47 装）；选字边缘自动滚**真机验证通过**（09:55 用户确认「滚了」）。
-- 1.0.17 已交付：长按菜单裁剪（复制/全选/翻译 + ⋯ 分享/朗读/问AI）、问AI填入输入框、聊天页宠物关闭、左右滑只保留边缘 24dp、系统翻译。
-- 1.0.17 真机反馈两个问题：翻译跳到了 vivo **浏览器**、朗读语速太快；菜单/问AI/宠物/滑动手势三项未报问题。
-- 1.0.18 已收口：`SelectionPlugin.kt` 优先 `com.vivo.translator`、排除浏览器；朗读 `rate: 0.8, pitch: 1.0`；真机两项复验通过。
+- **实机**：`1.0.29+11140932`（2026-11-14 09:47 装）。长按选字拖边缘自动滚已真机验证通过。
+- **仓库**：`main` = `phone` = `2fd8d74`，源码版本 `1.0.30+1`，**未出包**（1.0.30 = 唤醒锁 20 分钟兜底超时）。
+- **1.0.29 是回退基线**：APK 206,214,152 字节，sha256 `c34fb33c…1ee485`，D 盘与飞书都有。出问题回退到它。
+- **1.0.30 待验**：装机后息屏 30 分钟看耗电降幅。
+- 已撤出的功能（保险箱、红后灯带、隐藏思考、分层宠物）完整版存档在分支 `archive/1.0.28-full`。
 
 ## 3. 双端分工
 
@@ -55,36 +49,31 @@
 - 文档/代码改动先 commit + 推 Gitee `phone`/`main`，推完才算完成（HANDOFF Rule 33）。
 - **不要把 Gitee 令牌、keystore 密码写进文档/仓库/聊天**；凭据在 `~/.git-credentials`（600）。
 - **仓库是唯一源头**：手机/电脑的代码、插件源码、界面配置、文档改动都必须提交并推送；只有密钥（`secrets.json`）和 `node_modules/` 例外。
-- versionName 按发布 patch +1（当前 1.0.28），versionCode 由构建脚本按 `MMDDHHmm` 生成；APK 名带 versionName + buildNumber。
+- versionName 按发布 patch +1（当前 1.0.30），versionCode 由构建脚本按 `MMDDHHmm` 生成；APK 名带 versionName + buildNumber。
 - 手机端不构建 APK；出包/分发只在电脑侧，走飞书云空间链接。
 - 用户偏好：中文、手机屏幕小要简洁；先结论后细节；给绝对路径；不擅自扩大改动范围。
 
 ## 6. 当前待办（按顺序）
 
-1. **1.0.29 已收口**：选字边缘自动滚真机通过。剩余未验：唤醒锁按需（生成中才持 CPU 锁）、待机耗电基线。
-2. **1.0.29 待办**：保险箱（Kotlin 五个坑已记录）、待机耗电基线复测；红后灯带判无用，不做。
-3. **AI 费用插件**：`local-ai-cost` 已在用，DeepSeek 余额 + 火山本月账单；凭据在插件 `secrets.json` 600，不入库。
-4. **Live2D 聊天页宠物**：已停做，WIP 在 `pets/layered-v2`（未推）。
-5. 安全项（令牌与 keystore 密码复用）用户已决定暂缓，不主动提。
+1. **1.0.30 待出包**：唤醒锁 20 分钟兜底超时 + 选字判定加长按门槛。装后测息屏 30 分钟耗电。
+2. **保险箱**：延后，Kotlin 五个坑已记在 `BACKLOG.md`。
+3. **AI 费用插件**：`local-ai-cost` 在用；凭据在插件 `secrets.json`（600），不入库。
+4. **聊天页宠物**：停做，WIP 在 `pets/layered-v2`。
+5. 安全项（令牌/keystore 复用）暂缓，不主动提。
 
 ## 7. 最近关键决策
 
-- 2026-11-11：长按菜单只保留复制/全选/翻译，⋯ 放分享/朗读/问AI；AI搜索、浏览器搜索、爱奇艺、快速搜索、搜视频、问问 DeepSeek、系统翻译全部剔除。
-- 翻译不接新模型：走 Android `ACTION_PROCESS_TEXT`，优先 vivo 翻译本体；问AI只填入输入框，不自动发送。
-- 聊天页宠物直接关闭（`PetStage(showPet: false)`）；悬浮窗/设置里的宠物保留。
-- 聊天页中间左右滑禁用，只保留屏幕左右边缘 **0–80dp** 起手（最外 0–20dp 可能被系统返回手势拿走）；真机已验证可稳定触发。
-- 每条消息显示时间戳：默认精简，点任意时间全聊天切换完整（周几+秒）；日期只在每天第一条；真机已验证。
-- 2026-11-12：AI 费用插件 `local-ai-cost` 用官方接口查 DeepSeek 余额与火山本月账单；火山用子账号账单只读 AK/SK，不用 Ark API Key。
-- 2026-11-12：聊天页用 `ui.json` 的 `hide: ["pluginCapsule"]` 隐藏「插件」聚合入口；费用条和面板保留。
-- 1.0.16 是版本号冒烟包，不装机；验证基线仍以 `11111711` 为准，1.0.17 已覆盖安装成功。
-- Gitee 令牌与 keystore 密码复用是已知低优先级安全问题：不写进文档/仓库，轮换时再处理。
+- 聊天页宠物关闭；悬浮窗与设置里的宠物保留。
+- 长按菜单只留复制/全选/引用/翻译/分享/朗读/问AI；翻译走 `ACTION_PROCESS_TEXT`，优先 vivo 本体。
+- 左边缘 0–80dp 起手翻页，中间禁用。
+- 1.0.25–1.0.28 的保险箱/红后/隐藏思考/分层宠物已撤，存档 `archive/1.0.28-full`。
+- 1.0.29 定为回退基线。
 
 ## 8. 关键路径与命令
 
 ```bash
 # 手机端
-cd /root/workspace/dsh-Go
-source /root/dev/dsh-env.sh
+cd /root/workspace/dsh-Go && source /root/dev/dsh-env.sh
 cd app && dart analyze && flutter test <受影响目录>
 
 # 电脑端（WSL）
@@ -92,32 +81,13 @@ cd /root/dsh-Go && source tooling/env.sh
 DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 ```
 
-- 交接文档：`HANDOFF.md`
-- 待办/问题：`BACKLOG.md`
-- 进度日志：`PROGRESS.md`
-- 长期记忆：`project_memory.md`
-- 安装/覆盖验证：`/sdcard/Download/DSH-Go/` 下的反馈与标记文件
-- APK 下载（飞书）：`https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR`（当前 `1.0.23+11121734`）
+- 交接 `HANDOFF.md`｜待办 `BACKLOG.md`｜日志 `PROGRESS.md`｜版本表 `UPGRADE_TABLE.md`
+- 飞书 APK：`https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR`
 
 ## 9. 维护这一页
 
-- **已验证（2026-11-11 23:05）**：新会话的工作区指令会自动包含本页（`/root/workspace/AGENTS.md` 软链生效），不需要用户先说“读 HANDOFF”。
-
-- 每次发版、装机反馈、重要决策后，更新第 2、6、7 节；与 `HANDOFF.md` 同一次提交推送。
-- 换机/重装后，克隆仓库并运行 `bash tooling/install-workspace-memory.sh`，重建 `/root/workspace/AGENTS.md` 软链。
-- 这一页控制在 6KB 以内：它是“开机记忆”，不是详细文档。
-
-## 10. 电脑端开机记忆（只装一次）
-
-电脑新对话不应每次手贴文档。先确认仓库在 `/root/dsh-Go`，然后运行一次：
-
-```bash
-DSH_WORKSPACE=/root/workspace bash /root/dsh-Go/tooling/install-workspace-memory.sh
-```
-
-它把 `/root/workspace/AGENTS.md` 指向 `/root/dsh-Go/PROJECT_STATE.md`；之后新对话自动带上当前状态。仓库更新后 `PROJECT_STATE` 本身更新，不用重装软链。
-
-若电脑的工作区不是 `/root/workspace`，把 `DSH_WORKSPACE` 换成实际目录。脚本在父目录是 `/root` 且 `/root/workspace` 存在时也会自动选它。
+- 上限 6KB。发版、装机、重要决策后更新第 2、6 节，与 `HANDOFF.md` 同一次提交推送。
+- 电脑端：`DSH_WORKSPACE=/root/workspace bash /root/dsh-Go/tooling/install-workspace-memory.sh` 重建软链。
 
 ## 11. 每轮固定动作（防漂移）
 

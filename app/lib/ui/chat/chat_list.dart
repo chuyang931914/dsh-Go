@@ -221,8 +221,12 @@ class _ChatListState extends ConsumerState<ChatList> with TickerProviderStateMix
   Offset? _edgePointer;
   Offset? _edgeDown;
   double? _edgeOffsetAtDown;
+  Duration? _edgeDownAt;
   bool _selectingText = false;
   static const double _edgeBand = 64;
+
+  /// 长按起手的门槛:Flutter 的长按是 500ms,取一半留余量。
+  static const Duration _longPressFloor = Duration(milliseconds: 300);
   Duration _glideLast = Duration.zero;
 
   /// Time constant of the glide: a line (about 28) lands in some 150ms, and lines
@@ -328,6 +332,7 @@ class _ChatListState extends ConsumerState<ChatList> with TickerProviderStateMix
     final ticker = _edgeTicker ??= createTicker(_onEdgeTick);
     if (event is PointerDownEvent) {
       _edgeDown = event.position;
+      _edgeDownAt = event.timeStamp;
       _edgePointer = event.position;
       _edgeOffsetAtDown = _scroll.hasClients ? _scroll.offset : null;
       _selectingText = false;
@@ -338,8 +343,10 @@ class _ChatListState extends ConsumerState<ChatList> with TickerProviderStateMix
       _edgePointer = event.position;
       final down = _edgeDown;
       final at = _edgeOffsetAtDown;
-      // 手指动了、列表却没动:这一下被选区吃掉了,那就是在选字。
-      if (!_selectingText && down != null && at != null && _scroll.hasClients) {
+      // 三个条件同时满足才算在选字:先按住一会儿(长按起手)、手指动了、
+      // 列表没动(这一下被选区吃掉)。普通滑动第一帧就在动,不会误判。
+      final since = _edgeDownAt == null ? Duration.zero : event.timeStamp - _edgeDownAt!;
+      if (!_selectingText && down != null && at != null && _scroll.hasClients && since >= _longPressFloor) {
         final moved = (event.position - down).distance > 12;
         if (moved && (_scroll.offset - at).abs() < 0.5) _selectingText = true;
       }
@@ -347,6 +354,7 @@ class _ChatListState extends ConsumerState<ChatList> with TickerProviderStateMix
     }
     if (event is PointerUpEvent || event is PointerCancelEvent) {
       _edgeDown = null;
+      _edgeDownAt = null;
       _edgeOffsetAtDown = null;
       _selectingText = false;
       if (ticker.isActive) ticker.stop();
