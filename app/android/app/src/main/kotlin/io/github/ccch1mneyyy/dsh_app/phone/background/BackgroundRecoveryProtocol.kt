@@ -44,7 +44,9 @@ internal object BackgroundRecoveryProtocol {
             get(Proto.RECOVERY_PEER) != record.birth.peer || get(Proto.OWNER) != record.owner) return false
         val kind = get(Proto.RECOVERY_KIND)
         if (kind != "previousBoot" && kind != "deadPeerEmpty") return false
-        if (kind == "deadPeerEmpty" && (record.displayId == null || !record.birth.pidNsAvailable)) return false
+        // A previous-boot record cannot leave a live display behind, so its id needs no echo; a
+        // deadPeerEmpty receipt must still echo the id whenever the journal recorded one.
+        if (kind == "previousBoot") return true
         return if (record.displayId == null) !contains(Proto.DISPLAY_ID)
         else contains(Proto.DISPLAY_ID) && (get(Proto.DISPLAY_ID) as? Int) == record.displayId
     }

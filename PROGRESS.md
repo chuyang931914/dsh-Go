@@ -3,6 +3,16 @@
 > 追加式流水账：每次构建、装机、真机反馈、重要决策后加一条（最新在上）。
 > 这里记“发生了什么”；当前状态看 [`PROJECT_STATE.md`](PROJECT_STATE.md)，完整实现看 [`HANDOFF.md`](HANDOFF.md)。
 
+## 2026-11-14 21:17 · 摘入上游 v1.0.16 资源自愈（1a，未出包）
+
+- 背景：上一轮评估记在 `BACKLOG.md`「上游 v1.0.16 三条特性评估」；用户选 1A。
+- 摘入：`133d2122`（OEM 拒绝命名空间时不再永久阻断旧后台资源恢复）+ `f8ee2a6a`（无 displayId 的孤儿探针记录同一开机内结案）。`5db07c91`+`df16eb2` 是上游自我回退，跳过。
+- 改动：4 个 Kotlin 文件 +75/−23。`ResourceRecovery.verify` 把 uid 校验提到 displays 查询之前、`displayId` 为空时返回 `deadPeerEmpty`（原先抛 `recoveryUnknown` 永久卡住）；`BackgroundRecoveryProtocol.recovered` 去掉 deadPeerEmpty 的 pidNs 前置限制；两个单测新增 5 个用例。
+- 移植坑：① `f8ee2a6a` 不能原样打（前置含上游已 revert 的 `sameNamespace` 重构，:69 冲突）→ `ResourceRecovery.kt` 手工移植，其余 3 文件按补丁打；② 上游 `unavailableNamespaceCanConsumeDeadPeerEmptyFromTheHostProof` 与自身实现矛盾（`previousBoot` 记录带 id、回执不带 id 却断言 true）→ 补「`previousBoot` 提前放行」2 行，理由：上一次开机的记录不可能留下活着的虚拟屏，不需要回执回声 id。
+- 验证：`dart analyze` 0 error / 24 info（与 1.0.30 同）；`:app:testArm64DebugUnitTest` 整个 `phone.background` 包 **427 通过 / 0 失败**（首次跑 debug 变体要下载 embedding，6m26s；之后增量 4s）。
+- 未出包：源码仍 `1.0.30+1`，出 1.0.31 时再 +1；真机要验「后台屏断开后能自动恢复」「残留记录能释放」。
+- 未做：工具输出折叠（可摘）、1b 连接重写（需适配，含「升级后不复用旧服务」）、tawcroot（不能摘）。
+
 ## 2026-11-14 20:10 · 1.0.30 出包（arm64，buildNumber 11142005）
 
 - `main` = `phone` = `52ad553`，工作区干净，reset --hard 后直接构建。
