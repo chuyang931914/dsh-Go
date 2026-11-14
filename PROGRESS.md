@@ -3,6 +3,17 @@
 > 追加式流水账：每次构建、装机、真机反馈、重要决策后加一条（最新在上）。
 > 这里记“发生了什么”；当前状态看 [`PROJECT_STATE.md`](PROJECT_STATE.md)，完整实现看 [`HANDOFF.md`](HANDOFF.md)。
 
+## 2026-11-14 21:50 · 1.0.31 出包（arm64，buildNumber 11142142）
+
+- 基线：`git fetch` 后 `main` = `origin/main` = `origin/phone` = `c9a1547`，`app/pubspec.yaml` = `1.0.31+1`，工作区干净。
+- 电脑侧验证：`dart analyze` 0 error / 0 warning / 24 info（全 deprecated_member_use / unnecessary_import）；`flutter test test/chat` **1969 通过 / 0 失败**（2m08s）。
+- 环境事故：首次跑 test 时 WSL 发行版整体卡死（`WSAETIMEDOUT`，遗留 6 个 wsl.exe 进程），`wsl --shutdown` 后恢复；之后 test/build 改成后台写 `/root/*.log` 再读，避免 Shell 超时丢输出。
+- 构建：`DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64`，Gradle `assembleArm64Release` 268.4s；无 error；warning 仅 flutter_webrtc KGP 弃用 1 条。
+- APK：`D:\Android\apk\dsh-go-1.0.31-11142142-mogai-arm64.apk`，206,213,828 字节，sha256 `d2cc740b895c03f7b76aab42c75f17cc70b5d8f53a2e9079233f55ba4ff3d8e9`，证书 `fb462eb1…3c2f`，versionCode `11142142` > `11142005`。
+- 源码包：`dsh-go-1.0.31-11142142-mogai-src.zip`，628,380,110 字节，sha256 `167c26ce27395e23df1a10f0f002107b0c132aa0fc329e81d58bd457ded4714f`，6,980 文件；排除项（`.git`/`app/build`/.dart_tool）校验 0 命中，保留 `runtime/out`。
+- push：`Everything up-to-date`，`ls-remote` = `c9a15479b5e9efad994aa74019472b24af78d9f6`。
+- 本版内容：上游 v1.0.16 资源自愈（1a）。装机要验：后台屏断连后自动恢复、journal 无残留卡死记录，以及 1.0.30/1.0.31 息屏 30 分钟耗电。
+
 ## 2026-11-14 21:17 · 摘入上游 v1.0.16 资源自愈（1a，未出包）
 
 - 背景：上一轮评估记在 `BACKLOG.md`「上游 v1.0.16 三条特性评估」；用户选 1A。

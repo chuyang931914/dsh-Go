@@ -1,10 +1,10 @@
 # dsh-Go 魔改版 · 项目交接文档
 
 > 用途：跨设备 / 跨账号 / 跨对话恢复本项目。任何人（或未来的我）拿到这份文档 + 两个仓库地址，就能从零把环境、签名、APK 全部重建出来。
-> 最后更新：2026-11-14 20:10（1.0.30 出包）
+> 最后更新：2026-11-14 22:05（1.0.31 出包）
 > 权威副本：本文件同时放在仓库根目录 `HANDOFF.md`（随 Git 推送，跨设备可用）。
 >
-> **当前状态（2026-11-14 20:05）**：1.0.30 已出包，buildNumber `11142005`。本版两处：唤醒锁 20 分钟兜底超时（`DshService.kt` 的 `WAKE_TIMEOUT_MS`）+ 选字滚加长按 300ms 门槛（`chat_list.dart` 的 `_longPressFloor`）。`main` = `phone` = `52ad553`。APK 已存 `D:\Android\apk\dsh-go-1.0.30-11142005-mogai-arm64.apk`，待装机验证待机耗电与长按选字拖边缘。
+> **当前状态（2026-11-14 22:05）**：1.0.31 已出包，buildNumber `11142142`，摘入上游 v1.0.16 资源自愈（`ResourceRecovery` / `BackgroundRecoveryProtocol`）：后台屏断连后可自恢复、无 displayId 的孤儿记录能在同一开机内结案。`main` = `phone` = `c9a1547`，源码 `1.0.31+1`。APK 已存 `D:\Android\apk\dsh-go-1.0.31-11142142-mogai-arm64.apk`，待装机验后台屏自愈、journal 残留与息屏耗电。
 
 > **新对话记忆**：`/root/workspace/AGENTS.md` 是指向 [`PROJECT_STATE.md`](PROJECT_STATE.md) 的软链，新对话会自动加载；换机/重装后运行 `bash tooling/install-workspace-memory.sh`。
 
@@ -31,11 +31,11 @@
 
 | 产物 | 路径 |
 | --- | --- |
-| 魔改版 APK（本地） | `D:\Android\apk\dsh-go-1.0.30-11142005-mogai-arm64.apk`（当前最新，206,213,645 字节，sha256 `cc712b78…f15eed`） |
-| **APK 下载（飞书云空间，优先）** | https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR （`dsh-go-1.0.30-11142005-mogai-arm64.apk`，当前 11142005；点开 → 右上角「...」→ 下载；飞书内直接下载，不走 GitHub/Gitee） |
-| **源码包（飞书云空间）** | https://my.feishu.cn/file/K2kCbcXXDowHj4xewIpcTB1onRg （`dsh-go-1.0.30-11142005-mogai-src.zip`，626,831,701 字节 / 598MB，`main` = `52ad553`，sha256 `1b684441…425c44ec`；已排除 `.git`、`app/build`、`.dart_tool`、`runtime/.work`、`runtime/.cache`，保留 `runtime/out` 可直接重建 APK） |
+| 魔改版 APK（本地） | `D:\Android\apk\dsh-go-1.0.31-11142142-mogai-arm64.apk`（当前最新，206,213,828 字节，sha256 `d2cc740b…f3d8e9`） |
+| **APK 下载（飞书云空间，优先）** | https://my.feishu.cn/file/YCLtbgPDkoAiR5xAhHvcfMpVnge （`dsh-go-1.0.31-11142142-mogai-arm64.apk`，当前 11142142；点开 → 右上角「...」→ 下载；飞书内直接下载，不走 GitHub/Gitee） |
+| **源码包（飞书云空间）** | https://my.feishu.cn/file/P4gvbQ8Mzow7xhxHUV9cz5pPnid （`dsh-go-1.0.31-11142142-mogai-src.zip`，628,380,110 字节 / 599MB，`main` = `c9a1547`，sha256 `167c26ce…ded4714f`；已排除 `.git`、`app/build`、`.dart_tool`、`runtime/.work`、`runtime/.cache`，保留 `runtime/out` 可直接重建 APK） |
 | 源码包（旧版，已删） | `IEqgbC77zoOqWmxo277cr8Wdnue`（`dsh-go-1.0.15-mogai-src.zip`）已于 2026-11-14 删除，飞书只留最新一份 |
-| 源码包（本地） | `D:\Android\apk\dsh-go-1.0.30-11142005-mogai-src.zip`（同 sha256 `1b684441…425c44ec`） |
+| 源码包（本地） | `D:\Android\apk\dsh-go-1.0.31-11142142-mogai-src.zip`（同 sha256 `167c26ce…ded4714f`） |
 | APK 备份（GitHub Release） | https://github.com/chuyang931914/dsh-Go/releases/download/v1.0.15-mogai/dsh-go-1.0.15-mogai-arm64.apk |
 | 构建脚本原始输出 | WSL 内 `/root/dsh-Go/app/build/app/outputs/flutter-apk/app-arm64-release.apk` |
 | 签名文件 | `D:\Android\keystore\dsh-go-release.jks` |
@@ -48,6 +48,10 @@
 | 交接文档（飞书云空间） | https://my.feishu.cn/file/OJSGbqo2IofCYQxm8uycjTGAn7d （`HANDOFF-dsh-Go.md`，每次更新后覆盖上传） |
 
 **源码分发 `1.0.29`（2026-11-14 19:00）**：`dsh-go-1.0.29-11140932-mogai-src.zip` 已上传飞书（file token `K2kCbcXXDowHj4xewIpcTB1onRg`，云端版本 `7707983819785112840`），626,822,487 字节，sha256 `1c71d560f8c3ded5982725af523539ffb52ac2fb2ca44d1ef3dcff0b55089029`，6965 个文件，`pubspec` 1.0.29+1。已排除 `.git`/`app/build`/`.dart_tool`，保留 `runtime/out`。本地同份 `D:\Android\apk\`。**注意**：覆盖旧 token `IEqgbC77zoOqWmxo277cr8Wdnue` 连续两次报服务端 `1061001 unknown error`，改用新建文件上传成功，旧 1.0.15 源码包于同日删除，避免拿错。
+
+**分发 `11142142`（2026-11-14 22:05）**：APK `1.0.31+11142142` 新建上传飞书（file token `YCLtbgPDkoAiR5xAhHvcfMpVnge`，云端版本 `7708024321213484294`，206,213,828 字节），标题 `dsh-go-1.0.31-11142142-mogai-arm64.apk`；源码包 `dsh-go-1.0.31-11142142-mogai-src.zip` 新建上传（file token `P4gvbQ8Mzow7xhxHUV9cz5pPnid`，云端版本 `7708026040886496516`，628,380,110 字节）。两者均**新建文件**、未覆盖旧 token，规避 `1061001`。
+
+**构建 `11142142`（2026-11-14 21:42，1.0.31）**：`main` = `phone` = `c9a1547`，源码 `1.0.31+1`。本版摘上游 v1.0.16 资源自愈：`ResourceRecovery.verify` 把 uid 校验提到 displays 查询之前、`displayId` 为空时返回 `deadPeerEmpty`（不再抛 `recoveryUnknown` 永久卡住）；`BackgroundRecoveryProtocol.recovered` 去掉 `deadPeerEmpty` 的 pidNs 前置限制，并加 `previousBoot` 提前放行。APK 206,213,828 字节，sha256 `d2cc740b895c03f7b76aab42c75f17cc70b5d8f53a2e9079233f55ba4ff3d8e9`，证书 `fb462eb1…3c2f`，versionCode `11142142` > `11142005`，release 未开 R8/minify，Gradle `assembleArm64Release` 268.4s。电脑侧 `dart analyze` 0 error / 0 warning / 24 info；`flutter test test/chat` **1969 通过 / 0 失败**。
 
 **分发 `11142005`（2026-11-14 20:25）**：APK `1.0.30+11142005` 已覆盖飞书 APK token `RzcFbpFCyokpPqxVIq5cUI1QnuR`（云端版本 `7707999467626056956`，206,213,645 字节），标题同步改为 `dsh-go-1.0.30-11142005-mogai-arm64.apk`。源码包 `dsh-go-1.0.30-11142005-mogai-src.zip`（626,831,701 字节，sha256 `1b684441…425c44ec`）**覆盖成功**到原 token `K2kCbcXXDowHj4xewIpcTB1onRg`（云端版本 `7708000828329577776`），本次未复现 `1061001`，token 未变、无需换新。
 
