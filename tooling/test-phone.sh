@@ -16,7 +16,10 @@ dart analyze || exit 1
 
 echo
 echo "== 非金色图测试 =="
-files=$(find $dirs -name '*_test.dart' ! -name '*_golden_test.dart' ! -path '*/goldens/*' | sort)
+# 金色图测试按内容识别(含 matchesGoldenFile 的文件一律跳过),不靠文件名。
+files=$(find $dirs -name '*_test.dart' ! -path '*/goldens/*' | sort | while read -r f; do
+  grep -q 'matchesGoldenFile' "$f" || echo "$f"
+done)
 if [ -z "$files" ]; then
   echo "没有找到可跑的测试文件"
   exit 1

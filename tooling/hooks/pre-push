@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# 推送前自检：工作区、版本、文档一致性。拦下明显不该推的状态。
+# 不检查远端分支是否对齐（推送当下必然不一致）。
+set -u
+
+root=$(git rev-parse --show-toplevel)
+cd "$root" || exit 1
+
+fail=0
+note() { printf '  %-24s %s\n' "$1" "$2"; }
+
+if [ -n "$(git status --porcelain)" ]; then
+  note "worktree" "脏，先把改动提交"
+  fail=1
+fi
+
+ver=$(sed -n 's/^version: //p' app/pubspec.yaml | head -1)
+short=${ver%%+*}
+if [ -n "$short" ] && ! grep -q "^| $short |" UPGRADE_TABLE.md; then
+  note "version in table" "缺 $short 一行"
+  fail=1
+fi
+
+bytes=$(wc -c < PROJECT_STATE.md)
+if [ "$bytes" -gt 6144 ]; then
+  note "PROJECT_STATE" "${bytes}B 超过 6KB"
+  fail=1
+fi
+
+if [ "$fail" = 0 ]; then
+  echo "pre-push: OK"
+else
+  echo "pre-push: 先修上面的问题，或 git push --no-verify 跳过"
+fi
+exit "$fail"
