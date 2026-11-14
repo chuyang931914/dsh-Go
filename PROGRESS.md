@@ -3,6 +3,15 @@
 > 追加式流水账：每次构建、装机、真机反馈、重要决策后加一条（最新在上）。
 > 这里记“发生了什么”；当前状态看 [`PROJECT_STATE.md`](PROJECT_STATE.md)，完整实现看 [`HANDOFF.md`](HANDOFF.md)。
 
+## 2026-11-14 19:00 · 1.0.29 源码打包发飞书
+
+- 源：`main` = `4bd6477`（1.0.29 代码 `b5bd8e7` + 出包文档提交）。
+- 包：`dsh-go-1.0.29-11140932-mogai-src.zip`，626,822,487 字节（598MB），sha256 `1c71d560f8c3ded5982725af523539ffb52ac2fb2ca44d1ef3dcff0b55089029`，6965 个文件，`pubspec` = `1.0.29+1`。
+- 排除：`.git`、`app/build`、`.dart_tool`、`runtime/.work`、`runtime/.cache`；保留 `runtime/out`（可直接重建 APK）。
+- 飞书：新建文件上传成功，file token `K2kCbcXXDowHj4xewIpcTB1onRg`，云端版本 `7707983819785112840`；本地同份 `D:\Android\apk\`。
+- **踩坑**：覆盖旧源码包 token `IEqgbC77zoOqWmxo277cr8Wdnue` 连试两次均报 `1061001 unknown error`（标 retryable，实际重试无效）；改为不带 `--file-token` 新建上传后一次成功。旧 1.0.15 源码包仍在原 token，未删除。
+- **注意**：打包期间手机侧把 `origin/main` 推到 `0799c3e`（1.0.30 进行中），此包内容为 1.0.29 代码，不含 1.0.30 改动。
+
 ## 2026-11-14 09:38 · 1.0.29 出包（arm64，buildNumber 11140932）
 
 - `main` = `phone` = `b5bd8e7`，工作区干净，reset --hard 后直接构建；本版改动仅 `chat_list.dart` +71 行、`pubspec.yaml` 版本号、两处文档，无 Kotlin 改动。
