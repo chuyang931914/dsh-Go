@@ -2,6 +2,11 @@
   <a href="README.md">简体中文</a> · <b>English</b>
 </p>
 
+> **Personal fork**: modified from [ccch1mneyyy/dsh-go](https://github.com/ccch1mneyyy/dsh-go) for private use. It does not follow upstream releases and does not accept outside PRs.
+> The source of truth is Gitee `https://gitee.com/chuyang931914/dsh-go-mogai` (the GitHub `chuyang931914/dsh-Go` is a mirror).
+> Build and release steps follow [`PROJECT_STATE.md`](PROJECT_STATE.md); parts below still come from upstream and were not re-checked.
+
+
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/assets/hero-en-dark.webp">
@@ -259,7 +264,7 @@ The following workflow targets **Linux x86_64**. The toolchain script currently 
 Start with the complete source tree and project assets. Fonts, images and other files declared in `app/pubspec.yaml` are build inputs. The following script generates the runtime bundle.
 
 ```bash
-git clone https://github.com/ccch1mneyyy/dsh-go.git
+git clone https://gitee.com/chuyang931914/dsh-go-mogai.git
 cd dsh-go
 
 bash tooling/setup-toolchain.sh

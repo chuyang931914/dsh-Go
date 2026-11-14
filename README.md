@@ -2,6 +2,11 @@
   <b>简体中文</b> · <a href="README.en.md">English</a>
 </p>
 
+> **本仓是个人魔改版**：基于 [ccch1mneyyy/dsh-go](https://github.com/ccch1mneyyy/dsh-go) 自用修改，不跟随上游发布，也不接受外部 PR。
+> 事实源在 Gitee `https://gitee.com/chuyang931914/dsh-go-mogai`（GitHub `chuyang931914/dsh-Go` 只是镜像）。
+> 构建与发布流程以 [`PROJECT_STATE.md`](PROJECT_STATE.md) 和 [`HANDOFF.md`](HANDOFF.md) 为准，下文部分内容来自上游，未逐条核对。
+
+
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/assets/hero-zh-dark.webp">
@@ -259,7 +264,7 @@ Android 8 及以上。手机直接下载 Release 页面上的安装包即可，�
 先取得完整源码和项目资源。`app/pubspec.yaml` 声明的字体、图片等都是构建输入，运行时包由下面的脚本生成。
 
 ```bash
-git clone https://github.com/ccch1mneyyy/dsh-go.git
+git clone https://gitee.com/chuyang931914/dsh-go-mogai.git
 cd dsh-go
 
 bash tooling/setup-toolchain.sh
