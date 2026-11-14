@@ -44,6 +44,7 @@ Shows your DeepSeek account or API key and balance; tap it to open your account.
 - **Voice input**: which recognition turns speech into text.
 - **Performance**: **Auto**, **Full** or **Light**, plus glass blur, interface motion, fluid motion and **Refresh rate** (Auto / Max / System).
 - **Background running**: see [FAQ](11-faq.md). Until it's set up, the row says so on the right.
+- **System permissions**: see, one by one, whether DSH Go has the permissions it needs (files, pets and floating windows, phone control, background running), and follow the page to turn on what's missing in system settings.
 
 ## Hosts
 
