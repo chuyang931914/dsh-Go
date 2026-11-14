@@ -49,6 +49,14 @@
 - 本版改动只两件：选字全局指针路由 + 唤醒锁按需（`DshService.kt` + `RuntimePlugin.kt` 的 setBusy ~26 行）。思考照常显示。
 - 装机待验：选字滚、唤醒锁按需（后台与耗电）。
 
+## 2026-11-14 21:20 · 1.0.31 待出包（1a 资源自愈）
+
+- 电脑侧摘入上游 `133d2122` + `f8ee2a6a`，提交 `affc661`，4 个 Kotlin 文件 +75/−23，新增 5 个用例。
+- 电脑测：analyze 0 error / 24 info；`:app:testArm64DebugUnitTest` 的 `phone.background` 427 通过 / 0 失败。
+- 手机侧：`dart analyze` 0 error / 24 info（Kotlin 单测只能在电脑跑）。
+- 移植判断：`f8ee2a6a` 依赖上游已 revert 的 sameNamespace 重构，`ResourceRecovery.kt` 手工移植；上游 `unavailableNamespaceCanConsumeDeadPeerEmptyFromTheHostProof` 自相矛盾，补了两行 previousBoot 提前放行。
+- 本版**不解决**「升级后要手动重开手机操控」——那是 1b 的服务版本绑定，排 1.0.32。
+
 ## 2026-11-14 20:30 · 1.0.30 装机，选字验证通过
 
 - 装 `1.0.30+11142005`（206,213,645 字节，sha256 `cc712b78…f15eed`），覆盖安装成功，数据保留。
