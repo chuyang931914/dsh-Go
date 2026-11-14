@@ -3,14 +3,6 @@
 > 用户决定（2026-11-11）：暂记 1.0.19，**这几天先收集问题**，不急着开工。
 > 新问题直接追加到本文件；开 1.0.19 时按这里逐条确认方案。
 
-## 后续（未排期）
-
-- **Live2D 聊天页宠物**（用户 2026-11-11 提出，先不定）
-  - 现状：用户采用 Live2D；没有画师，隔壁 AI 出素材；已有 `蓝发少女_拆件全拆版.zip`（57 层 + offsets，2056×4478，2x）。README 写“白发狐耳少女”，命名待核。
-  - 关键限制：拆件不是可运行模型，没有 `.moc3`/`.model3.json`/动作/物理；嘴只有闭合一张，手指未拆；真正 Live2D 需 Cubism Editor 绑定导出。
-  - 用户决定：先确认需要的素材能不能做完；**能做完就做实时交互，做不完再议**，暂不排期。
-  - 可选路线（届时定）：A 分层木偶（推荐）/ B 烘焙成 PetPack 精灵图 / C 原生 Cubism SDK。
-
 ## 已登记需求
 
 - [x] **聊天界面加时间戳**（2026-11-19 已实现；1.0.19/1.0.20 真机确认）
@@ -67,10 +59,6 @@
 - 待验三件（用户要求记住）：①选字边缘滚动（改过两次：1.0.27 Listener 版失败、1.0.28 全局指针版待验）；②唤醒锁按需 + 待机耗电基线，未测；③隐藏思考过程，未验。
 - 【历史，已不做】保险箱当时要补的 Kotlin 坑：`RuntimePlugin` 用 `appContext`、`status` 返回 bool、`SecretKeyFactory` 取 KeyInfo、vault 插件按 Activity 注册、`INSTALL_DONE` 释放唤醒锁。
 
-## 已决定不做
-
-- **密钥保险箱**（2026-11-14）：用户决定剔除，不再排期。完整实现存档在分支 `archive/1.0.28-full`，需要时从那里取。
-
 ## 手机操控在升级后掉线（2026-11-14 20:47）
 
 - 现象：20:47 后手机操控开关 false、桥接监听 false，无障碍工具从会话里消失。**用户 20:50 说明是他自己关的，不是升级导致的回归。**
@@ -85,7 +73,6 @@
 1. **工具输出折叠**（摘上游 `c08f1cff`，14 文件 +1316/−47，零冲突；follow-up `728f1689` 只在两份 `04-phone-control.md` 冲突，按本地版改）。超长工具输出只排头尾，全文另开页。
 2. **1b 精简版**：只摘「升级后不复用旧服务」——后台服务绑定 `.version(versionCode)`，落在 `ShizukuStarter.kt`/`BackgroundControl.kt` 及配套提交；**不**整包重写 55 文件，不碰 tawcroot。上游自述未真机验证，必须真机验。
 
-- **明确不做**：无障碍自动恢复（用户 22:33 决定暂不补，缺 `WRITE_SECURE_SETTINGS`）；1.0.30/1.0.31 息屏耗电对比（免测）。
 - **验收**：① 覆盖安装 1.0.32 后手机操控开关/桥接/后台屏不掉线、不用重开；② 超长工具输出能折叠、全文页正常；③ `dart analyze` 0 error + 非金色测试 + `phone.background` 单测全绿。
 - **版本**：出包时 `pubspec.yaml` 改 `1.0.32+1`，buildNumber 由脚本按 `MMDDHHmm` 生成。
 
@@ -95,5 +82,4 @@
 - **已摘（1a）**：`133d2122` OEM 拒绝命名空间时不再永久阻断旧后台资源恢复 + `f8ee2a6a` 无 displayId 的孤儿探针记录同一开机内结案。4 文件 +72/−23。`5db07c91`+`df16eb2` 是上游自我回退，跳过。
 - **可摘、未做**：超长工具输出只排头尾 + 全文另开页（`c08f1cff`，14 文件 +1316/−47，零冲突；follow-up `728f1689` 只在两份 `04-phone-control.md` 冲突）。
 - **需适配、未做（1b）**：后台屏/Shell 连接重写（`91bb9af3` 55 文件 +2843/−1113 + 4 个配套提交），11 文件实冲突：`BackgroundControl.kt`、`BackgroundGateState.kt`、`ShizukuStarter.kt`、`phone_control_screen.dart`、2 个 strings.xml、2 个测试、4 份文档。「升级后不复用旧服务」就在 `ShizukuStarter`/`BackgroundControl`（服务绑定 `.version(versionCode)`），上游自述未真机验证。
-- **不能摘**：tawcroot 加速启动（18 提交、60 文件 +3346/−151）。依赖 `runtime/tawcroot/build.py`、`runtime/patches/series`（我们只有 `pins.json` + 124 个 diff）、1.0.16 的直接启动重构与引擎 JS 补丁；`DshProcess.kt`/`RuntimeController.kt` 打不上。
 - `#1096` 上游仍 open，`RecoveryPlatform.birth` 的 ns 三层判定 v1.0.16 没动（我们树里已是 try/catch 容错版）。
