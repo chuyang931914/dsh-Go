@@ -23,24 +23,17 @@
 
 | 端 | 做什么 | 不做什么 |
 | --- | --- | --- |
-| 电脑（Windows + WSL `Ubuntu24`） | APK 构建/签名/分发、飞书与 D 盘同步、全量 `flutter test`、金色图重建、上游升级 | 不把没跑过测试的代码推 `main` |
-| 手机（Android proot Ubuntu，aarch64） | `dart analyze`、非金色图测试、交叉复跑、文档维护、装机校验、分支整理 | **不构建/不分发 APK**；不重生成金色图 |
+| 电脑（WSL） | 构建/签名/分发、飞书与 D 盘、全量测试、金色图 | 不推没测过的代码到 `main` |
+| 手机（proot aarch64） | `dart analyze`、非金色图测试、文档、装机校验 | **不构建/不分发 APK** |
 
 手机端环境：Flutter 3.47.7 linux-arm64 `/root/dev/flutter`；`source /root/dev/dsh-env.sh`；字体 `DSH_TEST_FONT_DIR=/usr/share/fonts/opentype/noto`。
 
 ## 4. 每次新对话必须先做
 
-1. 读完这一页，再回答项目问题；**不要凭旧对话里的版本/状态直接下结论**。
-2. 在仓库里确认当前事实：
-   ```bash
-   cd /root/workspace/dsh-Go
-   git fetch origin
-   git log -1 --format='%h %s'
-   grep '^version:' app/pubspec.yaml
-   ```
-3. 需要实现细节、Rules、构建命令时读 `HANDOFF.md`；长期偏好/决策读 `project_memory.md`。
-4. 改动前先看工作树/分支/上游，按 HANDOFF 8.3/第十四节走 `phone`；不要动 `main`。
-5. **时间必须精确**：回答涉及时间/计时前先运行 `date '+%F %T %Z'`，写精确值；禁止“约/左右/四舍五入”。聊天页时间戳只是 UI，不作为时钟。
+1. 读完这页，别凭旧聊天猜状态。
+2. 核对事实：`bash tooling/repo-check.sh`（分支、版本、文档一致性一把查）。
+3. 实现细节读 `HANDOFF.md`；长期偏好读 `project_memory.md`。
+4. 改动走 `phone`，不动 `main`；时间先跑 `date '+%F %T %Z'`，写精确值。
 
 ## 5. 不可违反的规则
 
