@@ -47,6 +47,8 @@
 
 **构建 `11140932`（2026-11-14 09:38，1.0.29）**：`main` = `phone` = `b5bd8e7`（1.0.28 全部 + 聊天页长按选字边缘自动滚；本版只动 `chat_list.dart` +71 行，`_ChatListState` 由 `SingleTickerProviderStateMixin` 换 `TickerProviderStateMixin`，`_SelectTextSheet` 滚动代码保留未删；无 Kotlin 改动）。APK 206,214,152 字节，sha256 `c34fb33cfc49ef71b96306dd00b47e777759e1c81508bf08619df8b7131ee485`，证书 `fb462eb1…3c2f`，versionCode `11140932` > `11140025`，release 未开 R8/minify。电脑侧 `dart analyze` 0 error / 0 warning / 24 info；`flutter test test/chat` **1969 通过 / 0 失败**。APK 已存 `D:\Android\apk\dsh-go-1.0.29-11140932-mogai-arm64.apk`。
 
+**分发 `11140932`（2026-11-14 09:45）**：APK `1.0.29+11140932` 已覆盖飞书原 file token（云端版本 `7707836313096981761`，206,214,152 字节）；HANDOFF 已覆盖飞书（file token `OJSGbqo2IofCYQxm8uycjTGAn7d`）与 `D:\HANDOFF.md`。
+
 **构建 `11140025`（2026-11-14 00:25，1.0.28）**：`main` = `phone` = `82cbb8c`（撤回至 1.0.24 基底 `9da1d7c` + 选区全局指针路由 `e252b28` + 唤醒锁按需；隐藏思考已撤）。APK 206,215,379 字节，sha256 `ed984049db4adeceb8874219dab717091c225005c6ce2bd31d467eb53e55517f`，证书 `fb462eb1…3c2f`，versionCode `11140025` > `11131822`。电脑侧 `dart analyze` 0 error / 24 info；`flutter test test/chat` **1969 通过 / 0 失败**（含 message_menu 4 张 golden 全过）。新增 Kotlin 仅 `DshService.kt` + `RuntimePlugin.kt` 的 `setBusy` ~26 行。APK 已存 `D:\Android\apk\dsh-go-1.0.28-11140025-mogai-arm64.apk`。
 
 **分发 `11140025`（2026-11-14 00:35）**：APK `1.0.28+11140025` 已覆盖飞书原 file token（云端版本 `7707699211113860288`，206,215,379 字节）；HANDOFF 已覆盖飞书（云端版本 `7707698589039856935`）与 `D:\HANDOFF.md`。
