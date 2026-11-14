@@ -76,7 +76,7 @@ cd /root/dsh-Go && source tooling/env.sh
 DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
 ```
 
-- 交接 `HANDOFF.md`｜待办 `BACKLOG.md`｜日志 `PROGRESS.md`｜版本表 `UPGRADE_TABLE.md`
+- 交接 `HANDOFF.md`｜待办 `BACKLOG.md`｜日志 `PROGRESS.md`｜版本表 `UPGRADE_TABLE.md`｜装机剧本 `tooling/acceptance-phone.md`
 - 飞书 APK：`https://my.feishu.cn/file/RzcFbpFCyokpPqxVIq5cUI1QnuR`（当前 1.0.29）
 
 ## 9. 维护这一页
