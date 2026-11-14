@@ -21,7 +21,7 @@ whenToUse: The user wants to add something of their own to the dsh-go phone app 
 | Agent 预设、Cordis 组合 | 官方组合类技能 | 官方流程 |
 
 - 用户没点名界面载体时：在本 App 里默认目标是 dsh-go 手机原生界面（`AGENTS.md` 也这么写）；但如果用户明确要网页版 / 桌面端，就按官方技能走。
-- 官方技能里的「不要在工作区外建包、不要在 `$DSH_HOME` 下建包、不要手写 profile 的 package.json / cordis.patch.yml」针对的是 **Cordis bundle**。dsh-go 原生插件不是 Cordis 工作区包、不用 `plugin_manager`；但它仍是 DSH bundle：`package.json` 必须有 `dsh.bundle.patch` 指向 `cordis.patch.yml`，缺了检查器会报「不是 bundle」。它装在 `$DSH_HOME/dsh-go/plugins/` 下，用 `dsh plugin --profile web add` 装。两条规则各管各的，不冲突，也不能互换目录和安装方式。
+- 官方技能里的「不要在工作区外建包、不要在 `$DSH_HOME` 下建包、不要手写 profile 的 package.json / cordis.patch.yml」针对的是 **Cordis bundle**。dsh-go 原生插件不是 Cordis bundle：它就是放在 `$DSH_HOME/dsh-go/plugins/` 下的 npm 包，用 `dsh plugin --profile web add` 装。两条规则各管各的，不冲突，也不能互换目录和安装方式。
 - 同一个「加个按钮」两边都能做时：在 dsh-go 里先做原生版本；用户还要网页版，再让官方技能另做一份。
 
 ## 先判断用哪个
@@ -42,7 +42,7 @@ whenToUse: The user wants to add something of their own to the dsh-go phone app 
 
 ## 步骤
 
-1. **建目录**（安装目标在 `$DSH_HOME/dsh-go/plugins/` 下，目录默认保留；引擎重置时若没勾保留 profile，重置后要重新 `add`。`DSH_HOME` 默认 `~/.dsh`。自己维护源码时，源码放仓库 `plugins/<name>/`，`$DSH_HOME` 里只放安装链接，改完 commit/push）：
+1. **建目录**（放在 `$DSH_HOME/dsh-go/plugins/` 下，引擎重置时会保留；`DSH_HOME` 默认 `~/.dsh`）：
    ```sh
    P="${DSH_HOME:-$HOME/.dsh}/dsh-go/plugins/local-quote"
    mkdir -p "$(dirname "$P")" && cp -r "${DSH_HOME:-$HOME/.dsh}/skills/dsh-go-plugin/template" "$P"
@@ -54,8 +54,8 @@ whenToUse: The user wants to add something of their own to the dsh-go phone app 
    ```sh
    node "${DSH_HOME:-$HOME/.dsh}/skills/dsh-go-plugin/kit/bin/check.mjs" "$P" --load
    ```
-   `--load` 用临时 `DSH_HOME` 加载你的代码——只保护真实 DSH 数据，代码仍在本机执行、能读宿主文件和网络：查处理函数在不在、视图函数画出来的视图 App 能不能画。`--json` 给机器读。
-6. **安装**（装上即生效，不用重启；先告诉用户会写入 profile `web`、装的是指向目录的链接，确认后再执行）：
+   `--load` 会在隔离环境里加载你的代码：查处理函数在不在、视图函数画出来的视图 App 能不能画。`--json` 给机器读。
+6. **安装**（装上即生效，不用重启）：
    ```sh
    dsh plugin --profile web add "$P"
    ```
@@ -87,10 +87,10 @@ whenToUse: The user wants to add something of their own to the dsh-go phone app 
 
 | 插槽 | 每插件 | 文字上限 | 字段 | 点按 |
 |---|---|---|---|---|
-| `composer.actions` | 2 | `label` 10 字 | `id` `label` `icon?` `effect?` `requires?` | 有 `effect`：App 直接执行，不写代码；否则调 `on(id)` |
-| `message.actions` | 2 | `label` 12 字 | `id` `label` `icon?` `effect?` `requires?` | 同上 |
+| `composer.actions` | 2 | `label` 10 字 | `id` `label` `icon?` `effect?` | 有 `effect`：App 直接执行，不写代码；否则调 `on(id)` |
+| `message.actions` | 2 | `label` 12 字 | 同上 | 同上 |
 | `composer.strip` | 1 | `text` 24 字 | `id` `icon?` `text?` `panel?` | `panel` → 打开该面板；否则 `on(id)` |
-| `panels` | 4 | `title` 16 字 | `id` `title` `icon?` `placement?` `presentation?` `view?` `micro?` | 视图里的按钮 / 行 / 选项 → `actions` |
+| `panels` | 4 | `title` 16 字 | `id` `title` `icon?` `placement?` `presentation?` `view?` | 视图里的按钮 / 行 / 选项 → `actions` |
 | `composer.tools` | 2 | `label` 8 字 | `id` `label` `icon?` `effect?` `panel?` `requires?` | `panel` / `effect` App 直接执行（两者只写一个）；否则 `on(id)` |
 | `session.actions` | 2 | `label` 12 字 | `id` `label` `icon?` `effect?` `requires?` | 同胶囊 |
 | `turn.note` | 1 | 每段 16 字 | `id` | 不能点；`turnNote(id, (scope, emit) => …)` 里 `emit({ 回合序号: { text, tone? } })` |
@@ -98,8 +98,7 @@ whenToUse: The user wants to add something of their own to the dsh-go phone app 
 - `title`、`label`、`text` 写字符串或 `{ "zh": "…", "en": "…" }`；中英文都不能超上限。插件名 `title` ≤ 24 字。
 - `id`：字母数字开头，字母数字和 `_ . -`，≤ 40 字；**整个插件内不能重复**（跨插槽也算）。
 - `wants`：`clipboard`、`draft`（输入框文字）只给胶囊和 `composer.tools`；`message`（被长按的回复正文）只给菜单项。
-- `composer.tools`、`session.actions`、`turn.note` 需要较新的 App：清单可写 `minApp`（如 `"minApp": "1.0.31"`，当前 App 低于它时不加载），再跑 `node …/check.mjs "$P" --app <版本>` 按目标版本查。
-- `placement`：`session.tab`（对话详情页，scope 带 sessionId，缺省）、`features`（全部功能）、`chat.panel`（聊天页输入框上方「插件」胶囊打开的弹层，scope 带 sessionId）、`plugin`（插件详情页，需较新 App；老 App 退回 `session.tab`）。
+- `placement`：`session.tab`（对话详情页，scope 带 sessionId，缺省）、`features`（全部功能）、`chat.panel`（聊天页输入框上方「插件」胶囊打开的弹层，scope 带 sessionId）。
 - 静态 `effect` 只能用 `insert` `command` `open` `link` `toast` `copy`。
 - `icon`：bolt star sparkle heart flag bookmark pin bell clock alarm calendar todo note document folder search code terminal globe chart lightbulb book puzzle robot chat mail translate image camera mic link summary wrench bug travel school home play refresh archive team wallet palette coin money speaker read copy quote share edit write save paste add remove delete clear fork regenerate reply select-text qr download downloads external info warning check done success error question pending running tip list table panel sidebar menu more expand collapse file folder-open workspace storage pdf zip slides article text diff gallery audio music video video-file play-video pause stop replay generate-image generate-video diagram plugin bot agent skill model tool workflow goal plan job automation command trajectory web web-search browser history time today timezone schedule repeat reminder user account group chats mention invite announcement reaction poll notification send community forum feedback wechat qq telegram discord phone computer cloud server power restart retry theme color text-size pet featured badge favorite settings
 
@@ -192,7 +191,7 @@ ctx.dshGo.on('translate', (scope) => ({
 | `actions` | `items: [{ label, action, icon?, style?: primary\|plain }]`（≤ 4，至多一个 primary） |
 | `options` | `id` `options: [{ label, value? }]` `multi?` `selected?` |
 | `confirm` | `id` `confirmLabel?` `cancelLabel?` |
-| `image` | `src`：`asset:<清单 assets 目录内的 png/jpg/webp/gif>` 或 ≤ 64 KiB 的 `data:image/…`；网页地址只画占位。`alt?` `aspect?` |
+| `image` | `src`：`/dsh-go/v1/…` 同源路径或 ≤ 64 KiB 的 `data:image/…`；`alt?` `aspect?` |
 
 `action` 写动作 id 字符串，或 `{ "id": "open", "args": { … } }`（args ≤ 1 KiB）。上限：面板 32 KiB / 120 个组件 / 8 层；工具卡 8 KiB / 40 个 / 6 层，第 0 期不能点。
 
@@ -202,14 +201,14 @@ ctx.dshGo.on('translate', (scope) => ({
 presentationMeta: (args, value) => {
   try {   // 抛错或返回 undefined / NaN 会让整次工具调用失败
     const text = JSON.stringify({ type: 'stack', title: `${value.city} · 今天`, children: [{ type: 'metric', label: '气温', value: `${value.temp}°` }] })
-    return Buffer.byteLength(text, 'utf8') <= 8 * 1024 ? { 'dsh-go/view': JSON.parse(text) } : {}
+    return text.length < 8000 ? { 'dsh-go/view': JSON.parse(text) } : {}
   } catch { return {} }
 },
 ```
 
 ## 声音与字幕（v1.2，可选）
 
-清单加 `"capabilities": ["audio", "voice", "micro", "overlay"]`（用哪几样写哪几样）；还要读写用户挑的文件时加 `"files"`，用 SDK 的 `pickFile` / `pickImage`（v1.3，见 `docs/plugins/files.md`）。`contributes` 加 `media: [{ id }]`、`micro: [{ id }]`、`overlays: [{ id, channel }]`（各 ≤ 2，id 和其他贡献不重复）；要用声音的按钮加 `"requires": ["audio"]`。
+清单加 `"capabilities": ["audio", "voice", "micro", "overlay"]`（用哪几样写哪几样），`contributes` 加 `media: [{ id }]`、`micro: [{ id }]`、`overlays: [{ id, channel }]`（各 ≤ 2，id 和其他贡献不重复）；要用声音的按钮加 `"requires": ["audio"]`。
 
 ```js
 ctx.dshGo.on('read', (scope) => [   // 同一 instance：App 当作一个会话
